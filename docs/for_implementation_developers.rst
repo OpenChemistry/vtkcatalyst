@@ -77,7 +77,7 @@ the `conduit::Node` API which is generally friendlier than the C API.
 
     #include <catalyst.h>
     #include <conduit.hpp>            // for conduit::Node
-    #include <c/conduit_cpp_to_c.hpp> // for conduit::cpp_node()
+    #include <conduit_cpp_to_c.hpp>   // for conduit::cpp_node()
 
     ...
 
