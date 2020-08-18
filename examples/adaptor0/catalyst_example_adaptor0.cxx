@@ -2,10 +2,10 @@
  * Distributed under OSI-approved BSD 3-Clause License. See
  * accompanying License.txt
  */
-#include <c/conduit_cpp_to_c.hpp>
 #include <catalyst.h>
 #include <catalyst_stub.h>
 #include <conduit.hpp>
+#include <conduit_cpp_to_c.hpp>
 
 //-----------------------------------------------------------------------------
 void catalyst_initialize(const conduit_node*) {}
