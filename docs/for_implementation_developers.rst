@@ -44,7 +44,8 @@ implementation.
 
     # use this function call to mark any library as the
     # Catalyst API implementation.
-    catalyst_apply_properties(MyCustomCatalystImpl)
+    catalyst_library(
+      TARGET MyCustomCatalystImpl)
 
 That is it! `catalyst_apply_properties` sets up appropriate CMake
 target-properties on the library including setting it's name and version number.
