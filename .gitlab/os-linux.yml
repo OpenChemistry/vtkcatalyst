@@ -63,4 +63,4 @@
         - "$LAUNCHER ctest --output-on-failure -V -S .gitlab/ci/ctest_test.cmake"
 
     interruptible: true
-    timeout: 3 hours
+    timeout: 5 minutes

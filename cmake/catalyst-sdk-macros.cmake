@@ -25,7 +25,8 @@ function(catalyst_library)
       catalyst::core
       catalyst::conduit_headers
     PRIVATE
-      catalyst::conduit)
+      catalyst::conduit
+      catalyst::blueprint)
   set_target_properties(${arg_TARGET}
     PROPERTIES
       VERSION   "${CATALYST_ABI_VERSION}"

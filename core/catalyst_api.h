@@ -7,7 +7,7 @@
 #define catalyst_api_h
 
 // include mangled conduit C API.
-#include <c/conduit.h>
+#include <conduit.h>
 
 #ifdef __cplusplus
 extern "C"

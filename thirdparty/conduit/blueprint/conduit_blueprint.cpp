@@ -44,33 +44,21 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit_core.hpp
+/// file: conduit_blueprint.cpp
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_CORE_HPP
-#define CONDUIT_CORE_HPP
+//-----------------------------------------------------------------------------
+// std lib includes
+//-----------------------------------------------------------------------------
+#include <string.h>
+#include <math.h>
 
 //-----------------------------------------------------------------------------
-// -- standard cpp lib includes -- 
+// conduit includes
 //-----------------------------------------------------------------------------
-#include <string>
-#include <iostream>
+#include "conduit_blueprint.hpp"
 
-//-----------------------------------------------------------------------------
-// -- configure time defines -- 
-//-----------------------------------------------------------------------------
-#include "conduit_config.h"
-
-//-----------------------------------------------------------------------------
-// -- define proper lib exports for various platforms -- 
-//-----------------------------------------------------------------------------
-#include "conduit_exports.h"
-
-//-----------------------------------------------------------------------------
-// -- include bit width style types mapping header  -- 
-//-----------------------------------------------------------------------------
-#include "conduit_bitwidth_style_types.h"
 
 //-----------------------------------------------------------------------------
 // -- begin conduit:: --
@@ -78,46 +66,82 @@
 namespace conduit
 {
 
-class Node;
-
 //-----------------------------------------------------------------------------
-/// typedefs that map bit width style types into conduit::
+// -- begin conduit::blueprint --
 //-----------------------------------------------------------------------------
+namespace blueprint
+{
 
-/// unsigned integer typedefs
-typedef conduit_uint8   uint8;
-typedef conduit_uint16  uint16;
-typedef conduit_uint32  uint32;
-typedef conduit_uint64  uint64;
 
-/// signed integer typedefs
-typedef conduit_int8    int8;
-typedef conduit_int16   int16;
-typedef conduit_int32   int32;
-typedef conduit_int64   int64;
+//---------------------------------------------------------------------------//
+std::string
+about()
+{
+    Node n;
+    blueprint::about(n);
+    return n.to_json();
+}
 
-/// floating point typedefs
-typedef conduit_float32 float32;
-typedef conduit_float64 float64;
+//---------------------------------------------------------------------------//
+void
+about(Node &n)
+{
+    n.reset();
+    n["protocols/mesh/coordset"] = "enabled";
+    n["protocols/mesh/topology"] = "enabled";
+    n["protocols/mesh/field"]    = "enabled";
+    n["protocols/mesh/index"]    = "enabled";
+    
+    n["protocols/mcarray"]  = "enabled";
+    n["protocols/zfparray"] = "enabled";
+}
 
-/// index typedefs
-typedef conduit_index32_t index32_t;
-typedef conduit_index64_t index64_t;
-// conduit_index_t is defined in Bitwidth_Style_Types.h
-// it will be index64_t, unless CONDUIT_INDEX_32 is defined
-typedef conduit_index_t   index_t;
+//---------------------------------------------------------------------------//
+bool
+verify(const std::string &protocol,
+       const Node &n,
+       Node &info)
+{
+    bool res = false;
+    info.reset();
+    
+    std::string p_curr;
+    std::string p_next;
+    conduit::utils::split_path(protocol,p_curr,p_next);
 
+    if(!p_next.empty())
+    {
+        if(p_curr == "mesh")
+        {
+            res = mesh::verify(p_next,n,info);
+        }
+        else if(p_curr == "mcarray")
+        {
+            res = mcarray::verify(p_next,n,info);
+        }
+    }
+    else
+    {
+        if(p_curr == "mesh")
+        {
+            res = mesh::verify(n,info);
+        }
+        else if(p_curr == "mcarray")
+        {
+            res = mcarray::verify(n,info);
+        }
+    }
+
+    return res;
+}
+
+}
 //-----------------------------------------------------------------------------
-/// The about methods construct human readable info about how conduit was
-/// configured.
+// -- end conduit::blueprint --
 //-----------------------------------------------------------------------------
-std::string CONDUIT_API about();
-void        CONDUIT_API about(Node &);
 
 }
 //-----------------------------------------------------------------------------
 // -- end conduit:: --
 //-----------------------------------------------------------------------------
-
-#endif
 
