@@ -12,7 +12,7 @@ option(CATALYST_BUILD_STUB_IMPLEMENTATION "Enable stub implementation" ON)
 
 #------------------------------------------------------------------------------
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(cMacros)
+include(catalyst-macros)
 include(cCompilerChecks)
 include(cInitializeBuildType)
 include(cDirectories)

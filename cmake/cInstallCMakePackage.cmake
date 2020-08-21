@@ -13,6 +13,7 @@ export(
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file("${_binary_package_dir}/catalyst-version.cmake"
+  VERSION       "${CATALYST_VERSION}"
   COMPATIBILITY SameMajorVersion)
 
 configure_package_config_file(
@@ -21,8 +22,8 @@ configure_package_config_file(
   INSTALL_DESTINATION "${CATALYST_INSTALL_PACKAGE_DIR}")
 
 
-configure_file("${CMAKE_CURRENT_LIST_DIR}/catalyst-sdk-macros.cmake"
-               "${_binary_package_dir}/catalyst-sdk-macros.cmake" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/catalyst-macros.cmake"
+               "${_binary_package_dir}/catalyst-macros.cmake" COPYONLY)
 #------------------------------------------------------------------------------
 # Get install directory functional
 
@@ -36,5 +37,5 @@ install(
 install(
   FILES       "${_binary_package_dir}/catalyst-version.cmake"
               "${_binary_package_dir}/catalyst-config.cmake"
-              "${_binary_package_dir}/catalyst-sdk-macros.cmake"
+              "${_binary_package_dir}/catalyst-macros.cmake"
   DESTINATION "${CATALYST_INSTALL_PACKAGE_DIR}")
