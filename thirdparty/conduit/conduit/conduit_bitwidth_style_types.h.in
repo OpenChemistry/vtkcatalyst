@@ -52,7 +52,7 @@
 #define CONDUIT_BITWIDTH_STYLE_TYPES_H
 
 #include "conduit_config.h"
-#include <climits>
+#include <limits.h>
 
 //-----------------------------------------------------------------------------
 // byte len of native types
