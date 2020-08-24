@@ -29,7 +29,7 @@ set(CMAKE_CONFIGURABLE_FILE_CONTENT "#error \"this file should not be compiled!\
 configure_file("${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in"
                "${CMAKE_CURRENT_BINARY_DIR}/dummy.cxx")
 unset(CMAKE_CONFIGURABLE_FILE_CONTENT)
-add_library(dummy EXCLUDE_FROM_ALL ${CMAKE_CURRENT_BINARY_DIR}/dummy.cxx)
+add_library(dummy SHARED EXCLUDE_FROM_ALL ${CMAKE_CURRENT_BINARY_DIR}/dummy.cxx)
 set_target_properties(dummy
   PROPERTIES
     DEFINE_SYMBOL catalyst_EXPORTS)
