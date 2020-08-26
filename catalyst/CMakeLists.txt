@@ -4,5 +4,5 @@
 add_library(catalyst SHARED
   catalyst.cxx)
 add_library(catalyst::catalyst ALIAS catalyst)
-catalyst_library(TARGET catalyst
-                 INSTALL_EXPORT_DEFAULT)
+catalyst_library(TARGET catalyst)
+c_install_targets(catalyst)
