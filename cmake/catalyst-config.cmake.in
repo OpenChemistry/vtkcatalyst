@@ -1,4 +1,7 @@
 # Catalyst Package config file.
+cmake_policy(PUSH)
+cmake_policy(VERSION 3.13)
+
 set(CATALYST_VERSION "@CATALYST_VERSION@")
 set(CATALYST_ABI_VERSION "@CATALYST_ABI_VERSION@")
 set(CATALYST_BUILD_SHARED_LIBS "@CATALYST_BUILD_SHARED_LIBS@")
@@ -14,3 +17,4 @@ if ("SDK" IN_LIST "${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS")
 endif()
 
 check_required_components(catalyst)
+cmake_policy(POP)
