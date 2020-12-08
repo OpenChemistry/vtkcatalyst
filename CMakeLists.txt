@@ -47,10 +47,15 @@ endif()
 include(cInstallCMakePackage)
 
 #------------------------------------------------------------------------------
-# Testing, we build examples and their tests. That's our testing suite.
+# Testing, we build:
+# 1.) examples and their tests
+# 2.) Some conduit-native tests to test our wrapped C API
+# That's our testing suite.
 if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
   include(CTest)
+  # TODO
+  # add_subdirectory(tests)
   add_subdirectory(examples)
 endif()
 #------------------------------------------------------------------------------
