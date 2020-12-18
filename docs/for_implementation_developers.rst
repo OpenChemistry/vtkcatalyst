@@ -47,8 +47,8 @@ implementation.
     catalyst_library(
       TARGET MyCustomCatalystImpl)
 
-That is it! `catalyst_apply_properties` sets up appropriate CMake
-target-properties on the library including setting it's name and version number.
+That is it! `catalyst_library` sets up appropriate CMake
+target-properties on the library including setting its name and version number.
 This function is only available when the `SDK` component is explicitly requested
 in the `find_package(catalyst .. )` call.
 
