@@ -3995,7 +3995,7 @@ public:
   ///@{
   //-----------------------------------------------------------------------------
   /// description:
-  ///  Node traversal (iterators), child access (for list or object types)
+  ///  child access (for list or object types)
   //-----------------------------------------------------------------------------
 
   /// fetch the node at the given index
