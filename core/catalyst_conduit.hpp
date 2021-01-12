@@ -4163,10 +4163,10 @@ public:
   void* data_ptr() { return conduit_node_data_ptr(this->c_node); }
   const void* data_ptr() const { return conduit_node_data_ptr(this->c_node); }
 
-  void* element_ptr(conduit_index_t idx) { conduit_node_element_ptr(this->c_node, idx); }
+  void* element_ptr(conduit_index_t idx) { return conduit_node_element_ptr(this->c_node, idx); }
   const void* element_ptr(conduit_index_t idx) const
   {
-    conduit_node_element_ptr(this->c_node, idx);
+    return conduit_node_element_ptr(this->c_node, idx);
   }
 
   //-----------------------------------------------------------------------------
