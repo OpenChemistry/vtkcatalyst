@@ -3917,10 +3917,6 @@ public:
     return 0;
   }
 
-  // #ifdef CONDUIT_USE_LONG_DOUBLE TODO
-  //   long double      to_long_double() const;
-  // #endif
-
   //-------------------------------------------------------------------------
   /// contiguous checks
   //-------------------------------------------------------------------------
