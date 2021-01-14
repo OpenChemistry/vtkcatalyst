@@ -49,34 +49,13 @@ include(${CMAKE_SOURCE_DIR}/thirdparty/blt/SetupBLT.cmake)
 # Core (conduit lib) Unit Tests
 ################################
 set(BASIC_TESTS
-    t_conduit_smoke
-    t_conduit_endianness
-    t_conduit_char8_str
-    t_conduit_datatype_tests
-    t_conduit_node
-    t_conduit_node_parent
+    # t_conduit_node
     t_conduit_node_compare
-    t_conduit_serialize
-    t_conduit_array
-    t_conduit_list_of
-    t_conduit_node_binary_io
-    t_conduit_node_save_load
-    t_conduit_node_paths
-    t_conduit_node_set
-    t_conduit_node_to_value
-    t_conduit_node_to_array
-    t_conduit_to_string
-    t_conduit_json
-    t_conduit_json_sanitize
-    t_conduit_yaml
-    t_conduit_generator
-    t_conduit_node_update
-    t_conduit_node_compact
-    t_conduit_node_info
-    t_conduit_node_iterator
-    t_conduit_schema
-    t_conduit_error
-    t_conduit_utils
+    # t_conduit_node_info
+    # t_conduit_node_parent
+    # t_conduit_node_paths
+    # t_conduit_node_set
+    # t_conduit_to_string
 )
 
 

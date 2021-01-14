@@ -55,7 +55,7 @@ if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
   include(CTest)
   # TODO
-  # add_subdirectory(tests)
+  add_subdirectory(tests)
   add_subdirectory(examples)
 endif()
 #------------------------------------------------------------------------------
