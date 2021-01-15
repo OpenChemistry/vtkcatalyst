@@ -164,13 +164,13 @@ public:
   void set(const long data) { conduit_node_set_long(this->c_node, data); }
   void set(const unsigned long data) { conduit_node_set_unsigned_long(this->c_node, data); }
 #endif
-  void set_string(const std::string data)
+  void set_string(const std::string& data)
   {
 
     conduit_node_set_char8_str(this->c_node, data.c_str());
   }
 
-  void set(const std::string data) { this->set_string(data); }
+  void set(const std::string& data) { this->set_string(data); }
 
   void set_char8_str(const char* data) { conduit_node_set_char8_str(this->c_node, data); }
 
@@ -331,6 +331,7 @@ public:
     conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
+
     this->set_int8_ptr(data, num_elements, offset, stride, element_bytes, endianness);
   }
 
@@ -487,7 +488,7 @@ public:
     this->set_float64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
   }
 
-  void set(const char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+  void set_char_ptr(const char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
@@ -1127,8 +1128,9 @@ public:
     this->set_path_float64_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
   }
 
-  void set_path(const std::string& path, const char* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
+  void set_path_char_ptr(const std::string& path, const char* data,
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
     char data_cpy[num_elements];
@@ -1512,8 +1514,8 @@ public:
     this->set_external_float64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
   }
 
-  void set_external(char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
+  void set_external_char_ptr(char* data, conduit_index_t num_elements = 1,
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
 
@@ -1953,8 +1955,9 @@ public:
       path, data, num_elements, offset, stride, element_bytes, endianness);
   }
 
-  void set_path_external(const std::string& path, char* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
+  void set_path_external_char_ptr(const std::string& path, char* data,
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
 
