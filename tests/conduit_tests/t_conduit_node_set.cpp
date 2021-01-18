@@ -50,7 +50,6 @@
 
 #include "catalyst_conduit.hpp"
 
-#include "rapidjson/document.h"
 #include "gtest/gtest.h"
 #include <iostream>
 using namespace conduit;
@@ -70,10 +69,7 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
   Node n;
   // uint8
   n.set(u8v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint8(), u8v);
-  EXPECT_EQ(n.total_strided_bytes(), 1);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -83,10 +79,7 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
 
   // uint16
   n.set(u16v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint16(), u16v);
-  EXPECT_EQ(n.total_strided_bytes(), 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -96,10 +89,7 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
 
   // uint32
   n.set(u32v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint32(), u32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -109,10 +99,7 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
 
   // uint64
   n.set(u64v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint64(), u64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -132,13 +119,10 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
   Node n;
   // uint8
   n.set_path("one/two/three", u8v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   Node& nc = n["one/two/three"];
   EXPECT_EQ(nc.as_uint8(), u8v);
-  EXPECT_EQ(nc.total_strided_bytes(), 1);
-  EXPECT_EQ(nc.dtype().element_bytes(), 1);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -148,13 +132,10 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
 
   // uint16
   n.set_path("one/two/three", u16v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_uint16(), u16v);
-  EXPECT_EQ(nc.total_strided_bytes(), 2);
-  EXPECT_EQ(nc.dtype().element_bytes(), 2);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -164,13 +145,10 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
 
   // uint32
   n.set_path("one/two/three", u32v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_uint32(), u32v);
-  EXPECT_EQ(nc.total_strided_bytes(), 4);
-  EXPECT_EQ(nc.dtype().element_bytes(), 4);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -180,13 +158,10 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
 
   // uint64
   n.set_path("one/two/three", u64v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_uint64(), u64v);
-  EXPECT_EQ(nc.total_strided_bytes(), 8);
-  EXPECT_EQ(nc.dtype().element_bytes(), 8);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -206,10 +181,7 @@ TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
   Node n;
   // uint8
   n.set_external(&u8v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint8(), u8v);
-  EXPECT_EQ(n.total_strided_bytes(), 1);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -221,10 +193,7 @@ TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
 
   // uint16
   n.set_external(&u16v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint16(), u16v);
-  EXPECT_EQ(n.total_strided_bytes(), 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -236,10 +205,7 @@ TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
 
   // uint32
   n.set_external(&u32v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint32(), u32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -251,10 +217,7 @@ TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
 
   // uint64
   n.set_external(&u64v);
-  n.schema().print();
   EXPECT_EQ(n.as_uint64(), u64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -280,10 +243,7 @@ TEST(conduit_node_set, set_bitwidth_int_scalar)
   Node n;
   // int8
   n.set(i8v);
-  n.schema().print();
   EXPECT_EQ(n.as_int8(), i8v);
-  EXPECT_EQ(n.total_strided_bytes(), 1);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -293,10 +253,7 @@ TEST(conduit_node_set, set_bitwidth_int_scalar)
 
   // int16
   n.set(i16v);
-  n.schema().print();
   EXPECT_EQ(n.as_int16(), i16v);
-  EXPECT_EQ(n.total_strided_bytes(), 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -306,10 +263,7 @@ TEST(conduit_node_set, set_bitwidth_int_scalar)
 
   // int32
   n.set(i32v);
-  n.schema().print();
   EXPECT_EQ(n.as_int32(), i32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -319,10 +273,7 @@ TEST(conduit_node_set, set_bitwidth_int_scalar)
 
   // int64
   n.set(i64v);
-  n.schema().print();
   EXPECT_EQ(n.as_int64(), i64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -342,13 +293,10 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
   Node n;
   // int8
   n.set_path("one/two/three", i8v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   Node& nc = n["one/two/three"];
   EXPECT_EQ(nc.as_int8(), i8v);
-  EXPECT_EQ(nc.total_strided_bytes(), 1);
-  EXPECT_EQ(nc.dtype().element_bytes(), 1);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), true);
@@ -358,13 +306,10 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 
   // int16
   n.set_path("one/two/three", i16v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_int16(), i16v);
-  EXPECT_EQ(nc.total_strided_bytes(), 2);
-  EXPECT_EQ(nc.dtype().element_bytes(), 2);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), true);
@@ -374,13 +319,10 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 
   // int32
   n.set_path("one/two/three", i32v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_int32(), i32v);
-  EXPECT_EQ(nc.total_strided_bytes(), 4);
-  EXPECT_EQ(nc.dtype().element_bytes(), 4);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), true);
@@ -390,13 +332,10 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 
   // int64
   n.set_path("one/two/three", i64v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_int64(), i64v);
-  EXPECT_EQ(nc.total_strided_bytes(), 8);
-  EXPECT_EQ(nc.dtype().element_bytes(), 8);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), true);
   EXPECT_EQ(nc.dtype().is_signed_integer(), true);
@@ -416,10 +355,7 @@ TEST(conduit_node_set, set_external_bitwidth_int_scalar)
   Node n;
   // int8
   n.set_external(&i8v);
-  n.schema().print();
   EXPECT_EQ(n.as_int8(), i8v);
-  EXPECT_EQ(n.total_strided_bytes(), 1);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -430,10 +366,7 @@ TEST(conduit_node_set, set_external_bitwidth_int_scalar)
 
   // int16
   n.set_external(&i16v);
-  n.schema().print();
   EXPECT_EQ(n.as_int16(), i16v);
-  EXPECT_EQ(n.total_strided_bytes(), 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -445,10 +378,7 @@ TEST(conduit_node_set, set_external_bitwidth_int_scalar)
 
   // int32
   n.set_external(&i32v);
-  n.schema().print();
   EXPECT_EQ(n.as_int32(), i32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -460,10 +390,7 @@ TEST(conduit_node_set, set_external_bitwidth_int_scalar)
 
   // int64
   n.set_external(&i64v);
-  n.schema().print();
   EXPECT_EQ(n.as_int64(), i64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), true);
   EXPECT_EQ(n.dtype().is_signed_integer(), true);
@@ -488,10 +415,7 @@ TEST(conduit_node_set, set_bitwidth_float_scalar)
 
   // float32
   n.set(f32v);
-  n.schema().print();
   EXPECT_EQ(n.as_float32(), f32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), false);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -501,10 +425,7 @@ TEST(conduit_node_set, set_bitwidth_float_scalar)
 
   // float64
   n.set(f64v);
-  n.schema().print();
   EXPECT_EQ(n.as_float64(), f64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), false);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -522,13 +443,10 @@ TEST(conduit_node_set, set_path_bitwidth_float_scalar)
   // float32
   Node n;
   n.set_path("one/two/three", f32v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   Node& nc = n["one/two/three"];
   EXPECT_EQ(nc.as_float32(), f32v);
-  EXPECT_EQ(nc.total_strided_bytes(), 4);
-  EXPECT_EQ(nc.dtype().element_bytes(), 4);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), false);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -538,13 +456,10 @@ TEST(conduit_node_set, set_path_bitwidth_float_scalar)
 
   // float64
   n.set_path("one/two/three", f64v);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("one"));
   EXPECT_TRUE(n["one"].has_path("two/three"));
   nc = n["one/two/three"];
   EXPECT_EQ(nc.as_float64(), f64v);
-  EXPECT_EQ(nc.total_strided_bytes(), 8);
-  EXPECT_EQ(nc.dtype().element_bytes(), 8);
   EXPECT_EQ(nc.dtype().is_number(), true);
   EXPECT_EQ(nc.dtype().is_integer(), false);
   EXPECT_EQ(nc.dtype().is_signed_integer(), false);
@@ -563,10 +478,7 @@ TEST(conduit_node_set, set_external_bitwidth_float_scalar)
 
   // float32
   n.set_external(&f32v);
-  n.schema().print();
   EXPECT_EQ(n.as_float32(), f32v);
-  EXPECT_EQ(n.total_strided_bytes(), 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), false);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -578,10 +490,7 @@ TEST(conduit_node_set, set_external_bitwidth_float_scalar)
 
   // float64
   n.set_external(&f64v);
-  n.schema().print();
   EXPECT_EQ(n.as_float64(), f64v);
-  EXPECT_EQ(n.total_strided_bytes(), 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   EXPECT_EQ(n.dtype().is_number(), true);
   EXPECT_EQ(n.dtype().is_integer(), false);
   EXPECT_EQ(n.dtype().is_signed_integer(), false);
@@ -607,9 +516,6 @@ TEST(conduit_node_set, set_bitwidth_uint_ptr)
   Node n;
   // using uint8* interface
   n.set(u8av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   uint8* u8av_ptr = n.as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -621,9 +527,6 @@ TEST(conduit_node_set, set_bitwidth_uint_ptr)
 
   // using uint16* interface
   n.set(u16av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   uint16* u16av_ptr = n.as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -635,9 +538,6 @@ TEST(conduit_node_set, set_bitwidth_uint_ptr)
 
   // using uint32 * interface
   n.set(u32av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   uint32* u32av_ptr = n.as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -649,9 +549,6 @@ TEST(conduit_node_set, set_bitwidth_uint_ptr)
 
   // using uint64 * interface
   n.set(u64av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   uint64* u64av_ptr = n.as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -678,9 +575,6 @@ TEST(conduit_node_set, set_bitwidth_uint_array)
   Node n;
   // uint8
   n.set(u8av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   uint8* u8av_ptr = n.as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -692,9 +586,6 @@ TEST(conduit_node_set, set_bitwidth_uint_array)
 
   // uint16
   n.set(u16av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   uint16* u16av_ptr = n.as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -706,9 +597,6 @@ TEST(conduit_node_set, set_bitwidth_uint_array)
 
   // uint32
   n.set(u32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   uint32* u32av_ptr = n.as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -720,9 +608,6 @@ TEST(conduit_node_set, set_bitwidth_uint_array)
 
   // uint64
   n.set(u64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   uint64* u64av_ptr = n.as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -749,11 +634,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_array)
   Node n;
   // uint8
   n.set_path("two/lvl", u8av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   uint8* u8av_ptr = n["two/lvl"].as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -765,11 +647,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_array)
 
   // uint16
   n.set_path("two/lvl", u16av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   uint16* u16av_ptr = n["two/lvl"].as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -781,11 +660,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_array)
 
   // uint32
   n.set_path("two/lvl", u32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   uint32* u32av_ptr = n["two/lvl"].as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -797,11 +673,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_array)
 
   // uint64
   n.set_path("two/lvl", u64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   uint64* u64av_ptr = n["two/lvl"].as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -823,11 +696,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_ptr)
   Node n;
   // using uint8* interface
   n.set_path("two/lvl", u8av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   uint8* u8av_ptr = n["two/lvl"].as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -839,11 +709,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_ptr)
 
   // using uint16* interface
   n.set_path("two/lvl", u16av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   uint16* u16av_ptr = n["two/lvl"].as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -855,11 +722,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_ptr)
 
   // using uint32 * interface
   n.set_path("two/lvl", u32av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   uint32* u32av_ptr = n["two"]["lvl"].as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -871,11 +735,8 @@ TEST(conduit_node_set, set_path_bitwidth_uint_ptr)
 
   // using uint64 * interface
   n.set_path("two/lvl", u64av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   uint64* u64av_ptr = n["two/lvl"].as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -902,9 +763,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_array)
   Node n;
   // uint8
   n.set_external(u8av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   uint8* u8av_ptr = n.as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -918,9 +776,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_array)
 
   // uint16
   n.set_external(u16av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   uint16* u16av_ptr = n.as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -934,9 +789,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_array)
 
   // uint32
   n.set_external(u32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   uint32* u32av_ptr = n.as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -950,9 +802,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_array)
 
   // uint64
   n.set_external(u64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   uint64* u64av_ptr = n.as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -977,9 +826,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_ptr)
   Node n;
   // uint8
   n.set_external(u8av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   uint8* u8av_ptr = n.as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -993,9 +839,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_ptr)
 
   // uint16
   n.set_external(u16av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   uint16* u16av_ptr = n.as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1009,9 +852,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_ptr)
 
   // uint32
   n.set_external(u32av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   uint32* u32av_ptr = n.as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1025,9 +865,6 @@ TEST(conduit_node_set, set_external_bitwidth_uint_ptr)
 
   // uint64
   n.set_external(u64av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   uint64* u64av_ptr = n.as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1057,11 +894,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_array)
   Node n;
   // uint8
   n.set_path_external("two/lvl", u8av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   uint8* u8av_ptr = n["two/lvl"].as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1075,11 +909,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_array)
 
   // uint16
   n.set_path_external("two/lvl", u16av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   uint16* u16av_ptr = n["two/lvl"].as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1093,11 +924,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_array)
 
   // uint32
   n.set_path_external("two/lvl", u32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   uint32* u32av_ptr = n["two/lvl"].as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1111,11 +939,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_array)
 
   // uint64
   n.set_path_external("two/lvl", u64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   uint64* u64av_ptr = n["two/lvl"].as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1140,11 +965,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
   Node n;
   // uint8
   n.set_path_external("two/lvl", u8av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   uint8* u8av_ptr = n["two/lvl"].as_uint8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1158,11 +980,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
 
   // uint16
   n.set_path_external("two/lvl", u16av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   uint16* u16av_ptr = n["two/lvl"].as_uint16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1176,11 +995,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
 
   // uint32
   n.set_path_external("two/lvl", u32av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   uint32* u32av_ptr = n["two/lvl"].as_uint32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1194,11 +1010,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
 
   // uint64
   n.set_path_external("two/lvl", u64av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   uint64* u64av_ptr = n["two/lvl"].as_uint64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1228,9 +1041,6 @@ TEST(conduit_node_set, set_bitwidth_int_array)
   Node n;
   // int8
   n.set(i8av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   int8* i8av_ptr = n.as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1241,9 +1051,6 @@ TEST(conduit_node_set, set_bitwidth_int_array)
   EXPECT_EQ(i8av_ptr[5], -64);
   // int16
   n.set(i16av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   int16* i16av_ptr = n.as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1254,9 +1061,6 @@ TEST(conduit_node_set, set_bitwidth_int_array)
   EXPECT_EQ(i16av_ptr[5], -64);
   // int32
   n.set(i32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   int32* i32av_ptr = n.as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1267,9 +1071,6 @@ TEST(conduit_node_set, set_bitwidth_int_array)
   EXPECT_EQ(i32av_ptr[5], -64);
   // int64
   n.set(i64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   int64* i64av_ptr = n.as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1291,9 +1092,6 @@ TEST(conduit_node_set, set_bitwidth_int_ptr)
   Node n;
   // int8
   n.set(i8av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   int8* i8av_ptr = n.as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1304,9 +1102,6 @@ TEST(conduit_node_set, set_bitwidth_int_ptr)
   EXPECT_EQ(i8av_ptr[5], -64);
   // int16
   n.set(i16av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   int16* i16av_ptr = n.as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1317,9 +1112,6 @@ TEST(conduit_node_set, set_bitwidth_int_ptr)
   EXPECT_EQ(i16av_ptr[5], -64);
   // int32
   n.set(i32av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   int32* i32av_ptr = n.as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1330,9 +1122,6 @@ TEST(conduit_node_set, set_bitwidth_int_ptr)
   EXPECT_EQ(i32av_ptr[5], -64);
   // int64
   n.set(i64av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   int64* i64av_ptr = n.as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1359,11 +1148,8 @@ TEST(conduit_node_set, set_path_bitwidth_int_array)
   Node n;
   // int8
   n.set_path("two/lvl", i8av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   int8* i8av_ptr = n["two/lvl"].as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1374,11 +1160,8 @@ TEST(conduit_node_set, set_path_bitwidth_int_array)
   EXPECT_EQ(i8av_ptr[5], -64);
   // int16
   n.set_path("two/lvl", i16av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   int16* i16av_ptr = n["two/lvl"].as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1389,11 +1172,8 @@ TEST(conduit_node_set, set_path_bitwidth_int_array)
   EXPECT_EQ(i16av_ptr[5], -64);
   // int32
   n.set_path("two/lvl", i32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   int32* i32av_ptr = n["two/lvl"].as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1404,11 +1184,8 @@ TEST(conduit_node_set, set_path_bitwidth_int_array)
   EXPECT_EQ(i32av_ptr[5], -64);
   // int64
   n.set_path("two/lvl", i64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   int64* i64av_ptr = n["two/lvl"].as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1430,11 +1207,8 @@ TEST(conduit_node_set_, set_path_bitwidth_int_ptr)
   Node n;
   // int8
   n.set_path("two/lvl", i8av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   int8* i8av_ptr = n["two/lvl"].as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1445,11 +1219,8 @@ TEST(conduit_node_set_, set_path_bitwidth_int_ptr)
   EXPECT_EQ(i8av_ptr[5], -64);
   // int16
   n.set_path("two/lvl", i16av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   int16* i16av_ptr = n["two/lvl"].as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1460,11 +1231,8 @@ TEST(conduit_node_set_, set_path_bitwidth_int_ptr)
   EXPECT_EQ(i16av_ptr[5], -64);
   // int32
   n.set_path("two/lvl", i32av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   int32* i32av_ptr = n["two/lvl"].as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1475,11 +1243,8 @@ TEST(conduit_node_set_, set_path_bitwidth_int_ptr)
   EXPECT_EQ(i32av_ptr[5], -64);
   // int64
   n.set_path("two/lvl", i64av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   int64* i64av_ptr = n["two/lvl"].as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1506,9 +1271,6 @@ TEST(conduit_node_set, set_external_bitwidth_int_array)
   Node n;
   // int8
   n.set_external(i8av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   int8* i8av_ptr = n.as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1523,9 +1285,6 @@ TEST(conduit_node_set, set_external_bitwidth_int_array)
 
   // int16
   n.set_external(i16av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   int16* i16av_ptr = n.as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1540,9 +1299,6 @@ TEST(conduit_node_set, set_external_bitwidth_int_array)
 
   // int32
   n.set_external(i32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   int32* i32av_ptr = n.as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1557,9 +1313,6 @@ TEST(conduit_node_set, set_external_bitwidth_int_array)
 
   // int64
   n.set_external(i64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   int64* i64av_ptr = n.as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1584,9 +1337,6 @@ TEST(conduit_node_set_, set_external_bitwidth_int_ptr)
   Node n;
   // int8
   n.set_external(i8av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6);
-  EXPECT_EQ(n.dtype().element_bytes(), 1);
   int8* i8av_ptr = n.as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1601,9 +1351,6 @@ TEST(conduit_node_set_, set_external_bitwidth_int_ptr)
 
   // int16
   n.set_external(i16av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n.dtype().element_bytes(), 2);
   int16* i16av_ptr = n.as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1618,9 +1365,6 @@ TEST(conduit_node_set_, set_external_bitwidth_int_ptr)
 
   // int32
   n.set_external(i32av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   int32* i32av_ptr = n.as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1635,9 +1379,6 @@ TEST(conduit_node_set_, set_external_bitwidth_int_ptr)
 
   // int64
   n.set_external(i64av, 6);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   int64* i64av_ptr = n.as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1667,11 +1408,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_array)
   Node n;
   // int8
   n.set_path_external("two/lvl", i8av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   int8* i8av_ptr = n["two/lvl"].as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1686,11 +1424,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_array)
 
   // int16
   n.set_path_external("two/lvl", i16av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   int16* i16av_ptr = n["two/lvl"].as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1705,11 +1440,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_array)
 
   // int32
   n.set_path_external("two/lvl", i32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   int32* i32av_ptr = n["two/lvl"].as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1724,11 +1456,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_array)
 
   // int64
   n.set_path_external("two/lvl", i64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   int64* i64av_ptr = n["two/lvl"].as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1753,11 +1482,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
   Node n;
   // int8
   n.set_path_external("two/lvl", i8av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 1);
   int8* i8av_ptr = n["two/lvl"].as_int8_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1772,11 +1498,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
 
   // int16
   n.set_path_external("two/lvl", i16av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 2);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 2);
   int16* i16av_ptr = n["two/lvl"].as_int16_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1791,11 +1514,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
 
   // int32
   n.set_path_external("two/lvl", i32av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   int32* i32av_ptr = n["two/lvl"].as_int32_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1810,11 +1530,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
 
   // int64
   n.set_path_external("two/lvl", i64av, 6);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 6 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   int64* i64av_ptr = n["two/lvl"].as_int64_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -1844,9 +1561,6 @@ TEST(conduit_node_set, set_bitwidth_float_array)
   Node n;
   // float32
   n.set(f32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   float32* f32av_ptr = n.as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1858,9 +1572,6 @@ TEST(conduit_node_set, set_bitwidth_float_array)
 
   // float64
   n.set(f64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   float64* f64av_ptr = n.as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1880,9 +1591,6 @@ TEST(conduit_node_set, set_bitwidth_float_ptr)
   Node n;
   // float32
   n.set(f32av, 4);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   float32* f32av_ptr = n.as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1894,9 +1602,6 @@ TEST(conduit_node_set, set_bitwidth_float_ptr)
 
   // float64
   n.set(f64av, 4);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   float64* f64av_ptr = n.as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1919,11 +1624,8 @@ TEST(conduit_node_set, set_path_bitwidth_float_array)
   Node n;
   // float32
   n.set_path("two/lvl", f32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1935,11 +1637,8 @@ TEST(conduit_node_set, set_path_bitwidth_float_array)
 
   // float64
   n.set_path("two/lvl", f64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1959,11 +1658,8 @@ TEST(conduit_node_set, set_path_bitwidth_float_ptr)
   Node n;
   // float32
   n.set_path("two/lvl", f32av, 4);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -1975,11 +1671,8 @@ TEST(conduit_node_set, set_path_bitwidth_float_ptr)
 
   // float64
   n.set_path("two/lvl", f64av, 4);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2005,9 +1698,6 @@ TEST(conduit_node_set, set_external_bitwidth_float_array)
   Node n;
   // float32
   n.set_external(f32av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   float32* f32av_ptr = n.as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2022,9 +1712,6 @@ TEST(conduit_node_set, set_external_bitwidth_float_array)
 
   // float64
   n.set_external(f64av_a);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   float64* f64av_ptr = n.as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2047,9 +1734,6 @@ TEST(conduit_node_set, set_external_bitwidth_float_ptr)
   Node n;
   // float32
   n.set_external(f32av, 4);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n.dtype().element_bytes(), 4);
   float32* f32av_ptr = n.as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2064,9 +1748,6 @@ TEST(conduit_node_set, set_external_bitwidth_float_ptr)
 
   // float64
   n.set_external(f64av, 4);
-  n.schema().print();
-  EXPECT_EQ(n.total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n.dtype().element_bytes(), 8);
   float64* f64av_ptr = n.as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2092,11 +1773,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_float_array)
   Node n;
   // float32
   n.set_path_external("two/lvl", f32av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2111,11 +1789,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_float_array)
 
   // float64
   n.set_path_external("two/lvl", f64av_a);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2138,11 +1813,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_float_ptr)
   Node n;
   // float32
   n.set_path_external("two/lvl", f32av, 4);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2157,11 +1829,8 @@ TEST(conduit_node_set, set_path_external_bitwidth_float_ptr)
 
   // float64
   n.set_path_external("two/lvl", f64av, 4);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -2222,7 +1891,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // char
   n.set_char_ptr(char_av, 6);
-  n.schema().print();
   char* char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2239,7 +1907,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // short
   n.set(short_av, 6);
-  n.schema().print();
   short* short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2256,7 +1923,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // int
   n.set(int_av, 6);
-  n.schema().print();
   int* int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2273,7 +1939,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // long
   n.set(long_av, 6);
-  n.schema().print();
   long* long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2291,7 +1956,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set(longlong_av, 6);
-  n.schema().print();
   long long* longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2315,7 +1979,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // char
   n.set_external_char_ptr(char_av, 6);
-  n.schema().print();
   char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2332,7 +1995,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // short
   n.set_external(short_av, 6);
-  n.schema().print();
   short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2349,7 +2011,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // int
   n.set_external(int_av, 6);
-  n.schema().print();
   int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2366,7 +2027,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 
   // long
   n.set_external(long_av, 6);
-  n.schema().print();
   long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2384,7 +2044,6 @@ TEST(conduit_node_set, set_cstyle_native_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set_external(longlong_av, 6);
-  n.schema().print();
   longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2433,7 +2092,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // char
   n.set(char_av_a);
-  n.schema().print();
   char* char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2450,7 +2108,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // short
   n.set(short_av_a);
-  n.schema().print();
   short* short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2467,7 +2124,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // int
   n.set(int_av_a);
-  n.schema().print();
   int* int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2484,7 +2140,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // long
   n.set(long_av_a);
-  n.schema().print();
   long* long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2502,7 +2157,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set(longlong_av_a);
-  n.schema().print();
   long long* longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2526,7 +2180,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // char
   n.set_external(char_av_a);
-  n.schema().print();
   char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2543,7 +2196,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // short
   n.set_external(short_av_a);
-  n.schema().print();
   short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2560,7 +2212,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // int
   n.set_external(int_av_a);
-  n.schema().print();
   int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2577,7 +2228,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 
   // long
   n.set_external(long_av_a);
-  n.schema().print();
   long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2595,7 +2245,6 @@ TEST(conduit_node_set, set_cstyle_native_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set_external(longlong_av_a);
-  n.schema().print();
   longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2644,7 +2293,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // char
   n.set(char_v);
-  n.schema().print();
   char* char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2661,7 +2309,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // short
   n.set(short_v);
-  n.schema().print();
   short* short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2678,7 +2325,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // int
   n.set(int_v);
-  n.schema().print();
   int* int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2695,7 +2341,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // long
   n.set(long_v);
-  n.schema().print();
   long* long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2713,7 +2358,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set(longlong_v);
-  n.schema().print();
   long long* longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2737,7 +2381,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // char
   n.set_external(char_v);
-  n.schema().print();
   char_ptr = n.as_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2754,7 +2397,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // short
   n.set_external(short_v);
-  n.schema().print();
   short_ptr = n.as_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2771,7 +2413,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // int
   n.set_external(int_v);
-  n.schema().print();
   int_ptr = n.as_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2788,7 +2429,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 
   // long
   n.set_external(long_v);
-  n.schema().print();
   long_ptr = n.as_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2806,7 +2446,6 @@ TEST(conduit_node_set, set_cstyle_native_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set_external(longlong_v);
-  n.schema().print();
   longlong_ptr = n.as_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -2849,7 +2488,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned char
   n.set(uchar_av, 6);
-  n.schema().print();
   unsigned char* uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2866,7 +2504,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned short
   n.set(ushort_av, 6);
-  n.schema().print();
   unsigned short* ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2883,7 +2520,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned int
   n.set(uint_av, 6);
-  n.schema().print();
   unsigned int* uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2900,7 +2536,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned long
   n.set(ulong_av, 6);
-  n.schema().print();
   unsigned long* ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2918,7 +2553,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set(ulonglong_av, 6);
-  n.schema().print();
   unsigned long long* ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2940,7 +2574,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned char
   n.set_external(uchar_av, 6);
-  n.schema().print();
   uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2957,7 +2590,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned short
   n.set_external(ushort_av, 6);
-  n.schema().print();
   ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2974,7 +2606,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned int
   n.set_external(uint_av, 6);
-  n.schema().print();
   uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -2991,7 +2622,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 
   // unsigned long
   n.set_external(ulong_av, 6);
-  n.schema().print();
   ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3009,7 +2639,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set_external(ulonglong_av);
-  n.schema().print();
   ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3055,7 +2684,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned char
   n.set(uchar_av_a);
-  n.schema().print();
   unsigned char* uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3072,7 +2700,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned short
   n.set(ushort_av_a);
-  n.schema().print();
   unsigned short* ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3089,7 +2716,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned int
   n.set(uint_av_a);
-  n.schema().print();
   unsigned int* uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3106,7 +2732,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned long
   n.set(ulong_av_a);
-  n.schema().print();
   unsigned long* ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3124,7 +2749,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set(ulonglong_av_a);
-  n.schema().print();
   unsigned long long* ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3146,7 +2770,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned char
   n.set_external(uchar_av_a);
-  n.schema().print();
   uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3163,7 +2786,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned short
   n.set_external(ushort_av_a);
-  n.schema().print();
   ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3180,7 +2802,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned int
   n.set_external(uint_av_a);
-  n.schema().print();
   uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3197,7 +2818,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 
   // unsigned long
   n.set_external(ulong_av_a);
-  n.schema().print();
   ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3215,7 +2835,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set_external(ulonglong_av_a);
-  n.schema().print();
   ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3261,7 +2880,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned char
   n.set(uchar_v);
-  n.schema().print();
   unsigned char* uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3278,7 +2896,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned short
   n.set(ushort_v);
-  n.schema().print();
   unsigned short* ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3295,7 +2912,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned int
   n.set(uint_v);
-  n.schema().print();
   unsigned int* uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3312,7 +2928,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned long
   n.set(ulong_v);
-  n.schema().print();
   unsigned long* ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3330,7 +2945,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set(ulonglong_v);
-  n.schema().print();
   unsigned long long* ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3352,7 +2966,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned char
   n.set_external(uchar_v);
-  n.schema().print();
   uchar_ptr = n.as_unsigned_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3369,7 +2982,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned short
   n.set_external(ushort_v);
-  n.schema().print();
   ushort_ptr = n.as_unsigned_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3386,7 +2998,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned int
   n.set_external(uint_v);
-  n.schema().print();
   uint_ptr = n.as_unsigned_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3403,7 +3014,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 
   // unsigned long
   n.set_external(ulong_v);
-  n.schema().print();
   ulong_ptr = n.as_unsigned_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3421,7 +3031,6 @@ TEST(conduit_node_set, set_cstyle_unsigned_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set_external(ulonglong_v);
-  n.schema().print();
   ulonglong_ptr = n.as_unsigned_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3462,7 +3071,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned char
   n.set(schar_av, 6);
-  n.schema().print();
   signed char* schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3479,7 +3087,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned short
   n.set(sshort_av, 6);
-  n.schema().print();
   signed short* sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3496,7 +3103,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned int
   n.set(sint_av, 6);
-  n.schema().print();
   signed int* sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3513,7 +3119,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned long
   n.set(slong_av, 6);
-  n.schema().print();
   signed long* slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3531,7 +3136,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set(slonglong_av, 6);
-  n.schema().print();
   signed long long* slonglong_ptr = n.as_signed_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3553,7 +3157,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned char
   n.set_external(schar_av, 6);
-  n.schema().print();
   schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3570,7 +3173,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned short
   n.set_external(sshort_av, 6);
-  n.schema().print();
   sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3587,7 +3189,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned int
   n.set_external(sint_av, 6);
-  n.schema().print();
   sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3604,7 +3205,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 
   // unsigned long
   n.set_external(slong_av, 6);
-  n.schema().print();
   slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3622,7 +3222,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_ptr)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set_external(slonglong_av);
-  n.schema().print();
   slonglong_ptr = n.as_signed_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3668,7 +3267,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed char
   n.set(schar_av_a);
-  n.schema().print();
   signed char* schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3685,7 +3283,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed short
   n.set(sshort_av_a);
-  n.schema().print();
   signed short* sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3702,7 +3299,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed int
   n.set(sint_av_a);
-  n.schema().print();
   signed int* sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3719,7 +3315,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed long
   n.set(slong_av_a);
-  n.schema().print();
   signed long* slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3737,7 +3332,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // signed long long
   n.set(slonglong_av_a);
-  n.schema().print();
   signed long long* slonglong_ptr = n.as_signed_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3759,7 +3353,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed char
   n.set_external(schar_av_a);
-  n.schema().print();
   schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3776,7 +3369,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed short
   n.set_external(sshort_av_a);
-  n.schema().print();
   sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3793,7 +3385,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed int
   n.set_external(sint_av_a);
-  n.schema().print();
   sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3810,7 +3401,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 
   // signed long
   n.set_external(slong_av_a);
-  n.schema().print();
   slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3828,7 +3418,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_array)
 #ifdef CONDUIT_HAS_LONG_LONG
   // unsigned long long
   n.set_external(slonglong_av_a);
-  n.schema().print();
   slonglong_ptr = n.as_signed_long_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3873,7 +3462,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // char
   n.set(schar_v);
-  n.schema().print();
   signed char* schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3890,7 +3478,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // short
   n.set(sshort_v);
-  n.schema().print();
   short* sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3907,7 +3494,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // int
   n.set(sint_v);
-  n.schema().print();
   int* sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3924,7 +3510,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // long
   n.set(slong_v);
-  n.schema().print();
   long* slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3942,7 +3527,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set(slonglong_v);
-  n.schema().print();
   long long* slonglong_ptr = n.as_signed_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -3966,7 +3550,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // char
   n.set_external(schar_v);
-  n.schema().print();
   schar_ptr = n.as_signed_char_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -3983,7 +3566,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // short
   n.set_external(sshort_v);
-  n.schema().print();
   sshort_ptr = n.as_signed_short_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -4000,7 +3582,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // int
   n.set_external(sint_v);
-  n.schema().print();
   sint_ptr = n.as_signed_int_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -4017,7 +3598,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 
   // long
   n.set_external(slong_v);
-  n.schema().print();
   slong_ptr = n.as_signed_long_ptr();
   for (index_t i = 0; i < 6; i++)
   {
@@ -4035,7 +3615,6 @@ TEST(conduit_node_set, set_cstyle_signed_int_vec)
 #ifdef CONDUIT_HAS_LONG_LONG
   // long long
   n.set_external(slonglong_v);
-  n.schema().print();
   slonglong_ptr = n.as_signed_long_long_ptr();
 
   for (index_t i = 0; i < 6; i++)
@@ -4073,9 +3652,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
   {
     // float32
     n.set(fav, 4);
-    n.schema().print();
-    EXPECT_EQ(n.total_strided_bytes(), 4 * 4);
-    EXPECT_EQ(n.dtype().element_bytes(), 4);
     float32* f32av_ptr = n.as_float32_ptr();
     for (index_t i = 0; i < 4; i++)
     {
@@ -4090,9 +3666,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
   {
     // float64
     n.set(dav, 4);
-    n.schema().print();
-    EXPECT_EQ(n.total_strided_bytes(), 4 * 8);
-    EXPECT_EQ(n.dtype().element_bytes(), 8);
     float64* f64av_ptr = n.as_float64_ptr();
     for (index_t i = 0; i < 4; i++)
     {
@@ -4109,7 +3682,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // float
   n.set(fav, 4);
-  n.schema().print();
   float* f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4126,7 +3698,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // double
   n.set(dav, 4);
-  n.schema().print();
   double* d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4145,7 +3716,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // long_double
   n.set(ldav, 4);
-  n.schema().print();
   long double* ld_ptr = n.as_long_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4167,7 +3737,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // float
   n.set_external(fav, 4);
-  n.schema().print();
   f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4184,7 +3753,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // double
   n.set_external(dav, 4);
-  n.schema().print();
   d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4203,7 +3771,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   // long_double
   n.set_external(ldav, 4);
-  n.schema().print();
   ld_ptr = n.as_long_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4237,7 +3804,6 @@ TEST(conduit_node_set, set_cstyle_float_array)
 
   // float
   n.set(fav_a);
-  n.schema().print();
   float* f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4249,7 +3815,6 @@ TEST(conduit_node_set, set_cstyle_float_array)
 
   // double
   n.set(dav_a);
-  n.schema().print();
   double* d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4265,7 +3830,6 @@ TEST(conduit_node_set, set_cstyle_float_array)
 
   // float
   n.set_external(fav_a);
-  n.schema().print();
   f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4277,7 +3841,6 @@ TEST(conduit_node_set, set_cstyle_float_array)
 
   // double
   n.set_external(dav_a);
-  n.schema().print();
   d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4305,7 +3868,6 @@ TEST(conduit_node_set, set_cstyle_float_vec)
 
   // float
   n.set(fav_v);
-  n.schema().print();
   float* f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4317,7 +3879,6 @@ TEST(conduit_node_set, set_cstyle_float_vec)
 
   // double
   n.set(dav_v);
-  n.schema().print();
   double* d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4333,7 +3894,6 @@ TEST(conduit_node_set, set_cstyle_float_vec)
 
   // float
   n.set_external(fav_v);
-  n.schema().print();
   f_ptr = n.as_float_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -4345,7 +3905,6 @@ TEST(conduit_node_set, set_cstyle_float_vec)
 
   // double
   n.set_external(dav_v);
-  n.schema().print();
   d_ptr = n.as_double_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -6533,8 +6092,6 @@ TEST(conduit_node_set, set_path_external_node)
 
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 4);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 4);
   float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
   for (index_t i = 0; i < 4; i++)
   {
@@ -6553,11 +6110,8 @@ TEST(conduit_node_set, set_path_external_node)
   nsrc.print();
 
   n.set_external(nsrc);
-  n.schema().print();
   EXPECT_TRUE(n.has_path("two"));
   EXPECT_TRUE(n["two"].has_path("lvl"));
-  EXPECT_EQ(n["two"]["lvl"].total_strided_bytes(), 4 * 8);
-  EXPECT_EQ(n["two"]["lvl"].dtype().element_bytes(), 8);
   float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
