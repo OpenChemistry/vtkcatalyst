@@ -85,8 +85,16 @@ public:
     : c_node(conduit_node_create())
   {
   }
-  Node(conduit_node* c_node) { this->c_node = c_node; }
-  Node(const Node& other) { this->c_node = other.c_node; }
+  Node(conduit_node* c_node)
+  {
+    this->c_node = conduit_node_create();
+    conduit_node_set_node(this->c_node, c_node);
+  }
+  Node(const Node& other)
+  {
+    this->c_node = conduit_node_create();
+    conduit_node_set_node(this->c_node, other.c_node);
+  }
   ~Node() { conduit_node_destroy(this->c_node); }
 
   //-----------------------------------------------------------------------------
@@ -2059,7 +2067,7 @@ public:
   {
     if (this != &node)
     {
-      this->set_node(node);
+      conduit_node_set_node(this->c_node, node.c_node);
     }
     return *this;
   }
@@ -3933,6 +3941,8 @@ public:
   ///  These methods provide general info about the node hierarchy, and memory
   ///  layout.
   //-----------------------------------------------------------------------------
+
+  const conduit_datatype* c_dtype() { return conduit_node_dtype(this->c_node); }
 
   // check if data owned by this node is externally
   // allocated.
