@@ -54,7 +54,7 @@ set(BASIC_TESTS
     # t_conduit_node_info
     t_conduit_node_parent
     # t_conduit_node_paths
-    # t_conduit_node_set
+    t_conduit_node_set
     t_conduit_to_string
     t_conduit_node_to_value
 )
