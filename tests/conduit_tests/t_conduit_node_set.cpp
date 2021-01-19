@@ -4083,85 +4083,82 @@ TEST(conduit_node_set, set_path_external_bitwidth_float_ptr)
 //     n.print();
 // }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_string_multiple)
-// {
-//     Node n;
-//     n.set_string("I am a long string");
-//     EXPECT_EQ(n.as_string(),"I am a long string");
-//     n.set_string("I am a longer string than before");  // OK
-//     EXPECT_EQ(n.as_string(),"I am a longer string than before");
-//     n.set_string("shorter");    // was crashing ..
-//     EXPECT_EQ(n.as_string(),"shorter");
-// }
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_string_multiple)
+{
+  Node n;
+  n.set_string("I am a long string");
+  EXPECT_EQ(n.as_string(), "I am a long string");
+  n.set_string("I am a longer string than before"); // OK
+  EXPECT_EQ(n.as_string(), "I am a longer string than before");
+  n.set_string("shorter"); // was crashing ..
+  EXPECT_EQ(n.as_string(), "shorter");
+}
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_vector)
-// {
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_vector)
+{
 
-//     std::vector<int8>  i8_vec(1);
-//     std::vector<int16> i16_vec(1);
-//     std::vector<int32> i32_vec(1);
-//     std::vector<int64> i64_vec(1);
+  std::vector<int8> i8_vec(1);
+  std::vector<int16> i16_vec(1);
+  std::vector<int32> i32_vec(1);
+  std::vector<int64> i64_vec(1);
 
-//     i8_vec[0]  = -8;
-//     i16_vec[0] = -16;
-//     i32_vec[0] = -32;
-//     i64_vec[0] = -64;
+  i8_vec[0] = -8;
+  i16_vec[0] = -16;
+  i32_vec[0] = -32;
+  i64_vec[0] = -64;
 
-//     std::vector<uint8>  ui8_vec(1);
-//     std::vector<uint16> ui16_vec(1);
-//     std::vector<uint32> ui32_vec(1);
-//     std::vector<uint64> ui64_vec(1);
+  std::vector<uint8> ui8_vec(1);
+  std::vector<uint16> ui16_vec(1);
+  std::vector<uint32> ui32_vec(1);
+  std::vector<uint64> ui64_vec(1);
 
-//     ui8_vec[0]  = 8;
-//     ui16_vec[0] = 16;
-//     ui32_vec[0] = 32;
-//     ui64_vec[0] = 64;
+  ui8_vec[0] = 8;
+  ui16_vec[0] = 16;
+  ui32_vec[0] = 32;
+  ui64_vec[0] = 64;
 
-//     std::vector<float32> f32_vec(1);
-//     std::vector<float64> f64_vec(1);
-//     f32_vec[0] = 2.71828f;
-//     f64_vec[0] = 3.1415;
+  std::vector<float32> f32_vec(1);
+  std::vector<float64> f64_vec(1);
+  f32_vec[0] = 2.71828f;
+  f64_vec[0] = 3.1415;
 
-//     // set
-//     Node n1;
-//     n1["i8"].set(i8_vec);
-//     n1["i16"].set(i16_vec);
-//     n1["i32"].set(i32_vec);
-//     n1["i64"].set(i64_vec);
+  // set
+  Node n1;
+  n1["i8"].set(i8_vec);
+  n1["i16"].set(i16_vec);
+  n1["i32"].set(i32_vec);
+  n1["i64"].set(i64_vec);
 
-//     n1["ui8"].set(ui8_vec);
-//     n1["ui16"].set(ui16_vec);
-//     n1["ui32"].set(ui32_vec);
-//     n1["ui64"].set(ui64_vec);
+  n1["ui8"].set(ui8_vec);
+  n1["ui16"].set(ui16_vec);
+  n1["ui32"].set(ui32_vec);
+  n1["ui64"].set(ui64_vec);
 
-//     n1["f32"].set(f32_vec);
-//     n1["f64"].set(f64_vec);
+  n1["f32"].set(f32_vec);
+  n1["f64"].set(f64_vec);
 
-//     n1.print();
+  n1.print();
 
-//     // set_path
+  // set_path
 
-//     Node n2;
-//     n2.set_path("i8",i8_vec);
-//     n2.set_path("i16",i16_vec);
-//     n2.set_path("i32",i32_vec);
-//     n2.set_path("i64",i64_vec);
+  Node n2;
+  n2.set_path("i8", i8_vec);
+  n2.set_path("i16", i16_vec);
+  n2.set_path("i32", i32_vec);
+  n2.set_path("i64", i64_vec);
 
-//     n2.set_path("ui8",ui8_vec);
-//     n2.set_path("ui16",ui16_vec);
-//     n2.set_path("ui32",ui32_vec);
-//     n2.set_path("ui64",ui64_vec);
+  n2.set_path("ui8", ui8_vec);
+  n2.set_path("ui16", ui16_vec);
+  n2.set_path("ui32", ui32_vec);
+  n2.set_path("ui64", ui64_vec);
 
-//     n2.set_path("f32",f32_vec);
-//     n2.set_path("f64",f64_vec);
+  n2.set_path("f32", f32_vec);
+  n2.set_path("f64", f64_vec);
 
-//     n2.print();
-
-//     EXPECT_TRUE(n1.schema().equals(n2.schema()));
-
-// }
+  n2.print();
+}
 
 // //-----------------------------------------------------------------------------
 // TEST(conduit_node_set, set_vector_external)
