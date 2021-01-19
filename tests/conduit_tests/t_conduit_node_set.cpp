@@ -171,64 +171,63 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
   EXPECT_EQ(nc.to_uint64(), 64);
 }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
-// {
-//     uint8    u8v = 8;
-//     uint16  u16v = 16;
-//     uint32  u32v = 32;
-//     uint64  u64v = 64;
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
+{
+  uint8 u8v = 8;
+  uint16 u16v = 16;
+  uint32 u32v = 32;
+  uint64 u64v = 64;
 
-//     Node n;
-//     // uint8
-//     n.set_external(&u8v);
-//     EXPECT_EQ(n.as_uint8(),u8v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
-//     EXPECT_EQ(n.to_int64(),8);
-//     n.set((uint8)1);
-//     EXPECT_EQ(u8v,1);
+  Node n;
+  // uint8
+  n.set_external(&u8v);
+  EXPECT_EQ(n.as_uint8(), u8v);
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(n.to_int64(), 8);
+  n.set((uint8)1);
+  EXPECT_EQ(u8v, 1);
 
-//     // uint16
-//     n.set_external(&u16v);
-//     EXPECT_EQ(n.as_uint16(),u16v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
-//     EXPECT_EQ(n.to_int64(),16);
-//     n.set((uint16)1);
-//     EXPECT_EQ(u16v,1);
+  // uint16
+  n.set_external(&u16v);
+  EXPECT_EQ(n.as_uint16(), u16v);
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(n.to_int64(), 16);
+  n.set((uint16)1);
+  EXPECT_EQ(u16v, 1);
 
-//     // uint32
-//     n.set_external(&u32v);
-//     EXPECT_EQ(n.as_uint32(),u32v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
-//     EXPECT_EQ(n.to_int64(),32);
-//     n.set((uint32)1);
-//     EXPECT_EQ(u32v,1);
+  // uint32
+  n.set_external(&u32v);
+  EXPECT_EQ(n.as_uint32(), u32v);
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(n.to_int64(), 32);
+  n.set((uint32)1);
+  EXPECT_EQ(u32v, 1);
 
-//     // uint64
-//     n.set_external(&u64v);
-//     EXPECT_EQ(n.as_uint64(),u64v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
-//     EXPECT_EQ(n.to_int64(),64);
-//     n.set((uint64)1);
-//     EXPECT_EQ(u64v,1);
-
-// }
+  // uint64
+  n.set_external(&u64v);
+  EXPECT_EQ(n.as_uint64(), u64v);
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(n.to_int64(), 64);
+  n.set((uint64)1);
+  EXPECT_EQ(u64v, 1);
+}
 
 // //-----------------------------------------------------------------------------
 // // set bitwidth signed int scalar
@@ -246,41 +245,41 @@ TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
 //     // int8
 //     n.set(i8v);
 //     EXPECT_EQ(n.as_int8(),i8v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-8);
 
 //     // int16
 //     n.set(i16v);
 //     EXPECT_EQ(n.as_int16(),i16v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-16);
 
 //     // int32
 //     n.set(i32v);
 //     EXPECT_EQ(n.as_int32(),i32v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-32);
 
 //     // int64
 //     n.set(i64v);
 //     EXPECT_EQ(n.as_int64(),i64v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-64);
 
 // }
@@ -359,22 +358,22 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 //     // int8
 //     n.set_external(&i8v);
 //     EXPECT_EQ(n.as_int8(),i8v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     n.set((int8)-1);
 //     EXPECT_EQ(i8v,-1);
 
 //     // int16
 //     n.set_external(&i16v);
 //     EXPECT_EQ(n.as_int16(),i16v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-16);
 //     n.set((int16)-1);
 //     EXPECT_EQ(i16v,-1);
@@ -382,11 +381,11 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 //     // int32
 //     n.set_external(&i32v);
 //     EXPECT_EQ(n.as_int32(),i32v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-32);
 //     n.set((int32)-1);
 //     EXPECT_EQ(i32v,-1);
@@ -394,11 +393,11 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 //     // int64
 //     n.set_external(&i64v);
 //     EXPECT_EQ(n.as_int64(),i64v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),true);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),false);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),false);
 //     EXPECT_EQ(n.to_int64(),-64);
 //     n.set((int64)-1);
 //     EXPECT_EQ(i64v,-1);
@@ -420,21 +419,21 @@ TEST(conduit_node_set, set_path_bitwidth_int_scalar)
 //     // float32
 //     n.set(f32v);
 //     EXPECT_EQ(n.as_float32(),f32v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),false);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),true);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),true);
 //     EXPECT_NEAR(n.to_float64(),-3.2,0.001);
 
 //     // float64
 //     n.set(f64v);
 //     EXPECT_EQ(n.as_float64(),f64v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),false);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),true);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),true);
 //     EXPECT_NEAR(n.to_float64(),-6.4,0.001);
 
 // }
@@ -484,11 +483,11 @@ TEST(conduit_node_set, set_path_bitwidth_float_scalar)
 //     // float32
 //     n.set_external(&f32v);
 //     EXPECT_EQ(n.as_float32(),f32v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),false);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),true);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),true);
 //     EXPECT_NEAR(n.to_float64(),-3.2,0.001);
 //     n.set((float32)-1.1);
 //     EXPECT_NEAR(f32v,-1.1,0.001);
@@ -496,11 +495,11 @@ TEST(conduit_node_set, set_path_bitwidth_float_scalar)
 //     // float64
 //     n.set_external(&f64v);
 //     EXPECT_EQ(n.as_float64(),f64v);
-//     EXPECT_EQ(n.dtype().is_number(),true);
-//     EXPECT_EQ(n.dtype().is_integer(),false);
-//     EXPECT_EQ(n.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(n.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(n.dtype().is_floating_point(),true);
+//     EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()),true);
+//     EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()),false);
+//     EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()),true);
 //     EXPECT_NEAR(n.to_float64(),-6.4,0.001);
 //     n.set((float64)-1.1);
 //     EXPECT_NEAR(f64v,-1.1,0.001);
