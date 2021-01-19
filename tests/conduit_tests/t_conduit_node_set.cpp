@@ -109,68 +109,67 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
   EXPECT_EQ(n.to_uint64(), 64);
 }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
-// {
-//     uint8    u8v = 8;
-//     uint16  u16v = 16;
-//     uint32  u32v = 32;
-//     uint64  u64v = 64;
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_bitwidth_uint_scalar)
+{
+  uint8 u8v = 8;
+  uint16 u16v = 16;
+  uint32 u32v = 32;
+  uint64 u64v = 64;
 
-//     Node n;
-//     // uint8
-//     n.set_path("one/two/three",u8v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     Node &nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_uint8(),u8v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_uint64(),8);
+  Node n;
+  // uint8
+  n.set_path("one/two/three", u8v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  Node nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_uint8(), u8v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_uint64(), 8);
 
-//     // uint16
-//     n.set_path("one/two/three",u16v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_uint16(),u16v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_uint64(),16);
+  // uint16
+  n.set_path("one/two/three", u16v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_uint16(), u16v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_uint64(), 16);
 
-//     // uint32
-//     n.set_path("one/two/three",u32v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_uint32(),u32v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_uint64(),32);
+  // uint32
+  n.set_path("one/two/three", u32v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_uint32(), u32v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_uint64(), 32);
 
-//     // uint64
-//     n.set_path("one/two/three",u64v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_uint64(),u64v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_uint64(),64);
-
-// }
+  // uint64
+  n.set_path("one/two/three", u64v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_uint64(), u64v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_uint64(), 64);
+}
 
 // //-----------------------------------------------------------------------------
 // TEST(conduit_node_set, set_external_bitwidth_uint_scalar)
@@ -286,68 +285,67 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
 
 // }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_path_bitwidth_int_scalar)
-// {
-//     int8    i8v = -8;
-//     int16  i16v = -16;
-//     int32  i32v = -32;
-//     int64  i64v = -64;
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_bitwidth_int_scalar)
+{
+  int8 i8v = -8;
+  int16 i16v = -16;
+  int32 i32v = -32;
+  int64 i64v = -64;
 
-//     Node n;
-//     // int8
-//     n.set_path("one/two/three",i8v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     Node &nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_int8(),i8v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_int64(),-8);
+  Node n;
+  // int8
+  n.set_path("one/two/three", i8v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  Node nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_int8(), i8v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_int64(), -8);
 
-//     // int16
-//     n.set_path("one/two/three",i16v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_int16(),i16v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_int64(),-16);
+  // int16
+  n.set_path("one/two/three", i16v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_int16(), i16v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_int64(), -16);
 
-//     // int32
-//     n.set_path("one/two/three",i32v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_int32(),i32v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_int64(),-32);
+  // int32
+  n.set_path("one/two/three", i32v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_int32(), i32v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_int64(), -32);
 
-//     // int64
-//     n.set_path("one/two/three",i64v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_int64(),i64v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),true);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),false);
-//     EXPECT_EQ(nc.to_int64(),-64);
-
-// }
+  // int64
+  n.set_path("one/two/three", i64v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_int64(), i64v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(nc.to_int64(), -64);
+}
 
 // //-----------------------------------------------------------------------------
 // TEST(conduit_node_set, set_external_bitwidth_int_scalar)
@@ -441,40 +439,39 @@ TEST(conduit_node_set, set_bitwidth_uint_scalar)
 
 // }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_path_bitwidth_float_scalar)
-// {
-//     float32  f32v = -3.2f;
-//     float64  f64v = -6.4;
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_bitwidth_float_scalar)
+{
+  float32 f32v = -3.2f;
+  float64 f64v = -6.4;
 
-//     // float32
-//     Node n;
-//     n.set_path("one/two/three",f32v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     Node &nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_float32(),f32v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),true);
-//     EXPECT_NEAR(nc.to_float64(),-3.2,0.001);
+  // float32
+  Node n;
+  n.set_path("one/two/three", f32v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  Node nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_float32(), f32v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), true);
+  EXPECT_NEAR(nc.to_float64(), -3.2, 0.001);
 
-//     // float64
-//     n.set_path("one/two/three",f64v);
-//     EXPECT_TRUE(n.has_path("one"));
-//     EXPECT_TRUE(n["one"].has_path("two/three"));
-//     nc = n["one/two/three"];
-//     EXPECT_EQ(nc.as_float64(),f64v);
-//     EXPECT_EQ(nc.dtype().is_number(),true);
-//     EXPECT_EQ(nc.dtype().is_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_signed_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_unsigned_integer(),false);
-//     EXPECT_EQ(nc.dtype().is_floating_point(),true);
-//     EXPECT_NEAR(nc.to_float64(),-6.4,0.001);
-
-// }
+  // float64
+  n.set_path("one/two/three", f64v);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_float64(), f64v);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), true);
+  EXPECT_NEAR(nc.to_float64(), -6.4, 0.001);
+}
 
 // //-----------------------------------------------------------------------------
 // TEST(conduit_node_set, set_external_bitwidth_float_scalar)
