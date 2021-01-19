@@ -685,77 +685,76 @@ TEST(conduit_node_set, set_external_bitwidth_uint_ptr)
   n.print();
 }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
-// {
-//     uint8    u8av[6] = {2,4,8,16,32,64};
-//     uint16  u16av[6] = {2,4,8,16,32,64};
-//     uint32  u32av[6] = {2,4,8,16,32,64};
-//     uint64  u64av[6] = {2,4,8,16,32,64};
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_external_bitwidth_uint_ptr)
+{
+  uint8 u8av[6] = { 2, 4, 8, 16, 32, 64 };
+  uint16 u16av[6] = { 2, 4, 8, 16, 32, 64 };
+  uint32 u32av[6] = { 2, 4, 8, 16, 32, 64 };
+  uint64 u64av[6] = { 2, 4, 8, 16, 32, 64 };
 
-//     Node n;
-//     // uint8
-//     n.set_path_external("two/lvl",u8av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     uint8 *u8av_ptr = n["two/lvl"].as_uint8_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(u8av_ptr[i],u8av[i]);
-//          // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&u8av_ptr[i],&u8av[i]);
-//     }
-//     u8av_ptr[1] = 100;
-//     EXPECT_EQ(u8av[1],100);
-//     n.print();
+  Node n;
+  // uint8
+  n.set_path_external("two/lvl", u8av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  uint8* u8av_ptr = n["two/lvl"].as_uint8_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(u8av_ptr[i], u8av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&u8av_ptr[i], &u8av[i]);
+  }
+  u8av_ptr[1] = 100;
+  EXPECT_EQ(u8av[1], 100);
+  n.print();
 
-//     // uint16
-//     n.set_path_external("two/lvl",u16av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     uint16 *u16av_ptr = n["two/lvl"].as_uint16_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(u16av_ptr[i],u16av[i]);
-//         // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&u16av_ptr[i],&u16av[i]);
-//     }
-//     u16av_ptr[1] = 100;
-//     EXPECT_EQ(u16av[1],100);
-//     n.print();
+  // uint16
+  n.set_path_external("two/lvl", u16av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  uint16* u16av_ptr = n["two/lvl"].as_uint16_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(u16av_ptr[i], u16av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&u16av_ptr[i], &u16av[i]);
+  }
+  u16av_ptr[1] = 100;
+  EXPECT_EQ(u16av[1], 100);
+  n.print();
 
-//     // uint32
-//     n.set_path_external("two/lvl",u32av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     uint32 *u32av_ptr = n["two/lvl"].as_uint32_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(u32av_ptr[i],u32av[i]);
-//         // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&u32av_ptr[i],&u32av[i]);
-//     }
-//     u32av_ptr[1] = 100;
-//     EXPECT_EQ(u32av[1],100);
-//     n.print();
+  // uint32
+  n.set_path_external("two/lvl", u32av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  uint32* u32av_ptr = n["two/lvl"].as_uint32_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(u32av_ptr[i], u32av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&u32av_ptr[i], &u32av[i]);
+  }
+  u32av_ptr[1] = 100;
+  EXPECT_EQ(u32av[1], 100);
+  n.print();
 
-//     // uint64
-//     n.set_path_external("two/lvl",u64av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     uint64 *u64av_ptr = n["two/lvl"].as_uint64_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(u64av_ptr[i],u64av[i]);
-//         // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&u64av_ptr[i],&u64av[i]);
-//     }
-//     EXPECT_EQ(u64av_ptr[5],64);
-//     u64av_ptr[1] = 100;
-//     EXPECT_EQ(u64av[1],100);
-//     n.print();
-
-// }
+  // uint64
+  n.set_path_external("two/lvl", u64av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  uint64* u64av_ptr = n["two/lvl"].as_uint64_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(u64av_ptr[i], u64av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&u64av_ptr[i], &u64av[i]);
+  }
+  EXPECT_EQ(u64av_ptr[5], 64);
+  u64av_ptr[1] = 100;
+  EXPECT_EQ(u64av[1], 100);
+  n.print();
+}
 
 //-----------------------------------------------------------------------------
 TEST(conduit_node_set, set_bitwidth_int_ptr)
@@ -933,80 +932,79 @@ TEST(conduit_node_set_, set_external_bitwidth_int_ptr)
   n.print();
 }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
-// {
-//     int8    i8av[6] = {-2,-4,-8,-16,-32,-64};
-//     int16  i16av[6] = {-2,-4,-8,-16,-32,-64};
-//     int32  i32av[6] = {-2,-4,-8,-16,-32,-64};
-//     int64  i64av[6] = {-2,-4,-8,-16,-32,-64};
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_external_bitwidth_int_ptr)
+{
+  int8 i8av[6] = { -2, -4, -8, -16, -32, -64 };
+  int16 i16av[6] = { -2, -4, -8, -16, -32, -64 };
+  int32 i32av[6] = { -2, -4, -8, -16, -32, -64 };
+  int64 i64av[6] = { -2, -4, -8, -16, -32, -64 };
 
-//     Node n;
-//     // int8
-//     n.set_path_external("two/lvl",i8av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     int8 *i8av_ptr = n["two/lvl"].as_int8_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(i8av_ptr[i],i8av[i]);
-//        // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&i8av_ptr[i],&i8av[i]);
-//     }
-//     EXPECT_EQ(i8av_ptr[5],-64);
-//     i8av_ptr[1] = -100;
-//     EXPECT_EQ(i8av[1],-100);
-//     n.print();
+  Node n;
+  // int8
+  n.set_path_external("two/lvl", i8av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  int8* i8av_ptr = n["two/lvl"].as_int8_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(i8av_ptr[i], i8av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&i8av_ptr[i], &i8av[i]);
+  }
+  EXPECT_EQ(i8av_ptr[5], -64);
+  i8av_ptr[1] = -100;
+  EXPECT_EQ(i8av[1], -100);
+  n.print();
 
-//     // int16
-//     n.set_path_external("two/lvl",i16av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     int16 *i16av_ptr = n["two/lvl"].as_int16_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(i16av_ptr[i],i16av[i]);
-//        // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&i16av_ptr[i],&i16av[i]);
-//     }
-//     EXPECT_EQ(i16av_ptr[5],-64);
-//     i16av_ptr[1] = -100;
-//     EXPECT_EQ(i16av[1],-100);
-//     n.print();
+  // int16
+  n.set_path_external("two/lvl", i16av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  int16* i16av_ptr = n["two/lvl"].as_int16_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(i16av_ptr[i], i16av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&i16av_ptr[i], &i16av[i]);
+  }
+  EXPECT_EQ(i16av_ptr[5], -64);
+  i16av_ptr[1] = -100;
+  EXPECT_EQ(i16av[1], -100);
+  n.print();
 
-//     // int32
-//     n.set_path_external("two/lvl",i32av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     int32 *i32av_ptr = n["two/lvl"].as_int32_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(i32av_ptr[i],i32av[i]);
-//        // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&i32av_ptr[i],&i32av[i]);
-//     }
-//     EXPECT_EQ(i32av_ptr[5],-64);
-//     i32av_ptr[1] = -100;
-//     EXPECT_EQ(i32av[1],-100);
-//     n.print();
+  // int32
+  n.set_path_external("two/lvl", i32av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  int32* i32av_ptr = n["two/lvl"].as_int32_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(i32av_ptr[i], i32av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&i32av_ptr[i], &i32av[i]);
+  }
+  EXPECT_EQ(i32av_ptr[5], -64);
+  i32av_ptr[1] = -100;
+  EXPECT_EQ(i32av[1], -100);
+  n.print();
 
-//     // int64
-//     n.set_path_external("two/lvl",i64av,6);
-//     EXPECT_TRUE(n.has_path("two"));
-//     EXPECT_TRUE(n["two"].has_path("lvl"));
-//     int64 *i64av_ptr = n["two/lvl"].as_int64_ptr();
-//     for(index_t i=0;i<6;i++)
-//     {
-//         EXPECT_EQ(i64av_ptr[i],i64av[i]);
-//        // set_external(...) semantics imply a ref -- mem addys should match
-//         EXPECT_EQ(&i64av_ptr[i],&i64av[i]);
-//     }
-//     EXPECT_EQ(i64av_ptr[5],-64);
-//     i64av_ptr[1] = -100;
-//     EXPECT_EQ(i64av[1],-100);
-//     n.print();
-
-// }
+  // int64
+  n.set_path_external("two/lvl", i64av, 6);
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  int64* i64av_ptr = n["two/lvl"].as_int64_ptr();
+  for (index_t i = 0; i < 6; i++)
+  {
+    EXPECT_EQ(i64av_ptr[i], i64av[i]);
+    // set_external(...) semantics imply a ref -- mem addys should match
+    EXPECT_EQ(&i64av_ptr[i], &i64av[i]);
+  }
+  EXPECT_EQ(i64av_ptr[5], -64);
+  i64av_ptr[1] = -100;
+  EXPECT_EQ(i64av[1], -100);
+  n.print();
+}
 
 //-----------------------------------------------------------------------------
 TEST(conduit_node_set, set_bitwidth_float_ptr)
