@@ -604,6 +604,13 @@ public:
       offset, stride, element_bytes, endianness);
   }
 #endif
+
+  void set_path_node(const std::string& path, const Node& data)
+  {
+    conduit_node_set_path_node(this->c_node.get(), path.c_str(), data.c_node.get());
+  }
+  void set_path(const std::string& path, const Node& data) { this->set_path_node(path, data); }
+
   void set_path_int8(const std::string& path, const conduit_int8 data)
   {
 
@@ -1386,6 +1393,13 @@ public:
     conduit_node_set_external_unsigned_long_ptr(this->c_node.get(), data.data(), data.size());
   }
 #endif
+
+  void set_external_node(const Node& n)
+  {
+    conduit_node_set_external_node(this->c_node.get(), n.c_node.get());
+  }
+  void set_external(const Node& n) { this->set_external_node(n); }
+
   void set_external_int8_ptr(conduit_int8* data, conduit_index_t num_elements = 1,
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
     conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
@@ -1814,6 +1828,17 @@ public:
       this->c_node.get(), path.c_str(), data.data(), data.size());
   }
 #endif
+
+  void set_path_external_node(const std::string& path, Node& node)
+  {
+    conduit_node_set_path_external_node(this->c_node.get(), path.c_str(), node.c_node.get());
+  }
+
+  void set_path_external(const std::string& path, Node& node)
+  {
+    this->set_path_external_node(path, node);
+  }
+
   void set_path_external_int8_ptr(const std::string& path, conduit_int8* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(conduit_int8),
