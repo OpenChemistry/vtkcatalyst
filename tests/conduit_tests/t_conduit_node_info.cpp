@@ -96,10 +96,10 @@ TEST(conduit_node_info, simple_2)
 TEST(conduit_node_info, simple_3)
 {
   uint32 val = 42;
-  Node n2, ninfo;
+  Node n2;
   n2["a"].set_external(&val);
 
-  n2.info(ninfo);
+  Node ninfo = n2.info();
   EXPECT_EQ(4, ninfo["total_strided_bytes"].to_index_t());
   EXPECT_EQ(0, ninfo["total_bytes_allocated"].to_index_t());
 }
