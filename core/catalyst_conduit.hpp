@@ -3999,23 +3999,10 @@ public:
   ///@{
   //-----------------------------------------------------------------------------
   /// description:
-  ///  These methods provide general info about the node hierarchy, and memory
-  ///  layout.
+  ///  These methods provide general info about the node.
   //-----------------------------------------------------------------------------
 
   const conduit_datatype* c_dtype() { return conduit_node_dtype(this->c_node.get()); }
-
-  // check if data owned by this node is externally
-  // allocated.
-  bool is_data_external() const { return conduit_node_is_data_external(this->c_node.get()); }
-
-  // check if this node is the root of a tree nodes.
-  bool is_root() const { return conduit_node_is_root(this->c_node.get()); }
-
-  // parent access
-  Node parent() { return Node(conduit_node_parent(this->c_node.get())); }
-
-  const Node parent() const { return Node(conduit_node_parent(this->c_node.get())); }
 
   //-------------------------------------------------------------------------
   /// contiguous checks
@@ -4425,7 +4412,7 @@ public:
 #endif
 };
 
-conduit_node_sptr c_node(Node* n) // TODO: typedef Node* node_sptr? Return raw pointer?
+conduit_node_sptr c_node(Node* n)
 {
   return n ? n->c_node : nullptr;
 }
