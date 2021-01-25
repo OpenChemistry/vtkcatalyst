@@ -4161,8 +4161,6 @@ public:
   {
     return conduit_node_has_path(this->c_node.get(), path.c_str());
   }
-  /// returns the direct child names for this node
-  const std::vector<std::string>& child_names() const;
 
   /// adds an empty unnamed node to a list (list interface)
   /// TODO `append` is a strange name here, we want this interface
