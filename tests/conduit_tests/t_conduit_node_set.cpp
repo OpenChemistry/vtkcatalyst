@@ -2077,10 +2077,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
   float fav[4] = { -0.8f, -1.6f, -3.2f, -6.4f };
   double dav[4] = { -0.8, -1.6, -3.2, -6.4 };
 
-#ifdef CONDUIT_USE_LONG_DOUBLE
-  long double ldav[4] = { -0.8, -1.6, -3.2, -6.4 };
-#endif
-
   Node n;
   if (sizeof(float) == 4)
   {
@@ -2138,21 +2134,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
 
   EXPECT_NEAR(d_ptr[3], -6.4, 0.001);
 
-#ifdef CONDIT_USE_LONG_DOUBLE
-
-  // long_double
-  n.set(ldav, 4);
-  long double* ld_ptr = n.as_long_double_ptr();
-  for (index_t i = 0; i < 4; i++)
-  {
-    EXPECT_NEAR(ld_ptr[i], ldav[i], 0.001);
-    // set(...) semantics imply a copy -- mem addys should differ
-    EXPECT_NE(&ld_ptr[i], &ldav[i]);
-  }
-  EXPECT_NEAR(ld_ptr[3], -6.4, 0.001);
-
-#endif
-
   ////////////////////////////
   // set external
   ////////////////////////////
@@ -2180,21 +2161,6 @@ TEST(conduit_node_set, set_cstyle_float_ptr)
   }
 
   EXPECT_NEAR(d_ptr[3], -6.4, 0.001);
-
-#ifdef CONDIT_USE_LONG_DOUBLE
-
-  // long_double
-  n.set_external(ldav, 4);
-  ld_ptr = n.as_long_double_ptr();
-  for (index_t i = 0; i < 4; i++)
-  {
-    EXPECT_NEAR(ld_ptr[i], ldav[i], 0.001);
-    // set(...) semantics imply a copy -- mem addys should differ
-    EXPECT_EQ(&ld_ptr[i], &ldav[i]);
-  }
-  EXPECT_NEAR(ld_ptr[3], -6.4, 0.001);
-
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3008,10 +2974,6 @@ TEST(conduit_node_set, set_path_cstyle_float_ptr)
   float fav[4] = { -0.8f, -1.6f, -3.2f, -6.4f };
   double dav[4] = { -0.8, -1.6, -3.2, -6.4 };
 
-#ifdef CONDUIT_USE_LONG_DOUBLE
-  long double ldav[4] = { -0.8, -1.6, -3.2, -6.4 };
-#endif
-
   Node n;
 
   ////////////////////////////
@@ -3042,21 +3004,6 @@ TEST(conduit_node_set, set_path_cstyle_float_ptr)
 
   EXPECT_NEAR(d_ptr[3], -6.4, 0.001);
 
-#ifdef CONDIT_USE_LONG_DOUBLE
-
-  // long_double
-  n.set_path("ld", ldav, 4);
-  long double* ld_ptr = n["ld"].as_long_double_ptr();
-  for (index_t i = 0; i < 4; i++)
-  {
-    EXPECT_NEAR(ld_ptr[i], ldav[i], 0.001);
-    // set(...) semantics imply a copy -- mem addys should differ
-    EXPECT_NE(&ld_ptr[i], &ldav[i]);
-  }
-  EXPECT_NEAR(ld_ptr[3], -6.4, 0.001);
-
-#endif
-
   ////////////////////////////
   // set path external
   ////////////////////////////
@@ -3084,21 +3031,6 @@ TEST(conduit_node_set, set_path_cstyle_float_ptr)
   }
 
   EXPECT_NEAR(d_ptr[3], -6.4, 0.001);
-
-#ifdef CONDIT_USE_LONG_DOUBLE
-
-  // long_double
-  n.set_path_extenral("ld", ldav, 4);
-  ld_ptr = n["ld"].as_long_double_ptr();
-  for (index_t i = 0; i < 4; i++)
-  {
-    EXPECT_NEAR(ld_ptr[i], ldav[i], 0.001);
-    // set_external(...) semantics implies zero-copy -- mem addys should equal
-    EXPECT_EQ(&ld_ptr[i], &ldav[i]);
-  }
-  EXPECT_NEAR(ld_ptr[3], -6.4, 0.001);
-
-#endif
 }
 
 //-----------------------------------------------------------------------------
