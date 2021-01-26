@@ -3331,7 +3331,60 @@ TEST(conduit_node_set, set_path_cstyle_float_vec)
 // //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-TEST(conduit_node_set, set_path_external_node)
+TEST(conduit_node_set, set_node)
+{
+  float32 f32av[4] = { -0.8f, -1.6f, -3.2f, -6.4f };
+  float64 f64av[4] = { -0.8, -1.6, -3.2, -6.4 };
+
+  Node nsrc;
+  // float32
+  nsrc.set_path_external("two/lvl", f32av, 4);
+  nsrc.print();
+
+  Node n;
+  n.set(nsrc);
+
+  EXPECT_TRUE(n.has_path("two"));
+  EXPECT_TRUE(n["two"].has_path("lvl"));
+  float32* f32av_ptr = n["two/lvl"].as_float32_ptr();
+  for (index_t i = 0; i < 4; i++)
+  {
+    EXPECT_NEAR(f32av_ptr[i], f32av[i], 0.001);
+    // set(...) semantics imply a copy -- mem addys should differ
+    EXPECT_NE(&f32av_ptr[i], &f32av[i]);
+  }
+  EXPECT_NEAR(f32av_ptr[3], -6.4, 0.001);
+  // Changing one shouldn't affect the other.
+  f32av_ptr[1] = -110.1f;
+  EXPECT_NEAR(f32av_ptr[1], -110.1, 0.001);
+  EXPECT_NEAR(f32av[1], -1.6, 0.001);
+  n.print();
+
+  // float64
+  nsrc.set_path_external("two/lvl", f64av, 4);
+  nsrc.print();
+
+  n.set_path("one", nsrc);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two"));
+  EXPECT_TRUE(n["one/two"].has_path("lvl"));
+  float64* f64av_ptr = n["one/two/lvl"].as_float64_ptr();
+  for (index_t i = 0; i < 4; i++)
+  {
+    EXPECT_NEAR(f64av_ptr[i], f64av[i], 0.001);
+    // set(...) semantics imply a copy -- mem addys should differ
+    EXPECT_NE(&f64av_ptr[i], &f64av[i]);
+  }
+  EXPECT_NEAR(f64av_ptr[3], -6.4, 0.001);
+  // Changing one shouldn't affect the other.
+  f64av_ptr[1] = -110.1;
+  EXPECT_NEAR(f64av_ptr[1], -110.1, 0.001);
+  EXPECT_NEAR(f64av[1], -1.6, 0.001);
+  n.print();
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_external_node)
 {
   float32 f32av[4] = { -0.8f, -1.6f, -3.2f, -6.4f };
   float64 f64av[4] = { -0.8, -1.6, -3.2, -6.4 };
@@ -3362,10 +3415,11 @@ TEST(conduit_node_set, set_path_external_node)
   nsrc.set_path_external("two/lvl", f64av, 4);
   nsrc.print();
 
-  n.set_external(nsrc);
-  EXPECT_TRUE(n.has_path("two"));
-  EXPECT_TRUE(n["two"].has_path("lvl"));
-  float64* f64av_ptr = n["two/lvl"].as_float64_ptr();
+  n.set_path_external("one", nsrc);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two"));
+  EXPECT_TRUE(n["one/two"].has_path("lvl"));
+  float64* f64av_ptr = n["one/two/lvl"].as_float64_ptr();
   for (index_t i = 0; i < 4; i++)
   {
     EXPECT_NEAR(f64av_ptr[i], f64av[i], 0.001);
