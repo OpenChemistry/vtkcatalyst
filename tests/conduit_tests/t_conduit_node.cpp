@@ -822,3 +822,174 @@ TEST(conduit_node, check_as_bitwidth_ptr_const)
   EXPECT_NEAR(f32v, f32v_p_r[0], 0.001);
   EXPECT_NEAR(f64v, f64v_p_r[0], 0.001);
 }
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_assignment_from_bitwidth_vec)
+{
+
+  std::vector<int8> i8_vec(1);
+  std::vector<int16> i16_vec(1);
+  std::vector<int32> i32_vec(1);
+  std::vector<int64> i64_vec(1);
+
+  i8_vec[0] = -8;
+  i16_vec[0] = -16;
+  i32_vec[0] = -32;
+  i64_vec[0] = -64;
+
+  std::vector<uint8> ui8_vec(1);
+  std::vector<uint16> ui16_vec(1);
+  std::vector<uint32> ui32_vec(1);
+  std::vector<uint64> ui64_vec(1);
+
+  ui8_vec[0] = 8;
+  ui16_vec[0] = 16;
+  ui32_vec[0] = 32;
+  ui64_vec[0] = 64;
+
+  std::vector<float32> f32_vec(1);
+  std::vector<float64> f64_vec(1);
+  f32_vec[0] = 2.71828f;
+  f64_vec[0] = 3.1415;
+
+  // set
+  Node n;
+  n["i8"] = i8_vec;
+  n["i16"] = i16_vec;
+  n["i32"] = i32_vec;
+  n["i64"] = i64_vec;
+
+  n["ui8"] = ui8_vec;
+  n["ui16"] = ui16_vec;
+  n["ui32"] = ui32_vec;
+  n["ui64"] = ui64_vec;
+
+  n["f32"] = f32_vec;
+  n["f64"] = f64_vec;
+
+  n.print();
+
+  int8* i8_ptr = n["i8"].as_int8_ptr();
+  int16* i16_ptr = n["i16"].as_int16_ptr();
+  int32* i32_ptr = n["i32"].as_int32_ptr();
+  int64* i64_ptr = n["i64"].as_int64_ptr();
+
+  EXPECT_EQ(i8_ptr[0], i8_vec[0]);
+  EXPECT_EQ(i16_ptr[0], i16_vec[0]);
+  EXPECT_EQ(i32_ptr[0], i32_vec[0]);
+  EXPECT_EQ(i64_ptr[0], i64_vec[0]);
+
+  uint8* ui8_ptr = n["ui8"].as_uint8_ptr();
+  uint16* ui16_ptr = n["ui16"].as_uint16_ptr();
+  uint32* ui32_ptr = n["ui32"].as_uint32_ptr();
+  uint64* ui64_ptr = n["ui64"].as_uint64_ptr();
+
+  EXPECT_EQ(ui8_ptr[0], ui8_vec[0]);
+  EXPECT_EQ(ui16_ptr[0], ui16_vec[0]);
+  EXPECT_EQ(ui32_ptr[0], ui32_vec[0]);
+  EXPECT_EQ(ui64_ptr[0], ui64_vec[0]);
+
+  float32* f32_ptr = n["f32"].as_float32_ptr();
+  float64* f64_ptr = n["f64"].as_float64_ptr();
+
+  EXPECT_EQ(f32_ptr[0], f32_vec[0]);
+  EXPECT_EQ(f64_ptr[0], f64_vec[0]);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_assignment_from_cstyle_vec)
+{
+
+  std::vector<char> char_vec(1);
+  std::vector<short> short_vec(1);
+  std::vector<int> int_vec(1);
+  std::vector<long> long_vec(1);
+
+  char_vec[0] = -8;
+  short_vec[0] = -16;
+  int_vec[0] = -32;
+  long_vec[0] = -64;
+
+  std::vector<unsigned char> uchar_vec(1);
+  std::vector<unsigned short> ushort_vec(1);
+  std::vector<unsigned int> uint_vec(1);
+  std::vector<unsigned long> ulong_vec(1);
+
+  uchar_vec[0] = 8;
+  ushort_vec[0] = 16;
+  uint_vec[0] = 32;
+  ulong_vec[0] = 64;
+
+  std::vector<signed char> schar_vec(1);
+  std::vector<signed short> sshort_vec(1);
+  std::vector<signed int> sint_vec(1);
+  std::vector<signed long> slong_vec(1);
+
+  schar_vec[0] = 8;
+  sshort_vec[0] = 16;
+  sint_vec[0] = 32;
+  slong_vec[0] = 64;
+
+  std::vector<float> f_vec(1);
+  std::vector<double> d_vec(1);
+  f_vec[0] = 2.71828f;
+  d_vec[0] = 3.1415;
+
+  // set
+  Node n;
+  n["char"] = char_vec;
+  n["short"] = short_vec;
+  n["int"] = int_vec;
+  n["long"] = long_vec;
+
+  n["uchar"] = uchar_vec;
+  n["ushort"] = ushort_vec;
+  n["uint"] = uint_vec;
+  n["ulong"] = ulong_vec;
+
+  n["schar"] = schar_vec;
+  n["sshort"] = sshort_vec;
+  n["sint"] = sint_vec;
+  n["slong"] = slong_vec;
+
+  n["f"] = f_vec;
+  n["d"] = d_vec;
+
+  n.print();
+
+  char* char_ptr = n["char"].as_char_ptr();
+  short* short_ptr = n["short"].as_short_ptr();
+  int* int_ptr = n["int"].as_int_ptr();
+  long* long_ptr = n["long"].as_long_ptr();
+
+  EXPECT_EQ(char_ptr[0], char_vec[0]);
+  EXPECT_EQ(short_ptr[0], short_vec[0]);
+  EXPECT_EQ(int_ptr[0], int_vec[0]);
+  EXPECT_EQ(long_ptr[0], long_vec[0]);
+
+  unsigned char* uchar_ptr = n["uchar"].as_unsigned_char_ptr();
+  unsigned short* ushort_ptr = n["ushort"].as_unsigned_short_ptr();
+  unsigned int* uint_ptr = n["uint"].as_unsigned_int_ptr();
+  unsigned long* ulong_ptr = n["ulong"].as_unsigned_long_ptr();
+
+  EXPECT_EQ(uchar_ptr[0], uchar_vec[0]);
+  EXPECT_EQ(ushort_ptr[0], ushort_vec[0]);
+  EXPECT_EQ(uint_ptr[0], uint_vec[0]);
+  EXPECT_EQ(ulong_ptr[0], ulong_vec[0]);
+
+  signed char* schar_ptr = n["schar"].as_signed_char_ptr();
+  signed short* sshort_ptr = n["sshort"].as_signed_short_ptr();
+  signed int* sint_ptr = n["sint"].as_signed_int_ptr();
+  signed long* slong_ptr = n["slong"].as_signed_long_ptr();
+
+  EXPECT_EQ(schar_ptr[0], schar_vec[0]);
+  EXPECT_EQ(sshort_ptr[0], sshort_vec[0]);
+  EXPECT_EQ(sint_ptr[0], sint_vec[0]);
+  EXPECT_EQ(slong_ptr[0], slong_vec[0]);
+
+  float* f_ptr = n["f"].as_float_ptr();
+  double* d_ptr = n["d"].as_double_ptr();
+
+  EXPECT_EQ(f_ptr[0], f_vec[0]);
+  EXPECT_EQ(d_ptr[0], d_vec[0]);
+}

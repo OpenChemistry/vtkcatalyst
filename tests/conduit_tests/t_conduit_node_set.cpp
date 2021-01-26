@@ -3507,39 +3507,118 @@ TEST(conduit_node_set, set_vector)
   f64_vec[0] = 3.1415;
 
   // set
-  Node n1;
-  n1["i8"].set(i8_vec);
-  n1["i16"].set(i16_vec);
-  n1["i32"].set(i32_vec);
-  n1["i64"].set(i64_vec);
+  Node n;
+  n["i8"].set(i8_vec);
+  n["i16"].set(i16_vec);
+  n["i32"].set(i32_vec);
+  n["i64"].set(i64_vec);
 
-  n1["ui8"].set(ui8_vec);
-  n1["ui16"].set(ui16_vec);
-  n1["ui32"].set(ui32_vec);
-  n1["ui64"].set(ui64_vec);
+  n["ui8"].set(ui8_vec);
+  n["ui16"].set(ui16_vec);
+  n["ui32"].set(ui32_vec);
+  n["ui64"].set(ui64_vec);
 
-  n1["f32"].set(f32_vec);
-  n1["f64"].set(f64_vec);
+  n["f32"].set(f32_vec);
+  n["f64"].set(f64_vec);
 
-  n1.print();
+  n.print();
 
-  // set_path
+  int8* i8_ptr = n["i8"].as_int8_ptr();
+  int16* i16_ptr = n["i16"].as_int16_ptr();
+  int32* i32_ptr = n["i32"].as_int32_ptr();
+  int64* i64_ptr = n["i64"].as_int64_ptr();
 
-  Node n2;
-  n2.set_path("i8", i8_vec);
-  n2.set_path("i16", i16_vec);
-  n2.set_path("i32", i32_vec);
-  n2.set_path("i64", i64_vec);
+  EXPECT_EQ(i8_ptr[0], i8_vec[0]);
+  EXPECT_EQ(i16_ptr[0], i16_vec[0]);
+  EXPECT_EQ(i32_ptr[0], i32_vec[0]);
+  EXPECT_EQ(i64_ptr[0], i64_vec[0]);
 
-  n2.set_path("ui8", ui8_vec);
-  n2.set_path("ui16", ui16_vec);
-  n2.set_path("ui32", ui32_vec);
-  n2.set_path("ui64", ui64_vec);
+  uint8* ui8_ptr = n["ui8"].as_uint8_ptr();
+  uint16* ui16_ptr = n["ui16"].as_uint16_ptr();
+  uint32* ui32_ptr = n["ui32"].as_uint32_ptr();
+  uint64* ui64_ptr = n["ui64"].as_uint64_ptr();
 
-  n2.set_path("f32", f32_vec);
-  n2.set_path("f64", f64_vec);
+  EXPECT_EQ(ui8_ptr[0], ui8_vec[0]);
+  EXPECT_EQ(ui16_ptr[0], ui16_vec[0]);
+  EXPECT_EQ(ui32_ptr[0], ui32_vec[0]);
+  EXPECT_EQ(ui64_ptr[0], ui64_vec[0]);
 
-  n2.print();
+  float32* f32_ptr = n["f32"].as_float32_ptr();
+  float64* f64_ptr = n["f64"].as_float64_ptr();
+
+  EXPECT_EQ(f32_ptr[0], f32_vec[0]);
+  EXPECT_EQ(f64_ptr[0], f64_vec[0]);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_vector)
+{
+  std::vector<int8> i8_vec(1);
+  std::vector<int16> i16_vec(1);
+  std::vector<int32> i32_vec(1);
+  std::vector<int64> i64_vec(1);
+
+  i8_vec[0] = -8;
+  i16_vec[0] = -16;
+  i32_vec[0] = -32;
+  i64_vec[0] = -64;
+
+  std::vector<uint8> ui8_vec(1);
+  std::vector<uint16> ui16_vec(1);
+  std::vector<uint32> ui32_vec(1);
+  std::vector<uint64> ui64_vec(1);
+
+  ui8_vec[0] = 8;
+  ui16_vec[0] = 16;
+  ui32_vec[0] = 32;
+  ui64_vec[0] = 64;
+
+  std::vector<float32> f32_vec(1);
+  std::vector<float64> f64_vec(1);
+  f32_vec[0] = 2.71828f;
+  f64_vec[0] = 3.1415;
+
+  Node n;
+  n.set_path("i8", i8_vec);
+  n.set_path("i16", i16_vec);
+  n.set_path("i32", i32_vec);
+  n.set_path("i64", i64_vec);
+
+  n.set_path("ui8", ui8_vec);
+  n.set_path("ui16", ui16_vec);
+  n.set_path("ui32", ui32_vec);
+  n.set_path("ui64", ui64_vec);
+
+  n.set_path("f32", f32_vec);
+  n.set_path("f64", f64_vec);
+
+  int8* i8_ptr = n["i8"].as_int8_ptr();
+  int16* i16_ptr = n["i16"].as_int16_ptr();
+  int32* i32_ptr = n["i32"].as_int32_ptr();
+  int64* i64_ptr = n["i64"].as_int64_ptr();
+
+  EXPECT_EQ(i8_ptr[0], i8_vec[0]);
+  EXPECT_EQ(i16_ptr[0], i16_vec[0]);
+  EXPECT_EQ(i32_ptr[0], i32_vec[0]);
+  EXPECT_EQ(i64_ptr[0], i64_vec[0]);
+
+  uint8* ui8_ptr = n["ui8"].as_uint8_ptr();
+  uint16* ui16_ptr = n["ui16"].as_uint16_ptr();
+  uint32* ui32_ptr = n["ui32"].as_uint32_ptr();
+  uint64* ui64_ptr = n["ui64"].as_uint64_ptr();
+
+  EXPECT_EQ(ui8_ptr[0], ui8_vec[0]);
+  EXPECT_EQ(ui16_ptr[0], ui16_vec[0]);
+  EXPECT_EQ(ui32_ptr[0], ui32_vec[0]);
+  EXPECT_EQ(ui64_ptr[0], ui64_vec[0]);
+
+  float32* f32_ptr = n["f32"].as_float32_ptr();
+  float64* f64_ptr = n["f64"].as_float64_ptr();
+
+  EXPECT_EQ(f32_ptr[0], f32_vec[0]);
+  EXPECT_EQ(f64_ptr[0], f64_vec[0]);
+
+  n.print();
 }
 
 //-----------------------------------------------------------------------------
