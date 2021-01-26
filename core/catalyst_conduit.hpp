@@ -68,6 +68,7 @@ Additional BSD Notice
 #define catalyst_conduit_hpp
 
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -90,10 +91,6 @@ public:
     : c_node(conduit_node_create(), &conduit_node_destroy)
   {
   }
-  Node(conduit_node* data)
-    : c_node(data, &conduit_node_destroy)
-  {
-  } // TODO: Make this private?
   Node(const Node& other)
     : c_node(other.c_node)
   {
@@ -2132,7 +2129,11 @@ public:
   //-----------------------------------------------------------------------------
   // -- assignment operators for generic types --
   //-----------------------------------------------------------------------------
-
+  Node& operator=(const Node& other)
+  {
+    this->c_node = other.c_node;
+    return *this;
+  }
   //-----------------------------------------------------------------------------
   // --  assignment operators for scalar types ---
   //-----------------------------------------------------------------------------
@@ -2222,7 +2223,6 @@ public:
   //-----------------------------------------------------------------------------
   // assignment operator gap methods for scalar c-native types
   //-----------------------------------------------------------------------------
-
   //-----------------------------------------------------------------------------
   Node& operator=(char data)
   {
@@ -2352,7 +2352,6 @@ public:
   //-----------------------------------------------------------------------------
   // -- assignment operators for std::vector types ---
   //-----------------------------------------------------------------------------
-
   //-----------------------------------------------------------------------------
   // signed integer array types via std::vector
   //-----------------------------------------------------------------------------
@@ -4091,18 +4090,40 @@ public:
   //-----------------------------------------------------------------------------
 
   /// fetch the node at the given index
-  Node child(conduit_index_t idx) { return Node(conduit_node_child(this->c_node.get(), idx)); }
+  Node child(conduit_index_t idx)
+  {
+    Node ret;
+    ret.c_node =
+      conduit_node_sptr(conduit_node_child(this->c_node.get(), idx), &conduit_node_destroy);
+    return ret;
+  }
 
   const Node child(conduit_index_t idx) const
   {
-    return Node(conduit_node_child(this->c_node.get(), idx));
+    Node ret;
+    ret.c_node =
+      conduit_node_sptr(conduit_node_child(this->c_node.get(), idx), &conduit_node_destroy);
+    return ret;
   }
 
   /// access child node via a path (equivalent to fetch via path)
   // Note: Can't wrap const operator[]. No equivalent in C API.
   Node operator[](const std::string& path)
   {
-    return Node(conduit_node_fetch(this->c_node.get(), path.c_str()));
+    Node ret;
+    ret.c_node = conduit_node_sptr(
+      conduit_node_fetch(this->c_node.get(), path.c_str()), &conduit_node_destroy);
+    return ret;
+  }
+
+  /// access child node via a path (equivalent to fetch via path)
+  // Note: Can't wrap const operator[]. No equivalent in C API.
+  const Node operator[](const std::string& path) const
+  {
+    Node ret;
+    ret.c_node = conduit_node_sptr(
+      conduit_node_fetch(this->c_node.get(), path.c_str()), &conduit_node_destroy);
+    return ret;
   }
 
   /// access child node via index (equivalent to fetch via index)
@@ -4153,7 +4174,12 @@ public:
   /// TODO `append` is a strange name here, we want this interface
   /// but we may be abusing the common concept folks think of
   //  for the term `append`.
-  Node append() { return Node(conduit_node_append(this->c_node.get())); }
+  Node append()
+  {
+    Node ret;
+    ret.c_node = conduit_node_sptr(conduit_node_append(this->c_node.get()), &conduit_node_destroy);
+    return ret;
+  }
 
   /// remove child at index (list and object interfaces)
   void remove(conduit_index_t idx) { conduit_node_remove_child(this->c_node.get(), idx); }
@@ -4404,12 +4430,6 @@ public:
   const float* as_float_ptr() const { return conduit_node_as_float_ptr(this->c_node.get()); }
 
   const double* as_double_ptr() const { return conduit_node_as_double_ptr(this->c_node.get()); }
-#ifdef CONDUIT_USE_LONG_DOUBLE
-  const long double* as_long_double_ptr() const
-  {
-    return conduit_node_as_long_double_ptr(this->c_node.get());
-  }
-#endif
 };
 
 conduit_node_sptr c_node(Node* n)
