@@ -3379,6 +3379,93 @@ TEST(conduit_node_set, set_path_external_node)
 }
 
 //-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_string)
+{
+  ////////////////////////////
+  // set
+  ////////////////////////////
+
+  Node n;
+  const char* char_strv = "str1";
+  n.set_char8_str(char_strv);
+  EXPECT_EQ(std::string(n.as_char8_str()), std::string(char_strv));
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_char8_str(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_string(n.c_dtype()), true);
+
+  std::string std_strv = std::string("str2");
+  n.set(std_strv);
+  EXPECT_EQ(n.as_char8_str(), std_strv);
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_char8_str(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_string(n.c_dtype()), true);
+
+  ////////////////////////////
+  // set external
+  ////////////////////////////
+  Node n2;
+  char ext_char_strv[5];
+  // Copy in str2
+  strcpy(ext_char_strv, char_strv);
+  n.set_external_char8_str(ext_char_strv);
+  EXPECT_EQ(std::string(n.as_char8_str()), std::string(ext_char_strv));
+  EXPECT_EQ(conduit_datatype_is_number(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(n.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_char8_str(n.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_string(n.c_dtype()), true);
+  ext_char_strv[3] = '3';
+  EXPECT_EQ(std::string(n.as_char8_str()), std::string("str3"));
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, set_path_string)
+{
+  ////////////////////////////
+  // set_path
+  ////////////////////////////
+
+  Node n;
+  const char* char_strv = "str1";
+  n.set_path_char8_str("one/two/three", char_strv);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  Node nc = n["one/two/three"];
+  EXPECT_EQ(std::string(nc.as_char8_str()), std::string(char_strv));
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_char8_str(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_string(nc.c_dtype()), true);
+
+  std::string std_strv = std::string("str2");
+  n.set_path("one/two/three", std_strv);
+  EXPECT_TRUE(n.has_path("one"));
+  EXPECT_TRUE(n["one"].has_path("two/three"));
+  nc = n["one/two/three"];
+  EXPECT_EQ(nc.as_char8_str(), std_strv);
+  EXPECT_EQ(conduit_datatype_is_number(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_signed_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_unsigned_integer(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_floating_point(nc.c_dtype()), false);
+  EXPECT_EQ(conduit_datatype_is_char8_str(nc.c_dtype()), true);
+  EXPECT_EQ(conduit_datatype_is_string(nc.c_dtype()), true);
+}
+
+//-----------------------------------------------------------------------------
 TEST(conduit_node_set, set_string_multiple)
 {
   Node n;

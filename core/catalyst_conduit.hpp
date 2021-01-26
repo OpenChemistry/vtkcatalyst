@@ -1257,6 +1257,13 @@ public:
       offset, stride, element_bytes, endianness);
   }
 #endif
+
+  void set_external_char8_str(char* data)
+  {
+
+    conduit_node_set_external_char8_str(this->c_node.get(), data);
+  }
+
   void set_external_int8_vector(std::vector<conduit_int8>& data)
   {
 
