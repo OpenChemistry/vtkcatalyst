@@ -49,8 +49,8 @@ include(${CMAKE_SOURCE_DIR}/thirdparty/blt/SetupBLT.cmake)
 # Core (conduit lib) Unit Tests
 ################################
 set(BASIC_TESTS
-    # t_conduit_node
-    # t_conduit_node_compare
+    t_conduit_node
+    t_conduit_node_compare
     t_conduit_node_info
     t_conduit_node_parent
     t_conduit_node_paths
