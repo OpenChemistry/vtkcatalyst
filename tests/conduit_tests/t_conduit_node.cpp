@@ -302,145 +302,123 @@ TEST(conduit_node, check_contiguous_with)
   EXPECT_TRUE(n2.is_contiguous());
 }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node, check_path)
-// {
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_path)
+{
 
-//     Node n;
+  Node n;
 
-//     n["a/b/c/d/e/f"] = 10;
+  n["a/b/c/d/e/f"] = 10;
 
-//     EXPECT_EQ(n.path(), "");
-//     EXPECT_EQ(n["a/b/c/d/e/f"].path(), "a/b/c/d/e/f");
+  EXPECT_EQ(n.path(), "");
+  EXPECT_EQ(n["a/b/c/d/e/f"].path(), "a/b/c/d/e/f");
 
-//     // check roundtrip -- using path() to fetch from root node
-//     EXPECT_EQ(n[n["a/b/c/d/e/f"].path()].to_int32(),n["a/b/c/d/e/f"].to_int32());
+  // check roundtrip -- using path() to fetch from root node
+  EXPECT_EQ(n[n["a/b/c/d/e/f"].path()].to_int32(), n["a/b/c/d/e/f"].to_int32());
 
-//     // list cases
-//     EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[0]");
-//     EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[1]");
-//     EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[2]");
+  // list cases
+  EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[0]");
+  EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[1]");
+  EXPECT_EQ(n["a/b/c/list"].append().path(), "a/b/c/list/[2]");
 
-//     n.print();
-
-// }
+  n.print();
+}
 
 // -----------------------------------------------------------------------------
-// TEST(conduit_node, check_const_access)
-// {
-//     Node n;
-//     int64 arr[2] = {1, 2};
-//     n["a/b"].set_int32(10);
-//     n["a/c"].set_int64_ptr(arr, 2);
+TEST(conduit_node, check_const_access)
+{
+  Node n;
+  int64 arr[2] = { 1, 2 };
+  n["a/b"].set_int32(10);
+  n["a/c"].set_int64_ptr(arr, 2);
 
-//     // Note: this won't throw b/c n is not const, so the const fetch
-//     // will not bind
-//     //const Node &n_bad = n["bad"];
+  // Note: this won't throw b/c n is not const, so the const fetch
+  // will not bind
+  // const Node &n_bad = n["bad"];
 
-//     const Node n_a = n["a"];
-//     const int64 *c_vals_const = n_a["c"].as_int64_ptr();
+  const Node n_a = n["a"];
+  const int64* c_vals_const = n_a["c"].as_int64_ptr();
 
-//     EXPECT_EQ(n_a["b"].as_int32(),10);
-//     EXPECT_EQ(c_vals_const[0],arr[0]);
-//     EXPECT_EQ(c_vals_const[1],arr[1]);
+  EXPECT_EQ(n_a["b"].as_int32(), 10);
+  EXPECT_EQ(c_vals_const[0], arr[0]);
+  EXPECT_EQ(c_vals_const[1], arr[1]);
+}
 
-// }
+//-----------------------------------------------------------------------------
+TEST(conduit_node, node_more_set_cases)
+{
+  // construct from data type
+  Node n;
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node, node_more_set_cases)
-// {
-//     // construct from data type
-//     Node n(DataType::object());
+  // create complex tree
+  int64 val[2];
+  n["a/b/c/d"].append().set_external(val, 2);
 
-//     // create complex tree
-//     n["a/b/c/d"].append().set(DataType::int64(2));
+  int64* cvals = n["a/b/c/d"][0].as_int64_ptr();
+  cvals[0] = 1;
+  cvals[1] = 2;
 
-//     int64_array cvals = n["a/b/c/d"][0].value();
-//     cvals[0]= 1;
-//     cvals[1]= 2;
+  // set from constructor
+  Node n2(n);
 
-//     // set from constructor
-//     Node n2(n);
+  // set using node
+  Node n3;
+  n3.set(n2);
 
-//     // set using node
-//     Node n3;
-//     n3.set(n2);
+  const int64* n2_vals_ptr = n2["a/b/c/d"][0].as_int64_ptr();
+  const int64* n3_vals_ptr = n3["a/b/c/d"][0].as_int64_ptr();
 
-//     const int64 *n2_vals_ptr= n2["a/b/c/d"][0].as_int64_ptr();
-//     const int64 *n3_vals_ptr= n3["a/b/c/d"][0].as_int64_ptr();
+  EXPECT_EQ(n2_vals_ptr[0], 1);
+  EXPECT_EQ(n2_vals_ptr[1], 2);
 
-//     EXPECT_EQ(n2_vals_ptr[0],1);
-//     EXPECT_EQ(n2_vals_ptr[1],2);
+  EXPECT_EQ(n3_vals_ptr[0], 1);
+  EXPECT_EQ(n3_vals_ptr[1], 2);
+  n2.print();
+  n3.print();
 
-//     EXPECT_EQ(n3_vals_ptr[0],1);
-//     EXPECT_EQ(n3_vals_ptr[1],2);
+  float64 fval[1] = { 3.1415 };
 
-//     float64 fval[1] = { 3.1415 };
+  Node n4;
+  n4["a"].set(fval);
+  n4.set_path("b", fval);
 
-//     Node n4;
-//     n4["a"].set(DataType::float64(),fval);
-//     n4.set_path("b",DataType::float64(),fval);
+  EXPECT_EQ(n4["a"].as_float64(), fval[0]);
+  EXPECT_EQ(n4["b"].as_float64(), fval[0]);
 
-//     EXPECT_EQ(n4["a"].as_float64(),fval[0]);
-//     EXPECT_EQ(n4["b"].as_float64(),fval[0]);
+  n4.print();
+}
 
-//     n4.print();
+//-----------------------------------------------------------------------------
+TEST(conduit_node, rename_child)
+{
+  Node n;
 
-//     Node n5;
-//     n5["a"].set(Schema(DataType::float64()),fval);
-//     n5.set_path("b",Schema(DataType::float64()),fval);
+  n["a"].set((int64)0);
+  n["b"].set((float64)0);
+  n["c"].set(std::vector<float32>(10));
 
-//     EXPECT_EQ(n5["a"].as_float64(),fval[0]);
-//     EXPECT_EQ(n5["b"].as_float64(),fval[0]);
+  float32* c_vals = n["c"].as_float32_ptr();
+  for (index_t i = 0; i < 10; i++)
+  {
+    c_vals[i] = i;
+  }
 
-//     n5.print();
+  n.print();
 
-// }
+  EXPECT_TRUE(n.has_child("c"));
+  EXPECT_FALSE(n.has_child("d"));
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node, rename_child)
-// {
-//     Node n;
+  n.rename_child("c", "d");
 
-//     // error, can't rename non object
-//     EXPECT_THROW(n.rename_child("a","b"),conduit::Error);
+  n.print();
 
-//     n["a"].set(DataType::int64());
-//     n["b"].set(DataType::float64());
-//     n["c"].set(DataType::float32(10));
+  EXPECT_TRUE(n.has_child("d"));
+  EXPECT_FALSE(n.has_child("c"));
 
-//     float32_array c_vals = n["c"].value();
-//     for(index_t i=0;i<10;i++)
-//     {
-//         c_vals[i] = i;
-//     }
-
-//     n.print();
-
-//     // error, can't rename to existing child name
-//     EXPECT_THROW(n.rename_child("a","b"),conduit::Error);
-
-//     // error, can't rename non existing child
-//     EXPECT_THROW(n.rename_child("bad","d"),conduit::Error);
-
-//     std::vector<std::string> cnames = n.child_names();
-//     EXPECT_EQ(cnames[2],"c");
-//     EXPECT_TRUE(n.has_child("c"));
-//     EXPECT_FALSE(n.has_child("d"));
-
-//     n.rename_child("c","d");
-
-//     n.print();
-
-//     cnames = n.child_names();
-//     EXPECT_TRUE(n.has_child("d"));
-//     EXPECT_FALSE(n.has_child("c"));
-//     EXPECT_EQ(cnames[2],"d");
-
-//     // or old c_vals ptr should now be wired to d,
-//     // give the name change
-//     EXPECT_EQ(c_vals.data_ptr(),n["d"].data_ptr());
-// }
+  // or old c_vals ptr should now be wired to d,
+  // give the name change
+  EXPECT_EQ(c_vals, n["d"].data_ptr());
+}
 
 //-----------------------------------------------------------------------------
 TEST(conduit_node, list_to_obj_cleanup)
