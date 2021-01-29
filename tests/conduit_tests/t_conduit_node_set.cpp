@@ -3768,7 +3768,7 @@ TEST(conduit_node_set, set_vector_external)
   EXPECT_EQ(f64_ptr, &f64_vec[0]);
 }
 
-// //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // TEST(conduit_node, node_set_existing_char8)
 // {
 //     Schema s;
@@ -3801,27 +3801,15 @@ TEST(conduit_node_set, set_vector_external)
 //     EXPECT_EQ(n["b"].as_string(),value);
 // }
 
-// //-----------------------------------------------------------------------------
-// TEST(conduit_node, node_set_existing_obj)
-// {
-//     Node n_init;
+//-----------------------------------------------------------------------------
+TEST(conduit_node, node_set_existing_obj)
+{
+  Node n_init;
 
-//     n_init["a"] = DataType::list();
+  Node n_des;
+  n_des["a"].append().set("value");
 
-//     CONDUIT_INFO("INITIAL");
-//     CONDUIT_INFO(n_init.to_json());
+  n_init = n_des;
 
-//     Node n_des;
-//     n_des["a"].append().set("value");
-
-//     CONDUIT_INFO("DES");
-//     CONDUIT_INFO(n_des.to_json());
-
-//     n_init = n_des;
-
-//     EXPECT_EQ(n_init.number_of_children(),1);
-
-//     CONDUIT_INFO("POST SET");
-//     CONDUIT_INFO(n_init.to_json());
-
-// }
+  EXPECT_EQ(n_init.number_of_children(), 1);
+}
