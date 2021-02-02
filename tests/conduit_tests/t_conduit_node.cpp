@@ -971,3 +971,17 @@ TEST(conduit_node_set, check_assignment_from_cstyle_vec)
   EXPECT_EQ(f_ptr[0], f_vec[0]);
   EXPECT_EQ(d_ptr[0], d_vec[0]);
 }
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_memory_dealloc)
+{
+  int16 val = 5;
+  Node n;
+  {
+    Node n2;
+    n2 = val;
+    EXPECT_EQ(n2.as_int16(), val);
+    n.set_external(n2);
+  }
+  EXPECT_EQ(n.as_int16(), val);
+}
