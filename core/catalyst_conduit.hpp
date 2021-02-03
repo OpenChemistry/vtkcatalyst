@@ -4042,12 +4042,12 @@ public:
   ///
   /// info() creates a node that contains metadata about the current
   /// node's memory properties
-  void info(Node& nres) const { return conduit_node_info(this->c_node, nres.c_node); }
+  void info(Node& nres) const { conduit_node_info(this->c_node, nres.c_node); }
 
   Node info() const
   {
-    conduit_node* ret = conduit_node_create();
-    conduit_node_info(this->c_node, ret);
+    Node ret;
+    this->info(ret);
     return ret;
   }
 
