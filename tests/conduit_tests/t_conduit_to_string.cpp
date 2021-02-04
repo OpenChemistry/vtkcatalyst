@@ -15,7 +15,6 @@
 using namespace conduit_cpp;
 
 //-----------------------------------------------------------------------------
-// TODO: Figure out why \n aren't present in this test, but are in original conduit test.
 // TODO: Capture stdout and compare to correct value
 TEST(conduit_to_string, simple_1)
 {
@@ -23,18 +22,52 @@ TEST(conduit_to_string, simple_1)
   conduit_uint32 b_val = 20;
   conduit_float64 c_val = 30.0;
 
+  const std::string n_expected = "\n"
+                                 "{\n"
+                                 "  \"a\": 10,\n"
+                                 "  \"b\": 20,\n"
+                                 "  \"c\": 30.0\n"
+                                 "}\n";
+
+  const std::string n2_expected = "\n"
+                                  "{\n"
+                                  "  \"g\": \n"
+                                  "  {\n"
+                                  "    \"a\": 10,\n"
+                                  "    \"b\": 20,\n"
+                                  "    \"c\": 30.0\n"
+                                  "  }\n"
+                                  "}\n";
+
   Node n;
   n["a"] = a_val;
   n["b"] = b_val;
   n["c"] = c_val;
-  n.print_detailed();
-  // EXPECT_EQ(std::string("{\"a\": 10,\"b\": 20,\"c\": 30.0}"),n.to_json("json",0,0,"",""));
 
   Node n2;
   n2["g"]["a"] = a_val;
   n2["g"]["b"] = b_val;
   n2["g"]["c"] = c_val;
+
+  // Capture stdout using a stringstream
+  std::stringstream buffer;
+  std::streambuf* old_buf = std::cout.rdbuf(buffer.rdbuf());
+
+  // Check n
+  n.print();
+  EXPECT_EQ(std::string(n_expected), buffer.str());
+
+  buffer.str(std::string());
+  buffer.clear();
+
+  // Check n2
+  n2.print();
+  EXPECT_EQ(std::string(n2_expected), buffer.str());
+
+  std::cout.rdbuf(old_buf);
+
+  n.print();
+  n.print_detailed();
+  n2.print();
   n2.print_detailed();
-  // EXPECT_EQ(std::string("{\"g\": {\"a\": 10,\"b\":
-  // 20,\"c\": 30.0}}"),n2.to_json("json",0,0,"",""));
 }
