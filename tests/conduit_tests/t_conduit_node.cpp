@@ -59,9 +59,10 @@ using namespace conduit_cpp;
 TEST(conduit_node, cc)
 {
   Node n;
-  n = 5;
-  Node n2;
-  n2.set(n);
+  n = (int32)5;
+  EXPECT_EQ(n.as_int32(), (int32)5);
+  Node n2(n);
+  EXPECT_EQ(n2.as_int32(), (int32)5);
 }
 
 //-----------------------------------------------------------------------------
