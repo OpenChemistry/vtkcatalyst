@@ -312,6 +312,76 @@ TEST(conduit_node, check_contiguous_with)
 }
 
 //-----------------------------------------------------------------------------
+TEST(conduit_node, number_of_children_object)
+{
+
+  Node n;
+  EXPECT_EQ(n.number_of_children(), 0);
+
+  n["a"].set(10);
+  n["b"].set(20);
+  n["c"].set(30);
+  EXPECT_EQ(n.number_of_children(), 3);
+
+  n["c"]["d"].set(40);
+  EXPECT_EQ(n.number_of_children(), 3);
+  EXPECT_EQ(n["c"].number_of_children(), 1);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, number_of_children_list)
+{
+
+  Node n;
+  EXPECT_EQ(n.number_of_children(), 0);
+
+  n.append().set(10);
+  n.append().set(20);
+  n.append().set(30);
+  EXPECT_EQ(n.number_of_children(), 3);
+
+  n[2].append().set(40);
+  EXPECT_EQ(n.number_of_children(), 3);
+  EXPECT_EQ(n[2].number_of_children(), 1);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, name_object)
+{
+
+  Node n;
+  EXPECT_EQ(n.name(), "");
+
+  n["n_first_child"].set(10);
+  n["n_second_child"].set(20);
+  n["n_third_child"].set(30);
+  EXPECT_EQ(n["n_first_child"].name(), "n_first_child");
+  EXPECT_EQ(n["n_second_child"].name(), "n_second_child");
+  EXPECT_EQ(n["n_third_child"].name(), "n_third_child");
+
+  n["n_third_child"]["n_grandchild"].set(40);
+  EXPECT_EQ(n["n_first_child"]["n_grandchild"].name(), "n_grandchild");
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, name_list)
+{
+
+  Node n;
+  EXPECT_EQ(n.name(), "");
+
+  n.append().set(10);
+  n.append().set(20);
+  n.append().set(30);
+  EXPECT_EQ(n[0].name(), "[0]");
+  EXPECT_EQ(n[1].name(), "[1]");
+  EXPECT_EQ(n[2].name(), "[2]");
+
+  n[2].append().set(40);
+  EXPECT_EQ(n[2][0].name(), "[0]");
+}
+
+//-----------------------------------------------------------------------------
 TEST(conduit_node, check_path)
 {
 

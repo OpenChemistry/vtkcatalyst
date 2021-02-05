@@ -564,3 +564,72 @@ TEST(conduit_node_compare, compare_list_size_diff)
     }
   }
 }
+
+// The following two tests were taken from conduit's
+// t_conduit_schema testing file.
+//-----------------------------------------------------------------------------
+TEST(conduit_node_compare, compatible_nodes)
+{
+  Node n1, n2, n3;
+  n1["a"].set(std::vector<int64>(10, 0));
+  // n1["b"].set(DataType::float64(20, n1["a"].total_strided_bytes()));
+  n1["b"].set(std::vector<float64>(20, 0));
+
+  n2["a"].set(std::vector<int64>(10, 0));
+  n2["b"].set(std::vector<float64>(20, 0));
+  EXPECT_TRUE(n1.compatible(n2));
+
+  n3["a"].set(std::vector<int64>(10, 0));
+  n3["b"].set(std::vector<float64>(40, 0));
+  EXPECT_FALSE(n1.compatible(n3));
+  EXPECT_TRUE(n3.compatible(n1));
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_compare, compatible_nodes_with_lists)
+{
+  Node n1;
+  Node n1_a = n1.append();
+  Node n1_b = n1.append();
+
+  n1_a.set(std::vector<int8>(0, 10));
+  n1_b.set(std::vector<int8>(0, 10));
+
+  Node n2;
+  Node n2_a = n2.append();
+  Node n2_b = n2.append();
+  Node n2_c = n2.append();
+
+  n2_a.set(std::vector<int8>(0, 10));
+  n2_b.set(std::vector<int8>(0, 10));
+  n2_c.set(std::vector<int8>(0, 10));
+
+  EXPECT_FALSE(n1.compatible(n2));
+  EXPECT_TRUE(n2.compatible(n1));
+
+  EXPECT_TRUE(n1.compatible(n1));
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_compare, compatible_nodes_dtype)
+{
+  Node obj, list, leaf;
+  obj["a"].set_int32(10);
+  list.append().set_int32(10);
+  leaf.set_int32(10);
+
+  EXPECT_FALSE(obj.compatible(list));
+  EXPECT_FALSE(obj.compatible(leaf));
+
+  EXPECT_FALSE(list.compatible(obj));
+  EXPECT_FALSE(list.compatible(leaf));
+
+  EXPECT_FALSE(leaf.compatible(obj));
+  EXPECT_FALSE(leaf.compatible(list));
+
+  // Leaves with different types should also be incompatible
+  Node leaf2;
+  leaf2.set_float32(10);
+  EXPECT_FALSE(leaf.compatible(leaf2));
+  EXPECT_FALSE(leaf2.compatible(leaf));
+}
