@@ -64,7 +64,6 @@ TEST(conduit_node, cc)
   Node n2(n);
   EXPECT_EQ(n2.as_int32(), (int32)5);
 }
-
 //-----------------------------------------------------------------------------
 TEST(conduit_node, simple)
 {
@@ -314,7 +313,6 @@ TEST(conduit_node, check_contiguous_with)
 //-----------------------------------------------------------------------------
 TEST(conduit_node, number_of_children_object)
 {
-
   Node n;
   EXPECT_EQ(n.number_of_children(), 0);
 
@@ -331,7 +329,6 @@ TEST(conduit_node, number_of_children_object)
 //-----------------------------------------------------------------------------
 TEST(conduit_node, number_of_children_list)
 {
-
   Node n;
   EXPECT_EQ(n.number_of_children(), 0);
 
@@ -348,7 +345,6 @@ TEST(conduit_node, number_of_children_list)
 //-----------------------------------------------------------------------------
 TEST(conduit_node, name_object)
 {
-
   Node n;
   EXPECT_EQ(n.name(), "");
 
@@ -366,7 +362,6 @@ TEST(conduit_node, name_object)
 //-----------------------------------------------------------------------------
 TEST(conduit_node, name_list)
 {
-
   Node n;
   EXPECT_EQ(n.name(), "");
 
@@ -384,7 +379,6 @@ TEST(conduit_node, name_list)
 //-----------------------------------------------------------------------------
 TEST(conduit_node, check_path)
 {
-
   Node n;
 
   n["a/b/c/d/e/f"] = 10;
@@ -403,17 +397,59 @@ TEST(conduit_node, check_path)
   n.print();
 }
 
+//-----------------------------------------------------------------------------
+TEST(conduit_node, index_operator_with_path_no_copy)
+{
+  Node n;
+  n["a"].set_int32(10);
+
+  // No copy with copy constructor
+  Node n_a_copy1 = n["a"];
+  EXPECT_EQ(n_a_copy1.c_node, n["a"].c_node);
+  EXPECT_NE(n_a_copy1.c_node, nullptr);
+
+  // Same should hold if we're constructing a const object
+  const Node n_a_const_copy1 = n["a"];
+  EXPECT_EQ(n_a_const_copy1.c_node, n["a"].c_node);
+  EXPECT_NE(n_a_const_copy1.c_node, nullptr);
+
+  // No copy with assignment operator
+  Node n_a_copy2;
+  n_a_copy2 = n["a"];
+  EXPECT_EQ(n_a_copy2.c_node, n["a"].c_node);
+  EXPECT_NE(n_a_copy2.c_node, nullptr);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, index_operator_with_index_no_copy)
+{
+  Node n;
+  n.append().set_int32(10);
+
+  // No copy with copy constructor
+  Node n_0_copy1 = n[0];
+  EXPECT_EQ(n_0_copy1.c_node, n[0].c_node);
+  EXPECT_NE(n_0_copy1.c_node, nullptr);
+
+  // Same should hold if we're constructing a const object
+  const Node n_0_const_copy1 = n[0];
+  EXPECT_EQ(n_0_const_copy1.c_node, n[0].c_node);
+  EXPECT_NE(n_0_const_copy1.c_node, nullptr);
+
+  // No copy with assignment operator
+  Node n_0_copy2;
+  n_0_copy2 = n[0];
+  EXPECT_EQ(n_0_copy2.c_node, n[0].c_node);
+  EXPECT_NE(n_0_copy2.c_node, nullptr);
+}
+
 // -----------------------------------------------------------------------------
-TEST(conduit_node, check_const_access)
+TEST(conduit_node, check_const_access_path)
 {
   Node n;
   int64 arr[2] = { 1, 2 };
   n["a/b"].set_int32(10);
   n["a/c"].set_int64_ptr(arr, 2);
-
-  // Note: this won't throw b/c n is not const, so the const fetch
-  // will not bind
-  // const Node &n_bad = n["bad"];
 
   const Node n_a = n["a"];
   const int64* c_vals_const = n_a["c"].as_int64_ptr();
@@ -421,6 +457,37 @@ TEST(conduit_node, check_const_access)
   EXPECT_EQ(n_a["b"].as_int32(), 10);
   EXPECT_EQ(c_vals_const[0], arr[0]);
   EXPECT_EQ(c_vals_const[1], arr[1]);
+
+  // Check we get null back when path doesn't exist.
+  // Requested path also shouldn't be added.
+  EXPECT_EQ(n_a["nonexistant_child"].c_node, nullptr);
+  EXPECT_FALSE(n_a.has_path("nonexistant_child"));
+
+  // No copying should be done.
+  const Node n_a_b(n_a["b"]);
+  EXPECT_EQ(n["a/b"].c_node, n_a_b.c_node);
+}
+
+// -----------------------------------------------------------------------------
+TEST(conduit_node, check_const_access_index)
+{
+  Node n;
+  int64 arr[2] = { 1, 2 };
+  n.append();
+  n[0].append().set_int32(10);
+  n[0].append().set_int64_ptr(arr, 2);
+
+  const Node n_0 = n[0];
+  const int64* ptr_vals_const = n_0[1].as_int64_ptr();
+
+  EXPECT_EQ(n_0[0].as_int32(), 10);
+  EXPECT_EQ(ptr_vals_const[0], arr[0]);
+  EXPECT_EQ(ptr_vals_const[1], arr[1]);
+
+  // No copying should be done, move semantics should still apply.
+  // Check move constructor first.
+  const Node n_0_0(n_0[0]);
+  EXPECT_EQ(n[0][0].c_node, n_0_0.c_node);
 }
 
 //-----------------------------------------------------------------------------

@@ -2121,7 +2121,6 @@ public:
   Node& operator=(const Node& other)
   {
     set(other);
-    // this->c_node = other.c_node;
     return *this;
   }
 
@@ -4091,15 +4090,19 @@ public:
   }
 
   /// access child node via a path (equivalent to fetch via path)
-  // Note: Can't wrap const operator[](std::string). No equivalent in C API.
   Node operator[](const std::string& path)
   {
     return Node(conduit_node_fetch(this->c_node, path.c_str()));
   }
 
-  const Node operator[](const std::string& path) const // TODO: UB?
+  // Don't modify underlying structure if path doesn't exist
+  const Node operator[](const std::string& path) const
   {
-    return Node(conduit_node_fetch(this->c_node, path.c_str()));
+    if (this->has_path(path))
+    {
+      return Node(conduit_node_fetch(this->c_node, path.c_str()));
+    }
+    return Node(nullptr); // TODO: Throwing an exception more appropriate?
   }
 
   /// access child node via index (equivalent to fetch via index)
