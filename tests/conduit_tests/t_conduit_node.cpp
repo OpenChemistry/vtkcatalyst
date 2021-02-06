@@ -948,6 +948,62 @@ TEST(conduit_node, check_as_bitwidth_ptr_const)
 }
 
 //-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_data_ptr)
+{
+  Node n;
+  // Single element
+  n.set_int32(10);
+  EXPECT_EQ(*((int32*)n.data_ptr()), (int32)10);
+
+  // Several elements
+  std::vector<int32> vec({ -1, 2, -3, 4 });
+  n.set_int32_vector(vec);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(((int32*)n.data_ptr())[i], vec[i]);
+  }
+
+  // Set external. Do a copy first so we use
+  // an entirely new address space
+  std::vector<int32> vec_copy(vec);
+  int32* vec_data_ptr = vec_copy.data();
+  n.set_external_int32_ptr(vec_data_ptr, 4);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(((int32*)n.data_ptr())[i], vec[i]);
+  }
+  EXPECT_EQ((void*)n.data_ptr(), (void*)vec_data_ptr);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_data_ptr_const)
+{
+  Node n;
+  // Single element
+  n.set_int32(10);
+  EXPECT_EQ(*((int32*)const_cast<const Node&>(n).data_ptr()), (int32)10);
+
+  // Several elements
+  std::vector<int32> vec({ -1, 2, -3, 4 });
+  n.set_int32_vector(vec);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(((int32*)const_cast<const Node&>(n).data_ptr())[i], vec[i]);
+  }
+
+  // Set external. Do a copy first so we use
+  // an entirely new address space
+  std::vector<int32> vec_copy(vec);
+  int32* vec_data_ptr = vec_copy.data();
+  n.set_external_int32_ptr(vec_data_ptr, 4);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(((int32*)const_cast<const Node&>(n).data_ptr())[i], vec[i]);
+  }
+  EXPECT_EQ((void*)const_cast<const Node&>(n).data_ptr(), (void*)vec_data_ptr);
+}
+
+//-----------------------------------------------------------------------------
 TEST(conduit_node_set, check_assignment_from_bitwidth_vec)
 {
 
