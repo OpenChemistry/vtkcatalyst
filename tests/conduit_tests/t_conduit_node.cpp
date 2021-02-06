@@ -982,6 +982,7 @@ TEST(conduit_node_set, check_data_ptr_const)
   // Single element
   n.set_int32(10);
   EXPECT_EQ(*((int32*)const_cast<const Node&>(n).data_ptr()), (int32)10);
+  EXPECT_EQ(const_cast<const Node&>(n).data_ptr(), n.data_ptr());
 
   // Several elements
   std::vector<int32> vec({ -1, 2, -3, 4 });
@@ -990,6 +991,7 @@ TEST(conduit_node_set, check_data_ptr_const)
   {
     EXPECT_EQ(((int32*)const_cast<const Node&>(n).data_ptr())[i], vec[i]);
   }
+  EXPECT_EQ(const_cast<const Node&>(n).data_ptr(), n.data_ptr());
 
   // Set external. Do a copy first so we use
   // an entirely new address space
@@ -1001,6 +1003,39 @@ TEST(conduit_node_set, check_data_ptr_const)
     EXPECT_EQ(((int32*)const_cast<const Node&>(n).data_ptr())[i], vec[i]);
   }
   EXPECT_EQ((void*)const_cast<const Node&>(n).data_ptr(), (void*)vec_data_ptr);
+  EXPECT_EQ(const_cast<const Node&>(n).data_ptr(), n.data_ptr());
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node_set, check_element_ptr_const)
+{
+  Node n;
+  // Single element
+  n.set_int32(10);
+  EXPECT_EQ(*((int32*)const_cast<const Node&>(n).element_ptr(0)), (int32)10);
+  EXPECT_EQ(const_cast<const Node&>(n).element_ptr(0), n.element_ptr(0));
+
+  // Several elements
+  std::vector<int32> vec({ -1, 2, -3, 4 });
+  n.set_int32_vector(vec);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(*((int32*)const_cast<const Node&>(n).element_ptr(i)), vec[i]);
+  }
+  EXPECT_EQ(const_cast<const Node&>(n).element_ptr(0), n.element_ptr(0));
+
+  // Set external. Do a copy first so we use
+  // an entirely new address space
+  std::vector<int32> vec_copy(vec);
+  int32* vec_data_ptr = vec_copy.data();
+  n.set_external_int32_ptr(vec_data_ptr, 4);
+  for (unsigned i = 0; i < vec.size(); i++)
+  {
+    EXPECT_EQ(*((int32*)const_cast<const Node&>(n).element_ptr(i)), vec[i]);
+  }
+  // Base memory address should still match
+  EXPECT_EQ(const_cast<const Node&>(n).element_ptr(0), (void*)vec_data_ptr);
+  EXPECT_EQ(const_cast<const Node&>(n).element_ptr(0), n.element_ptr(0));
 }
 
 //-----------------------------------------------------------------------------
