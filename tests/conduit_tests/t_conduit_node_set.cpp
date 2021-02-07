@@ -3769,37 +3769,39 @@ TEST(conduit_node_set, set_vector_external)
 }
 
 //-----------------------------------------------------------------------------
-// TEST(conduit_node, node_set_existing_char8)
-// {
-//     Schema s;
+TEST(conduit_node, node_set_existing_char8)
+{
+  std::string value = "my value";
 
-//     std::string value = "my value";
+  Node n2;
+  n2.set_external_char8_str(const_cast<char*>(value.c_str()));
 
-//     s["a"].set(DataType::int64());
-//     s["b"].set(DataType::char8_str(value.length()+1));
+  // Can't do any kind of compaction because of what's
+  // exposed by the API. Below is the excluded portion of the
+  // original conduit test.
+  // Schema s;
+  // s["a"].set(DataType::int64());
+  // s["b"].set(DataType::char8_str(value.length()+1));
 
-//     Schema s_compact;
-//     s.compact_to(s_compact);
+  // Schema s_compact;
+  // s.compact_to(s_compact);
+  // Node n(s_compact);
 
-//     Node n2;
-//     n2.set_external_char8_str(const_cast<char*>(value.c_str()));
+  Node n;
+  n["a"].set_int64(10);
+  n["b"] = n2;
 
-//     Node n(s_compact);
+  EXPECT_EQ(n["a"].as_int64(), 10);
+  EXPECT_EQ(n["b"].as_string(), value);
 
-//     n["a"].set_int64(10);
-//     n["b"].update(n2);
+  n.print();
 
-//     EXPECT_EQ(n["a"].as_int64(),10);
-//     EXPECT_EQ(n["b"].as_string(),value);
+  n["b"].set(value);
 
-//     n.print();
+  n.print();
 
-//     n["b"].set(value);
-
-//     n.print();
-
-//     EXPECT_EQ(n["b"].as_string(),value);
-// }
+  EXPECT_EQ(n["b"].as_string(), value);
+}
 
 //-----------------------------------------------------------------------------
 TEST(conduit_node, node_set_existing_obj)

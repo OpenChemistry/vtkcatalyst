@@ -15,7 +15,6 @@
 using namespace conduit_cpp;
 
 //-----------------------------------------------------------------------------
-// TODO: Capture stdout and compare to correct value
 TEST(conduit_to_string, simple_1)
 {
   conduit_uint32 a_val = 10;
