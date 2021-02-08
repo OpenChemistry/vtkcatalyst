@@ -54,7 +54,11 @@ include(cInstallCMakePackage)
 if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
   include(CTest)
-  add_subdirectory(tests)
   add_subdirectory(examples)
+
+  find_package(GTest)
+  if (GTEST_FOUND)
+    add_subdirectory(tests)
+  endif()
 endif()
 #------------------------------------------------------------------------------

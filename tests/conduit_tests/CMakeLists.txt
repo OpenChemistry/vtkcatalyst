@@ -40,7 +40,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-include(${CMAKE_SOURCE_DIR}/thirdparty/blt/SetupBLT.cmake)
 ################################
 # Conduit Unit Tests
 ################################
@@ -59,18 +58,13 @@ set(BASIC_TESTS
     t_conduit_node_to_value
 )
 
-
 ################################
 # Add our tests
 ################################
 message(STATUS "Adding conduit lib unit tests")
 foreach(TEST ${BASIC_TESTS})
-    blt_add_executable(NAME ${TEST}
-                       SOURCES ${TEST}.cpp
-                       OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}
-                       DEPENDS_ON catalyst gtest)
+    add_executable(${TEST} ${TEST}.cpp)
+    target_link_libraries(${TEST} ${GTEST_BOTH_LIBRARIES} catalyst)
+    add_test(NAME ${TEST} COMMAND ${TEST})
 
-
-    blt_add_test(NAME ${TEST}
-                 COMMAND ${TEST})
 endforeach()
