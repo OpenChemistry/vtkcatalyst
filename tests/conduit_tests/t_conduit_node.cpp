@@ -64,6 +64,7 @@ TEST(conduit_node, cc)
   Node n2(n);
   EXPECT_EQ(n2.as_int32(), (int32)5);
 }
+
 //-----------------------------------------------------------------------------
 TEST(conduit_node, simple)
 {
@@ -82,6 +83,7 @@ TEST(conduit_node, simple)
   EXPECT_EQ(n["c"].as_float64(), c_val);
 }
 
+//-----------------------------------------------------------------------------
 TEST(conduit_node, nested)
 {
 
@@ -90,6 +92,21 @@ TEST(conduit_node, nested)
   Node n;
   n["a"]["b"] = val;
   EXPECT_EQ(n["a"]["b"].as_uint32(), val);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, destruct)
+{
+  Node n;
+  n["a"] = (int32)5;
+  {
+    Node n_a = n["a"];
+    EXPECT_EQ(n_a.as_int32(), (int32)5);
+  }
+
+  // Check going out of scope didn't deallocate the memory.
+  Node n_a = n["a"];
+  EXPECT_EQ(n_a.as_int32(), (int32)5);
 }
 
 //-----------------------------------------------------------------------------
