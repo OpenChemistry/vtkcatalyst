@@ -4149,10 +4149,6 @@ public:
     return conduit_node_has_path(this->c_node, path.c_str());
   }
 
-  /// adds an empty unnamed node to a list (list interface)
-  /// TODO `append` is a strange name here, we want this interface
-  /// but we may be abusing the common concept folks think of
-  //  for the term `append`.
   Node append() { return Node(conduit_node_append(this->c_node)); }
 
   /// remove child at index (list and object interfaces)
