@@ -167,6 +167,11 @@ void set_char8_str(const char* data)
   conduit_node_set_char8_str(this->c_node, data);
 }
 
+void set(const char* data)
+{
+  this->set_char8_str(data);
+}
+
 void set_int8_vector(const std::vector<conduit_int8>& data)
 {
   conduit_node_set_int8_ptr(this->c_node, std::vector<conduit_int8>(data).data(), data.size());
@@ -749,6 +754,11 @@ void set_path(const std::string& path, const std::string& data)
 void set_path_char8_str(const std::string& path, const char* data)
 {
   conduit_node_set_path_char8_str(this->c_node, path.c_str(), data);
+}
+
+void set_path(const std::string& path, const char* data)
+{
+  this->set_path_char8_str(path, data);
 }
 
 void set_path_int8_vector(const std::string& path, const std::vector<conduit_int8>& data)

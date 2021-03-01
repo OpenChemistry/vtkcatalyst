@@ -221,92 +221,110 @@ class SettersWriter(BaseWriter):
             implementation=imp,
         )
 
+    # Writes both the explicit set_{dtype} method and the
+    # overloaded set call.
+    def construct_overloaded_and_non_overloaded(
+        self,
+        dtype,
+        data_structure,
+        mod,
+        dtype_str=None,
+    ):
+        ret = self.construct_setter(
+            dtype, data_structure, mod, dtype_str=dtype_str
+        )
+        ret += "\n" * 2
+        ret += self.construct_setter(
+            dtype,
+            data_structure,
+            mod,
+            easy_imp=True,
+            overloading=True,
+            dtype_str=dtype_str,
+        )
+        ret += "\n" * 2
+        return ret
+
+    def write_setters_for_conduit_types(self, ds, mod):
+        ret = ""
+        types_to_iterate_over = self.conduit_types
+
+        if "external" in mod and ds == "":
+            types_to_iterate_over = ["Node"]
+
+        for dtype in types_to_iterate_over:
+            if dtype == "Node" and ds != "":
+                continue
+            ret += self.construct_overloaded_and_non_overloaded(
+                dtype, ds, mod
+            )
+
+        return ret
+
+    def write_setters_for_native_types(self, ds, mod):
+        ret = ""
+
+        if "external" in mod and ds == "":
+            return ret
+
+        for base_t, variants in list(self.native_types.items()):
+            if base_t != "char":
+                ret += self.open_ifndef(base_t) + "\n"
+
+            for variant in variants:
+                if variant == "signed char":
+                    ret += self.open_ifndef(base_t) + "\n"
+
+                overloading = (
+                    False if variant == "char" and ds == "ptr" else True
+                )
+                ret += self.construct_setter(
+                    variant,
+                    ds,
+                    mod,
+                    overloading=overloading,
+                )
+                ret += "\n"
+            ret += self.close_ifndef() + "\n"
+        return ret
+
+    def write_setters_for_string_types(self, ds, mod):
+        ret = ""
+        types_to_iterate_over = self.string_types
+
+        if ds != "":
+            return ret
+
+        if "external" in mod:
+            types_to_iterate_over = ["char*"]
+
+        for dtype in types_to_iterate_over:
+            dtype_str = "string" if dtype == "std::string" else "char8_str"
+
+            ret += self.construct_setter(
+                dtype, ds, mod, dtype_str=dtype_str
+            )
+            ret += "\n" * 2
+
+            if dtype == "std::string":
+                ret += self.construct_setter(
+                    dtype,
+                    ds,
+                    mod,
+                    easy_imp=True,
+                    overloading=True,
+                    dtype_str=dtype_str,
+                )
+                ret += "\n" * 2
+
+        return ret
+
+
     def write(self):
         total_str = ""
-        for mod in self.mods:
-            for data_structure in self.data_structures:
-                if "external" in mod and data_structure == "":
-                    # Only write out node and char8_str setters for this iteration
-                    for dtype in ["Node", "char*"]:
-                        dtype_str = "char8_str" if dtype == "char*" else None
+        for mod, ds in itertools.product(self.mods, self.data_structures):
+            total_str += self.write_setters_for_conduit_types(ds, mod)
+            total_str += self.write_setters_for_native_types(ds, mod)
+            total_str += self.write_setters_for_string_types(ds, mod)
 
-                        total_str += self.construct_setter(
-                            dtype, data_structure, mod, dtype_str=dtype_str
-                        )
-                        total_str += "\n" * 2
-                        total_str += self.construct_setter(
-                            dtype,
-                            data_structure,
-                            mod,
-                            easy_imp=True,
-                            overloading=True,
-                            dtype_str=dtype_str,
-                        )
-                        total_str += "\n" * 2
-                    continue
-
-                for dtype in self.conduit_types:
-                    if dtype == "Node" and data_structure != "":
-                        continue
-                    total_str += self.construct_setter(
-                        dtype, data_structure, mod
-                    )
-                    total_str += "\n" * 2
-                    total_str += self.construct_setter(
-                        dtype,
-                        data_structure,
-                        mod,
-                        easy_imp=True,
-                        overloading=True,
-                    )
-                    total_str += "\n" * 2
-
-                for base_t, variants in list(self.native_types.items()):
-                    if base_t != "char":
-                        total_str += self.open_ifndef(base_t) + "\n"
-
-                    for variant in variants:
-                        if variant == "signed char":
-                            total_str += self.open_ifndef(base_t) + "\n"
-
-                        overloading = (
-                            False
-                            if variant == "char" and data_structure == "ptr"
-                            else True
-                        )
-                        total_str += self.construct_setter(
-                            variant,
-                            data_structure,
-                            mod,
-                            overloading=overloading,
-                        )
-                        total_str += "\n"
-                    total_str += self.close_ifndef() + "\n"
-
-                if data_structure != "":
-                    continue
-
-                for dtype in self.string_types:
-                    if dtype == "std::string" and "external" in mod:
-                        continue
-
-                    dtype_str = (
-                        "string" if dtype == "std::string" else "char8_str"
-                    )
-
-                    total_str += self.construct_setter(
-                        dtype, data_structure, mod, dtype_str=dtype_str
-                    )
-                    total_str += "\n" * 2
-
-                    if dtype == "std::string":
-                        total_str += self.construct_setter(
-                            dtype,
-                            data_structure,
-                            mod,
-                            easy_imp=True,
-                            overloading=True,
-                            dtype_str=dtype_str,
-                        )
-                        total_str += "\n" * 2
         return total_str
