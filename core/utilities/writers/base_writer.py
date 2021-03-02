@@ -10,3 +10,7 @@ class BaseWriter:
 
     def close_ifndef(self):
         return "#endif"
+
+    # Note that this does return a newline
+    def long_comment_line(self):
+        return "/" * 77 + "\n"
