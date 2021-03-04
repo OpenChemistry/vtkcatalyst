@@ -4211,7 +4211,7 @@ public:
   const double* as_double_ptr() const { return conduit_node_as_double_ptr(this->c_node); }
 
 private:
-  Node(conduit_node* other)
+  explicit Node(conduit_node* other)
     : c_node(other)
   {
   }

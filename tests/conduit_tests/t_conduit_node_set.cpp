@@ -3815,3 +3815,20 @@ TEST(conduit_node, node_set_existing_obj)
 
   EXPECT_EQ(n_init.number_of_children(), 1);
 }
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, node_set_overload_ambig)
+{
+  Node n;
+  char buff[] = "foo";
+
+  // There was a previous issue where the below
+  // set call would be ambiguous between set(const std::string&) and
+  // set(const Node&). The latter method was incorrectly being considered
+  // due to the private constructor Node(conduit_node*), where conduit_node*
+  // is a typedef around void*. Compiler was attempting to construct a Node
+  // from the char* passed in. Making the above constructor explicit resolved
+  // the issue.
+  n["some_path"].set(buff);
+  EXPECT_EQ(n["some_path"].as_string(), "foo");
+}
