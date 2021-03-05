@@ -572,7 +572,6 @@ TEST(conduit_node_compare, compatible_nodes)
 {
   Node n1, n2, n3;
   n1["a"].set(std::vector<int64>(10, 0));
-  // n1["b"].set(DataType::float64(20, n1["a"].total_strided_bytes()));
   n1["b"].set(std::vector<float64>(20, 0));
 
   n2["a"].set(std::vector<int64>(10, 0));
