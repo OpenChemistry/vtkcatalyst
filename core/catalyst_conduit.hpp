@@ -4030,13 +4030,22 @@ public:
   Node append() { return Node(conduit_node_append(this->c_node)); }
 
   /// remove child at index (list and object interfaces)
-  void remove(conduit_index_t idx) { conduit_node_remove_child(this->c_node, idx); }
+  void remove(conduit_index_t idx)
+  {
+    CATALYST_CONDUIT_WRAP_EXCEP(conduit_node_remove_child(this->c_node, idx));
+  }
+
   /// remove child at given path (object interface)
-  void remove(const std::string& path) { conduit_node_remove_path(this->c_node, path.c_str()); }
+  void remove(const std::string& path)
+  {
+    CATALYST_CONDUIT_WRAP_EXCEP(conduit_node_remove_path(this->c_node, path.c_str()));
+  }
+
   /// rename a child (object interface)
   void rename_child(const std::string& current_name, const std::string& new_name)
   {
-    conduit_node_rename_child(this->c_node, current_name.c_str(), new_name.c_str());
+    CATALYST_CONDUIT_WRAP_EXCEP(
+      conduit_node_rename_child(this->c_node, current_name.c_str(), new_name.c_str()));
   }
 
   //-----------------------------------------------------------------------------
