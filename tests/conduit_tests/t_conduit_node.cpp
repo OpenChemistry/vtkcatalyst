@@ -475,9 +475,11 @@ TEST(conduit_node, check_const_access_path)
   EXPECT_EQ(c_vals_const[0], arr[0]);
   EXPECT_EQ(c_vals_const[1], arr[1]);
 
-  // Check we get null back when path doesn't exist.
-  // Requested path also shouldn't be added.
+  // Check we get an exception when path doesn't exist.
   EXPECT_THROW(n_a["nonexistant_child"], conduit_cpp::Error);
+  EXPECT_THROW(const Node no_exist = n_a["nonexistant_child"], conduit_cpp::Error);
+
+  // Requested path also shouldn't be added.
   EXPECT_FALSE(n_a.has_path("nonexistant_child"));
 
   // No copying should be done.
