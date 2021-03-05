@@ -558,6 +558,9 @@ TEST(conduit_node, rename_child)
 {
   Node n;
 
+  // error, can't rename non object
+  EXPECT_THROW(n.rename_child("a", "b"), conduit_cpp::Error);
+
   n["a"].set((int64)0);
   n["b"].set((float64)0);
   n["c"].set(std::vector<float32>(10));
@@ -569,6 +572,12 @@ TEST(conduit_node, rename_child)
   }
 
   n.print();
+
+  // error, can't rename to existing child name
+  EXPECT_THROW(n.rename_child("a", "b"), conduit_cpp::Error);
+
+  // error, can't rename non existing child
+  EXPECT_THROW(n.rename_child("bad", "d"), conduit_cpp::Error);
 
   EXPECT_TRUE(n.has_child("c"));
   EXPECT_FALSE(n.has_child("d"));
