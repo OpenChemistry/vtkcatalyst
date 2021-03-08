@@ -235,7 +235,7 @@ TEST(conduit_node, remove_by_index)
 }
 
 //-----------------------------------------------------------------------------
-TEST(conduit_node, remove_by_name_throws)
+TEST(conduit_node, remove_by_name_throw)
 {
   Node n;
   n["a"] = 5;
@@ -515,6 +515,60 @@ TEST(conduit_node, check_const_access_index)
   // Check move constructor first.
   const Node n_0_0(n_0[0]);
   EXPECT_EQ(n[0][0].c_node, n_0_0.c_node);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_invalid_index_error)
+{
+  Node n;
+
+  EXPECT_THROW(n.child(0), conduit_cpp::Error);
+  EXPECT_THROW(n[0], conduit_cpp::Error);
+  EXPECT_THROW(n.child(1), conduit_cpp::Error);
+  EXPECT_THROW(n[1], conduit_cpp::Error);
+
+  n.append();
+
+  Node n_0 = n[0];
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_invalid_index_error_with_const)
+{
+  const Node n;
+
+  EXPECT_THROW(n.child(0), conduit_cpp::Error);
+  EXPECT_THROW(n[0], conduit_cpp::Error);
+  EXPECT_THROW(n.child(1), conduit_cpp::Error);
+  EXPECT_THROW(n[1], conduit_cpp::Error);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_empty_path_fetch_throw)
+{
+  Node n;
+  EXPECT_THROW(n[""], conduit_cpp::Error);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_empty_path_fetch_with_const_throw)
+{
+  const Node n;
+  EXPECT_THROW(n[""], conduit_cpp::Error);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_fetch_null_parent_throw)
+{
+  Node n;
+  EXPECT_THROW(n["../a"], conduit_cpp::Error);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, check_fetch_null_parent_with_const_throw)
+{
+  const Node n;
+  EXPECT_THROW(n["../a"], conduit_cpp::Error);
 }
 
 //-----------------------------------------------------------------------------

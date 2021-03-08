@@ -3980,7 +3980,7 @@ public:
     {
       CATALYST_CONDUIT_WRAP_EXCEP(return Node(conduit_node_fetch(this->c_node, path.c_str())));
     }
-    CATALYST_CONDUIT_ERROR("Cannot fetch non-existent child.");
+    CATALYST_CONDUIT_ERROR("Error fetching path " + path);
   }
 
   /// access child node via index (equivalent to fetch via index)
