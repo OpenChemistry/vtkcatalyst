@@ -235,6 +235,14 @@ TEST(conduit_node, remove_by_index)
 }
 
 //-----------------------------------------------------------------------------
+TEST(conduit_node, remove_by_name_throws)
+{
+  Node n;
+  n["a"] = 5;
+  EXPECT_THROW(n.remove("b"), conduit_cpp::Error);
+}
+
+//-----------------------------------------------------------------------------
 TEST(conduit_node, check_contiguous)
 {
   uint8 u8av[6] = { 2, 4, 8, 16, 32, 64 };
