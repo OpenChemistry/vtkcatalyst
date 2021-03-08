@@ -190,6 +190,12 @@ public:
   void set(const long data) { conduit_node_set_long(this->c_node, data); }
   void set(const unsigned long data) { conduit_node_set_unsigned_long(this->c_node, data); }
 #endif
+#ifndef CONDUIT_USE_FLOAT
+  void set(const float data) { conduit_node_set_float(this->c_node, data); }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set(const double data) { conduit_node_set_double(this->c_node, data); }
+#endif
   void set_string(const std::string& data)
   {
     conduit_node_set_char8_str(this->c_node, data.c_str());
@@ -321,6 +327,18 @@ public:
   {
     conduit_node_set_unsigned_long_ptr(
       this->c_node, std::vector<unsigned long>(data).data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set(const std::vector<float>& data)
+  {
+    conduit_node_set_float_ptr(this->c_node, std::vector<float>(data).data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set(const std::vector<double>& data)
+  {
+    conduit_node_set_double_ptr(this->c_node, std::vector<double>(data).data(), data.size());
   }
 #endif
   void set_int8_ptr(const conduit_int8* data, conduit_index_t num_elements = 1,
@@ -587,6 +605,28 @@ public:
       offset, stride, element_bytes, endianness);
   }
 #endif
+#ifndef CONDUIT_USE_FLOAT
+  void set(const float* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
+  {
+    float data_cpy[num_elements];
+    conduit_node_set_float_ptr_detailed(this->c_node,
+      (float*)memcpy(data_cpy, data, sizeof(float) * num_elements), num_elements, offset, stride,
+      element_bytes, endianness);
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set(const double* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
+  {
+    double data_cpy[num_elements];
+    conduit_node_set_double_ptr_detailed(this->c_node,
+      (double*)memcpy(data_cpy, data, sizeof(double) * num_elements), num_elements, offset, stride,
+      element_bytes, endianness);
+  }
+#endif
   void set_path_node(const std::string& path, const Node& data)
   {
     conduit_node_set_path_node(this->c_node, path.c_str(), data.c_node);
@@ -736,6 +776,18 @@ public:
   void set_path(const std::string& path, const unsigned long data)
   {
     conduit_node_set_path_unsigned_long(this->c_node, path.c_str(), data);
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_path(const std::string& path, const float data)
+  {
+    conduit_node_set_path_float(this->c_node, path.c_str(), data);
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_path(const std::string& path, const double data)
+  {
+    conduit_node_set_path_double(this->c_node, path.c_str(), data);
   }
 #endif
   void set_path_string(const std::string& path, const std::string& data)
@@ -914,6 +966,20 @@ public:
   {
     conduit_node_set_path_unsigned_long_ptr(
       this->c_node, path.c_str(), std::vector<unsigned long>(data).data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_path(const std::string& path, const std::vector<float>& data)
+  {
+    conduit_node_set_path_float_ptr(
+      this->c_node, path.c_str(), std::vector<float>(data).data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_path(const std::string& path, const std::vector<double>& data)
+  {
+    conduit_node_set_path_double_ptr(
+      this->c_node, path.c_str(), std::vector<double>(data).data(), data.size());
   }
 #endif
   void set_path_int8_ptr(const std::string& path, const conduit_int8* data,
@@ -1203,6 +1269,28 @@ public:
       offset, stride, element_bytes, endianness);
   }
 #endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_path(const std::string& path, const float* data, conduit_index_t num_elements = 1,
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
+  {
+    float data_cpy[num_elements];
+    conduit_node_set_path_float_ptr_detailed(this->c_node, path.c_str(),
+      (float*)memcpy(data_cpy, data, sizeof(float) * num_elements), num_elements, offset, stride,
+      element_bytes, endianness);
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_path(const std::string& path, const double* data, conduit_index_t num_elements = 1,
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
+  {
+    double data_cpy[num_elements];
+    conduit_node_set_path_double_ptr_detailed(this->c_node, path.c_str(),
+      (double*)memcpy(data_cpy, data, sizeof(double) * num_elements), num_elements, offset, stride,
+      element_bytes, endianness);
+  }
+#endif
   void set_external_node(Node& data) { conduit_node_set_external_node(this->c_node, data.c_node); }
 
   void set_external(Node& data) { this->set_external_node(data); }
@@ -1324,6 +1412,18 @@ public:
   void set_external(std::vector<unsigned long>& data)
   {
     conduit_node_set_external_unsigned_long_ptr(this->c_node, data.data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_external(std::vector<float>& data)
+  {
+    conduit_node_set_external_float_ptr(this->c_node, data.data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_external(std::vector<double>& data)
+  {
+    conduit_node_set_external_double_ptr(this->c_node, data.data(), data.size());
   }
 #endif
   void set_external_int8_ptr(conduit_int8* data, conduit_index_t num_elements = 1,
@@ -1552,6 +1652,24 @@ public:
       this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_external(float* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
+  {
+    conduit_node_set_external_float_ptr_detailed(
+      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_external(double* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
+    conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
+  {
+    conduit_node_set_external_double_ptr_detailed(
+      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
+  }
+#endif
   void set_path_external_node(const std::string& path, Node& data)
   {
     conduit_node_set_path_external_node(this->c_node, path.c_str(), data.c_node);
@@ -1716,6 +1834,18 @@ public:
   {
     conduit_node_set_path_external_unsigned_long_ptr(
       this->c_node, path.c_str(), data.data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_path_external(const std::string& path, std::vector<float>& data)
+  {
+    conduit_node_set_path_external_float_ptr(this->c_node, path.c_str(), data.data(), data.size());
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_path_external(const std::string& path, std::vector<double>& data)
+  {
+    conduit_node_set_path_external_double_ptr(this->c_node, path.c_str(), data.data(), data.size());
   }
 #endif
   void set_path_external_int8_ptr(const std::string& path, conduit_int8* data,
@@ -1977,6 +2107,24 @@ public:
     conduit_index_t endianness = 0)
   {
     conduit_node_set_path_external_unsigned_long_ptr_detailed(
+      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
+  }
+#endif
+#ifndef CONDUIT_USE_FLOAT
+  void set_path_external(const std::string& path, float* data, conduit_index_t num_elements = 1,
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
+  {
+    conduit_node_set_path_external_float_ptr_detailed(
+      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
+  }
+#endif
+#ifndef CONDUIT_USE_DOUBLE
+  void set_path_external(const std::string& path, double* data, conduit_index_t num_elements = 1,
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
+    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
+  {
+    conduit_node_set_path_external_double_ptr_detailed(
       this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
   }
 #endif

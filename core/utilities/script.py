@@ -19,6 +19,8 @@ native_types = {
     "short": ["short", "unsigned short"],
     "int": ["int", "unsigned int"],
     "long": ["long", "unsigned long"],
+    "float": ["float"],
+    "double": ["double"],
 }
 
 string_types = [
