@@ -4062,7 +4062,11 @@ public:
   std::string name() const
   {
     char* name = conduit_node_name(this->c_node);
-    std::string ret(name); // TODO: Empty std::string if null
+    if (!name)
+    {
+      CATALYST_CONDUIT_ERROR("Error retrieving name from C API.")
+    }
+    std::string ret(name);
     free(name);
 
     return ret;
@@ -4073,6 +4077,10 @@ public:
   std::string path() const
   {
     char* path = conduit_node_path(this->c_node);
+    if (!path)
+    {
+      CATALYST_CONDUIT_ERROR("Error retrieving path from C API.")
+    }
     std::string ret(path);
     free(path);
 
