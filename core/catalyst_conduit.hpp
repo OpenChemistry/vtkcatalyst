@@ -4160,7 +4160,7 @@ public:
     std::string ret(path);
     free(path);
 
-    // Return copy and implicitly copy to an std::string
+    // Return copy
     return ret;
   }
 

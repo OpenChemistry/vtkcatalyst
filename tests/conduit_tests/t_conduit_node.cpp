@@ -885,7 +885,7 @@ TEST(conduit_node, check_as_native_ptr_const)
   EXPECT_NEAR(fv, fv_p_r[0], 0.001);
   EXPECT_NEAR(dv, dv_p_r[0], 0.001);
 
-  const char* char_strv_r = n["char_strv"].as_char8_str();
+  const char* char_strv_r = n_const["char_strv"].as_char8_str();
   EXPECT_EQ(std::string(char_strv), std::string(char_strv_r));
 }
 
