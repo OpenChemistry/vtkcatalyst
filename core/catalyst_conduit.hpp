@@ -345,9 +345,7 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
     conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
   {
-    conduit_int8 data_cpy[num_elements];
-    conduit_node_set_int8_ptr_detailed(this->c_node,
-      (conduit_int8*)memcpy(data_cpy, data, sizeof(conduit_int8) * num_elements), num_elements,
+    conduit_node_set_int8_ptr_detailed(this->c_node, const_cast<conduit_int8*>(data), num_elements,
       offset, stride, element_bytes, endianness);
   }
 
@@ -362,10 +360,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
-    conduit_int16 data_cpy[num_elements];
-    conduit_node_set_int16_ptr_detailed(this->c_node,
-      (conduit_int16*)memcpy(data_cpy, data, sizeof(conduit_int16) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_int16_ptr_detailed(this->c_node, const_cast<conduit_int16*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_int16* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -379,10 +375,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int32),
     conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
   {
-    conduit_int32 data_cpy[num_elements];
-    conduit_node_set_int32_ptr_detailed(this->c_node,
-      (conduit_int32*)memcpy(data_cpy, data, sizeof(conduit_int32) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_int32_ptr_detailed(this->c_node, const_cast<conduit_int32*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_int32* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -396,10 +390,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int64),
     conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
   {
-    conduit_int64 data_cpy[num_elements];
-    conduit_node_set_int64_ptr_detailed(this->c_node,
-      (conduit_int64*)memcpy(data_cpy, data, sizeof(conduit_int64) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_int64_ptr_detailed(this->c_node, const_cast<conduit_int64*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_int64* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -413,10 +405,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint8),
     conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
   {
-    conduit_uint8 data_cpy[num_elements];
-    conduit_node_set_uint8_ptr_detailed(this->c_node,
-      (conduit_uint8*)memcpy(data_cpy, data, sizeof(conduit_uint8) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_uint8_ptr_detailed(this->c_node, const_cast<conduit_uint8*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_uint8* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -430,10 +420,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint16),
     conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
   {
-    conduit_uint16 data_cpy[num_elements];
-    conduit_node_set_uint16_ptr_detailed(this->c_node,
-      (conduit_uint16*)memcpy(data_cpy, data, sizeof(conduit_uint16) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_uint16_ptr_detailed(this->c_node, const_cast<conduit_uint16*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_uint16* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -447,10 +435,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint32),
     conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
   {
-    conduit_uint32 data_cpy[num_elements];
-    conduit_node_set_uint32_ptr_detailed(this->c_node,
-      (conduit_uint32*)memcpy(data_cpy, data, sizeof(conduit_uint32) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_uint32_ptr_detailed(this->c_node, const_cast<conduit_uint32*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_uint32* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -464,10 +450,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint64),
     conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
   {
-    conduit_uint64 data_cpy[num_elements];
-    conduit_node_set_uint64_ptr_detailed(this->c_node,
-      (conduit_uint64*)memcpy(data_cpy, data, sizeof(conduit_uint64) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_uint64_ptr_detailed(this->c_node, const_cast<conduit_uint64*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set(const conduit_uint64* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -481,9 +465,7 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float32),
     conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
   {
-    conduit_float32 data_cpy[num_elements];
-    conduit_node_set_float32_ptr_detailed(this->c_node,
-      (conduit_float32*)memcpy(data_cpy, data, sizeof(conduit_float32) * num_elements),
+    conduit_node_set_float32_ptr_detailed(this->c_node, const_cast<conduit_float32*>(data),
       num_elements, offset, stride, element_bytes, endianness);
   }
 
@@ -498,9 +480,7 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float64),
     conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
   {
-    conduit_float64 data_cpy[num_elements];
-    conduit_node_set_float64_ptr_detailed(this->c_node,
-      (conduit_float64*)memcpy(data_cpy, data, sizeof(conduit_float64) * num_elements),
+    conduit_node_set_float64_ptr_detailed(this->c_node, const_cast<conduit_float64*>(data),
       num_elements, offset, stride, element_bytes, endianness);
   }
 
@@ -515,10 +495,8 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_CHAR), conduit_index_t endianness = 0)
   {
-    char data_cpy[num_elements];
-    conduit_node_set_char_ptr_detailed(this->c_node,
-      (char*)memcpy(data_cpy, data, sizeof(char) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_char_ptr_detailed(this->c_node, const_cast<char*>(data), num_elements, offset,
+      stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
   void set(const signed char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -526,20 +504,16 @@ public:
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
     conduit_index_t endianness = 0)
   {
-    signed char data_cpy[num_elements];
-    conduit_node_set_signed_char_ptr_detailed(this->c_node,
-      (signed char*)memcpy(data_cpy, data, sizeof(signed char) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_signed_char_ptr_detailed(this->c_node, const_cast<signed char*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
   void set(const unsigned char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
     conduit_index_t endianness = 0)
   {
-    unsigned char data_cpy[num_elements];
-    conduit_node_set_unsigned_char_ptr_detailed(this->c_node,
-      (unsigned char*)memcpy(data_cpy, data, sizeof(unsigned char) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_unsigned_char_ptr_detailed(this->c_node, const_cast<unsigned char*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_SHORT
@@ -547,20 +521,16 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
   {
-    short data_cpy[num_elements];
-    conduit_node_set_short_ptr_detailed(this->c_node,
-      (short*)memcpy(data_cpy, data, sizeof(short) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_short_ptr_detailed(this->c_node, const_cast<short*>(data), num_elements,
+      offset, stride, element_bytes, endianness);
   }
   void set(const unsigned short* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
     conduit_index_t endianness = 0)
   {
-    unsigned short data_cpy[num_elements];
-    conduit_node_set_unsigned_short_ptr_detailed(this->c_node,
-      (unsigned short*)memcpy(data_cpy, data, sizeof(unsigned short) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_unsigned_short_ptr_detailed(this->c_node, const_cast<unsigned short*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_INT
@@ -568,20 +538,16 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
   {
-    int data_cpy[num_elements];
-    conduit_node_set_int_ptr_detailed(this->c_node,
-      (int*)memcpy(data_cpy, data, sizeof(int) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_int_ptr_detailed(this->c_node, const_cast<int*>(data), num_elements, offset,
+      stride, element_bytes, endianness);
   }
   void set(const unsigned int* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
     conduit_index_t endianness = 0)
   {
-    unsigned int data_cpy[num_elements];
-    conduit_node_set_unsigned_int_ptr_detailed(this->c_node,
-      (unsigned int*)memcpy(data_cpy, data, sizeof(unsigned int) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_unsigned_int_ptr_detailed(this->c_node, const_cast<unsigned int*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_LONG
@@ -589,20 +555,16 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
   {
-    long data_cpy[num_elements];
-    conduit_node_set_long_ptr_detailed(this->c_node,
-      (long*)memcpy(data_cpy, data, sizeof(long) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_long_ptr_detailed(this->c_node, const_cast<long*>(data), num_elements, offset,
+      stride, element_bytes, endianness);
   }
   void set(const unsigned long* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
     conduit_index_t endianness = 0)
   {
-    unsigned long data_cpy[num_elements];
-    conduit_node_set_unsigned_long_ptr_detailed(this->c_node,
-      (unsigned long*)memcpy(data_cpy, data, sizeof(unsigned long) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+    conduit_node_set_unsigned_long_ptr_detailed(this->c_node, const_cast<unsigned long*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_FLOAT
@@ -610,10 +572,8 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
   {
-    float data_cpy[num_elements];
-    conduit_node_set_float_ptr_detailed(this->c_node,
-      (float*)memcpy(data_cpy, data, sizeof(float) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_float_ptr_detailed(this->c_node, const_cast<float*>(data), num_elements,
+      offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_DOUBLE
@@ -621,10 +581,8 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
   {
-    double data_cpy[num_elements];
-    conduit_node_set_double_ptr_detailed(this->c_node,
-      (double*)memcpy(data_cpy, data, sizeof(double) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_double_ptr_detailed(this->c_node, const_cast<double*>(data), num_elements,
+      offset, stride, element_bytes, endianness);
   }
 #endif
   void set_path_node(const std::string& path, const Node& data)
@@ -987,10 +945,8 @@ public:
     conduit_index_t stride = sizeof(conduit_int8),
     conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
   {
-    conduit_int8 data_cpy[num_elements];
     conduit_node_set_path_int8_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_int8*)memcpy(data_cpy, data, sizeof(conduit_int8) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_int8*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_int8* data, conduit_index_t num_elements = 1,
@@ -1005,10 +961,8 @@ public:
     conduit_index_t stride = sizeof(conduit_int16),
     conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
   {
-    conduit_int16 data_cpy[num_elements];
     conduit_node_set_path_int16_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_int16*)memcpy(data_cpy, data, sizeof(conduit_int16) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_int16*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_int16* data,
@@ -1024,10 +978,8 @@ public:
     conduit_index_t stride = sizeof(conduit_int32),
     conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
   {
-    conduit_int32 data_cpy[num_elements];
     conduit_node_set_path_int32_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_int32*)memcpy(data_cpy, data, sizeof(conduit_int32) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_int32*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_int32* data,
@@ -1043,10 +995,8 @@ public:
     conduit_index_t stride = sizeof(conduit_int64),
     conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
   {
-    conduit_int64 data_cpy[num_elements];
     conduit_node_set_path_int64_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_int64*)memcpy(data_cpy, data, sizeof(conduit_int64) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_int64*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_int64* data,
@@ -1062,10 +1012,8 @@ public:
     conduit_index_t stride = sizeof(conduit_uint8),
     conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
   {
-    conduit_uint8 data_cpy[num_elements];
     conduit_node_set_path_uint8_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_uint8*)memcpy(data_cpy, data, sizeof(conduit_uint8) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_uint8*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_uint8* data,
@@ -1081,10 +1029,8 @@ public:
     conduit_index_t stride = sizeof(conduit_uint16),
     conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
   {
-    conduit_uint16 data_cpy[num_elements];
     conduit_node_set_path_uint16_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_uint16*)memcpy(data_cpy, data, sizeof(conduit_uint16) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_uint16*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_uint16* data,
@@ -1100,10 +1046,8 @@ public:
     conduit_index_t stride = sizeof(conduit_uint32),
     conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
   {
-    conduit_uint32 data_cpy[num_elements];
     conduit_node_set_path_uint32_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_uint32*)memcpy(data_cpy, data, sizeof(conduit_uint32) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_uint32*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_uint32* data,
@@ -1119,10 +1063,8 @@ public:
     conduit_index_t stride = sizeof(conduit_uint64),
     conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
   {
-    conduit_uint64 data_cpy[num_elements];
     conduit_node_set_path_uint64_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_uint64*)memcpy(data_cpy, data, sizeof(conduit_uint64) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<conduit_uint64*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_uint64* data,
@@ -1138,10 +1080,8 @@ public:
     conduit_index_t stride = sizeof(conduit_float32),
     conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
   {
-    conduit_float32 data_cpy[num_elements];
     conduit_node_set_path_float32_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_float32*)memcpy(data_cpy, data, sizeof(conduit_float32) * num_elements),
-      num_elements, offset, stride, element_bytes, endianness);
+      const_cast<conduit_float32*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_float32* data,
@@ -1157,10 +1097,8 @@ public:
     conduit_index_t stride = sizeof(conduit_float64),
     conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
   {
-    conduit_float64 data_cpy[num_elements];
     conduit_node_set_path_float64_ptr_detailed(this->c_node, path.c_str(),
-      (conduit_float64*)memcpy(data_cpy, data, sizeof(conduit_float64) * num_elements),
-      num_elements, offset, stride, element_bytes, endianness);
+      const_cast<conduit_float64*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 
   void set_path(const std::string& path, const conduit_float64* data,
@@ -1176,10 +1114,8 @@ public:
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_CHAR), conduit_index_t endianness = 0)
   {
-    char data_cpy[num_elements];
-    conduit_node_set_path_char_ptr_detailed(this->c_node, path.c_str(),
-      (char*)memcpy(data_cpy, data, sizeof(char) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_char_ptr_detailed(this->c_node, path.c_str(), const_cast<char*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
   void set_path(const std::string& path, const signed char* data, conduit_index_t num_elements = 1,
@@ -1187,10 +1123,8 @@ public:
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
     conduit_index_t endianness = 0)
   {
-    signed char data_cpy[num_elements];
     conduit_node_set_path_signed_char_ptr_detailed(this->c_node, path.c_str(),
-      (signed char*)memcpy(data_cpy, data, sizeof(signed char) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<signed char*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
   void set_path(const std::string& path, const unsigned char* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -1198,10 +1132,8 @@ public:
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
     conduit_index_t endianness = 0)
   {
-    unsigned char data_cpy[num_elements];
     conduit_node_set_path_unsigned_char_ptr_detailed(this->c_node, path.c_str(),
-      (unsigned char*)memcpy(data_cpy, data, sizeof(unsigned char) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<unsigned char*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_SHORT
@@ -1209,10 +1141,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
   {
-    short data_cpy[num_elements];
-    conduit_node_set_path_short_ptr_detailed(this->c_node, path.c_str(),
-      (short*)memcpy(data_cpy, data, sizeof(short) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_short_ptr_detailed(this->c_node, path.c_str(), const_cast<short*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
   void set_path(const std::string& path, const unsigned short* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -1220,10 +1150,8 @@ public:
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
     conduit_index_t endianness = 0)
   {
-    unsigned short data_cpy[num_elements];
     conduit_node_set_path_unsigned_short_ptr_detailed(this->c_node, path.c_str(),
-      (unsigned short*)memcpy(data_cpy, data, sizeof(unsigned short) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<unsigned short*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_INT
@@ -1231,20 +1159,16 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
   {
-    int data_cpy[num_elements];
-    conduit_node_set_path_int_ptr_detailed(this->c_node, path.c_str(),
-      (int*)memcpy(data_cpy, data, sizeof(int) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_int_ptr_detailed(this->c_node, path.c_str(), const_cast<int*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
   void set_path(const std::string& path, const unsigned int* data, conduit_index_t num_elements = 1,
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
     conduit_index_t endianness = 0)
   {
-    unsigned int data_cpy[num_elements];
     conduit_node_set_path_unsigned_int_ptr_detailed(this->c_node, path.c_str(),
-      (unsigned int*)memcpy(data_cpy, data, sizeof(unsigned int) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<unsigned int*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_LONG
@@ -1252,10 +1176,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
   {
-    long data_cpy[num_elements];
-    conduit_node_set_path_long_ptr_detailed(this->c_node, path.c_str(),
-      (long*)memcpy(data_cpy, data, sizeof(long) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_long_ptr_detailed(this->c_node, path.c_str(), const_cast<long*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
   void set_path(const std::string& path, const unsigned long* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -1263,10 +1185,8 @@ public:
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
     conduit_index_t endianness = 0)
   {
-    unsigned long data_cpy[num_elements];
     conduit_node_set_path_unsigned_long_ptr_detailed(this->c_node, path.c_str(),
-      (unsigned long*)memcpy(data_cpy, data, sizeof(unsigned long) * num_elements), num_elements,
-      offset, stride, element_bytes, endianness);
+      const_cast<unsigned long*>(data), num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_FLOAT
@@ -1274,10 +1194,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
   {
-    float data_cpy[num_elements];
-    conduit_node_set_path_float_ptr_detailed(this->c_node, path.c_str(),
-      (float*)memcpy(data_cpy, data, sizeof(float) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_float_ptr_detailed(this->c_node, path.c_str(), const_cast<float*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
 #ifndef CONDUIT_USE_DOUBLE
@@ -1285,10 +1203,8 @@ public:
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
   {
-    double data_cpy[num_elements];
-    conduit_node_set_path_double_ptr_detailed(this->c_node, path.c_str(),
-      (double*)memcpy(data_cpy, data, sizeof(double) * num_elements), num_elements, offset, stride,
-      element_bytes, endianness);
+    conduit_node_set_path_double_ptr_detailed(this->c_node, path.c_str(), const_cast<double*>(data),
+      num_elements, offset, stride, element_bytes, endianness);
   }
 #endif
   void set_external_node(Node& data) { conduit_node_set_external_node(this->c_node, data.c_node); }
@@ -4146,7 +4062,7 @@ public:
   std::string name() const
   {
     char* name = conduit_node_name(this->c_node);
-    std::string ret(name);
+    std::string ret(name); // TODO: Empty std::string if null
     free(name);
 
     return ret;

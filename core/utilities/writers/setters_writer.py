@@ -25,7 +25,9 @@ conduit_index_t element_bytes = sizeof({dtype}),
 conduit_index_t endianness = 0
 """
 
-implementation_str = """{preprocess_str}conduit_node_set{mod}{dtype}{data_structure}{extra}({args});"""
+implementation_str = (
+    """conduit_node_set{mod}{dtype}{data_structure}{extra}({args});"""
+)
 
 
 class SettersWriter(BaseWriter):
@@ -55,10 +57,10 @@ class SettersWriter(BaseWriter):
             ret += "const "
 
         if data_structure == "vector":
-            ret += f"std::vector<{dtype}>& data"
+            ret += "std::vector<{}>& data".format(dtype)
 
         elif data_structure == "ptr":
-            ret += f"{dtype}* data,\n"
+            ret += "{}* data,\n".format(dtype)
 
             dtype_to_take_size_of = dtype
             if dtype in itertools.chain.from_iterable(
@@ -72,7 +74,7 @@ class SettersWriter(BaseWriter):
             ret += extra_args_with_defaults.format(dtype=dtype_to_take_size_of)
 
         else:
-            ret += f"{dtype}"
+            ret += dtype
             if dtype in ["std::string", "Node"]:
                 ret += "&"
             ret += " data"
@@ -100,19 +102,18 @@ class SettersWriter(BaseWriter):
 
         elif data_structure == "vector":
             if is_mutable:
-                ret += "data.data()" + arg_sep
+                ret += "data.data()"
             else:
-                ret += f"std::vector<{dtype}>(data).data()" + arg_sep
+                ret += "std::vector<{}>(data).data()".format(dtype)
+
+            ret += arg_sep
             ret += "data.size()"
 
         elif data_structure == "ptr":
             if is_mutable:
                 ret += "data"
             else:
-                ret += f"({dtype}*)"
-                ret += (
-                    f"memcpy(data_cpy, data, sizeof({dtype}) * num_elements)"
-                )
+                ret += "const_cast<{}*>(data)".format(dtype)
 
             ret += arg_sep
             ret += extra_args
@@ -162,11 +163,6 @@ class SettersWriter(BaseWriter):
             return self.get_easy_imp(dtype, data_structure, mod, dtype_str)
 
         # Else actually provide an implementation block
-        preprocess_str = ""
-        if data_structure == "ptr" and "external" not in mod:
-            preprocess_str = f"{dtype} data_cpy[num_elements];"
-            # Also need to add a newline
-            preprocess_str += "\n"
 
         c_call_args = self.get_c_call_args(dtype, data_structure, mod)
 
@@ -180,7 +176,6 @@ class SettersWriter(BaseWriter):
             dtype_str = "char8_str"
 
         return implementation_str.format(
-            preprocess_str=preprocess_str,
             dtype="_"
             + dtype_str.replace(" ", "_").replace("conduit_", "").lower(),
             mod="_" + mod if mod else mod,
@@ -255,9 +250,7 @@ class SettersWriter(BaseWriter):
         for dtype in types_to_iterate_over:
             if dtype == "Node" and ds != "":
                 continue
-            ret += self.construct_overloaded_and_non_overloaded(
-                dtype, ds, mod
-            )
+            ret += self.construct_overloaded_and_non_overloaded(dtype, ds, mod)
 
         return ret
 
@@ -301,9 +294,7 @@ class SettersWriter(BaseWriter):
         for dtype in types_to_iterate_over:
             dtype_str = "string" if dtype == "std::string" else "char8_str"
 
-            ret += self.construct_setter(
-                dtype, ds, mod, dtype_str=dtype_str
-            )
+            ret += self.construct_setter(dtype, ds, mod, dtype_str=dtype_str)
             ret += "\n" * 2
 
             if dtype == "std::string":
@@ -318,7 +309,6 @@ class SettersWriter(BaseWriter):
                 ret += "\n" * 2
 
         return ret
-
 
     def mark_beginning_of_generated_section(self):
         ret = self.long_comment_line()
@@ -336,7 +326,6 @@ class SettersWriter(BaseWriter):
         ret += self.long_comment_line()
         ret += "\n"
         return ret
-
 
     def write(self):
         total_str = self.mark_beginning_of_generated_section()
