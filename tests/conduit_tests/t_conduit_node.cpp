@@ -259,7 +259,7 @@ TEST(conduit_node, check_contiguous)
   // not contig
   EXPECT_FALSE(n.is_contiguous());
 
-  // contig & compact external
+  // contig external
   Node n2;
   n2["a"].set_external(u64av, 2);
   n2["b"].set_external(u64av, 4, sizeof(uint64) * 2);
@@ -274,7 +274,7 @@ TEST(conduit_node, check_contiguous)
   n3["b"].set_external(u64av, 2, sizeof(uint64) * 2, sizeof(uint64) * 2);
   EXPECT_TRUE(n3.is_contiguous());
 
-  // nested contig and compact
+  // nested contig
   Node n4;
   n4["a/b/c/d/e/f"].set_int64(10);
 

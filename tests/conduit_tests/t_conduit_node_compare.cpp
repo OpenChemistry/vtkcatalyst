@@ -350,6 +350,11 @@ TEST(conduit_node_compare, compare_leaf_mismatch)
     o = (float64)1;
     EXPECT_TRUE(diff_nodes(n, o, info));
     EXPECT_TRUE(diff_nodes(o, n, info));
+
+    n = (float64)1;
+    o = (int32)1;
+    EXPECT_TRUE(diff_nodes(n, o, info));
+    EXPECT_TRUE(diff_nodes(o, n, info));
   }
 }
 
