@@ -45,6 +45,7 @@ if (CATALYST_BINARY_DIR)
                 "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
                 "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
                 "-Dcatalyst_DIR:PATH=${root}/${CATALYST_INSTALL_PACKAGE_DIR}"
+                "-Dcatalyst_replay_command:PATH=${catalyst_replay_command}"
               --test-command
                 "${CMAKE_CTEST_COMMAND}"
                   -C $<CONFIGURATION>
@@ -77,3 +78,6 @@ endif ()
 
 add_example(about)
 add_example(adaptor0)
+if (${CATALYST_USE_MPI})
+  add_example(replay)
+endif()

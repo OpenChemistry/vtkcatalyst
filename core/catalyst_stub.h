@@ -6,13 +6,35 @@
 #ifndef catalyst_stub_h
 #define catalyst_stub_h
 
+#ifdef CATALYST_USE_MPI
+#include "catalyst_dump_node.h"
+#endif
+
 // This file provides functions to use when implementing custom Catalyst
 // implementation if you want to forward calls to the stub
 // implementation.
 
-void catalyst_stub_initialize(const conduit_node*) {}
-void catalyst_stub_finalize(const conduit_node*) {}
-void catalyst_stub_execute(const conduit_node*) {}
+void catalyst_stub_initialize(const conduit_node* params)
+{
+#ifdef CATALYST_USE_MPI
+  dump_node(params, "initialize");
+#endif
+}
+
+void catalyst_stub_finalize(const conduit_node* params)
+{
+#ifdef CATALYST_USE_MPI
+  dump_node(params, "finalize");
+#endif
+}
+
+void catalyst_stub_execute(const conduit_node* params)
+{
+#ifdef CATALYST_USE_MPI
+  dump_node(params, "execute");
+#endif
+}
+
 void catalyst_stub_about(conduit_node* params)
 {
   conduit_node_set_path_char8_str(params, "catalyst/version", CATALYST_VERSION);

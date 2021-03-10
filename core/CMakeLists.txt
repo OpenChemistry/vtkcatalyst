@@ -5,6 +5,7 @@ set(headers
   catalyst.hpp
   catalyst_conduit.hpp
   catalyst_conduit_error.hpp
+  catalyst_dump_node.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_export.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_version.h)
 configure_file(catalyst_version.h.in catalyst_version.h)
@@ -18,6 +19,12 @@ target_include_directories(core
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 add_library(catalyst::core ALIAS core)
+
+if (${CATALYST_USE_MPI})
+  target_link_libraries(core INTERFACE ${MPI_LIBRARIES})
+  target_include_directories(core INTERFACE ${MPI_INCLUDE_PATH})
+  target_compile_definitions(core INTERFACE CATALYST_USE_MPI)
+endif()
 
 c_install_targets(core)
 c_install_headers(
