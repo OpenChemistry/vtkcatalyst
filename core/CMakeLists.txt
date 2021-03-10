@@ -17,7 +17,6 @@ target_include_directories(core
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 add_library(catalyst::core ALIAS core)
-target_link_libraries(core INTERFACE conduit)
 
 c_install_targets(core)
 c_install_headers(
