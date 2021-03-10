@@ -2497,50 +2497,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_int8)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_int8)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_int8)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_int8)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_int8)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_int8)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_int8)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_int8)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_int8)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int16 res;
       std::stringstream ss(as_char8_str());
@@ -2554,50 +2554,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_int16)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_int16)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_int16)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_int16)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_int16)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_int16)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_int16)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_int16)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_int16)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int16 res;
       std::stringstream ss(as_char8_str());
@@ -2611,50 +2611,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_int32)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_int32)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_int32)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_int32)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_int32)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_int32)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_int32)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_int32)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_int32)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int32 res;
       std::stringstream ss(as_char8_str());
@@ -2668,50 +2668,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_int64)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_int64)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_int64)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_int64)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_int64)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_int64)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_int64)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_int64)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_int64)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int64 res;
       std::stringstream ss(as_char8_str());
@@ -2726,50 +2726,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_uint8)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_uint8)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_uint8)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_uint8)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_uint8)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_uint8)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_uint8)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_uint8)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_uint8)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_uint16 res;
       std::stringstream ss(as_char8_str());
@@ -2783,50 +2783,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_uint16)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_uint16)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_uint16)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_uint16)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_uint16)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_uint16)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_uint16)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_uint16)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_uint16)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_uint16 res;
       std::stringstream ss(as_char8_str());
@@ -2840,50 +2840,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_uint32)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_uint32)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_uint32)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_uint32)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_uint32)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_uint32)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_uint32)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_uint32)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_uint32)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_uint32 res;
       std::stringstream ss(as_char8_str());
@@ -2897,50 +2897,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_uint64)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_uint64)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_uint64)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_uint64)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_uint64)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_uint64)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_uint64)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_uint64)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_uint64)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_uint64 res;
       std::stringstream ss(as_char8_str());
@@ -2955,50 +2955,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_float32)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_float32)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_float32)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_float32)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_float32)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_float32)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_float32)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_float32)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_float32)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_float32 res;
       std::stringstream ss(as_char8_str());
@@ -3012,50 +3012,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_float64)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_float64)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_float64)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_float64)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_float64)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_float64)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_float64)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_float64)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_float64)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_float64)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_float64 res;
       std::stringstream ss(as_char8_str());
@@ -3069,50 +3069,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (conduit_index_t)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (conduit_index_t)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (conduit_index_t)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (conduit_index_t)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (conduit_index_t)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (conduit_index_t)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (conduit_index_t)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (conduit_index_t)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (conduit_index_t)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (conduit_index_t)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_index_t res;
       std::stringstream ss(as_char8_str());
@@ -3127,50 +3127,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (char)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (char)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (char)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (char)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (char)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (char)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (char)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (char)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (char)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (char)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int16 res;
       std::stringstream ss(as_char8_str());
@@ -3184,50 +3184,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (short)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (short)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (short)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (short)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (short)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (short)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (short)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (short)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (short)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (short)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       short res;
       std::stringstream ss(as_char8_str());
@@ -3241,50 +3241,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (int)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (int)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (int)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (int)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (int)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (int)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (int)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (int)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (int)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (int)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       int res;
       std::stringstream ss(as_char8_str());
@@ -3298,50 +3298,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (long)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (long)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (long)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (long)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (long)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (long)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (long)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (long)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (long)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (long)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       long res;
       std::stringstream ss(as_char8_str());
@@ -3356,50 +3356,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (signed char)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (signed char)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (signed char)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (signed char)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (signed char)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (signed char)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (signed char)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (signed char)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (signed char)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (signed char)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_int16 res;
       std::stringstream ss(as_char8_str());
@@ -3413,50 +3413,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (signed short)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (signed short)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (signed short)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (signed short)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (signed short)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (signed short)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (signed short)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (signed short)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (signed short)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (signed short)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       signed short res;
       std::stringstream ss(as_char8_str());
@@ -3470,50 +3470,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (signed int)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (signed int)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (signed int)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (signed int)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (signed int)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (signed int)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (signed int)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (signed int)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (signed int)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (signed int)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       signed int res;
       std::stringstream ss(as_char8_str());
@@ -3527,50 +3527,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (signed long)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (signed long)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (signed long)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (signed long)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (signed long)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (signed long)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (signed long)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (signed long)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (signed long)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (signed long)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       signed long res;
       std::stringstream ss(as_char8_str());
@@ -3585,50 +3585,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (unsigned char)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (unsigned char)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (unsigned char)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (unsigned char)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (unsigned char)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (unsigned char)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (unsigned char)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (unsigned char)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (unsigned char)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (unsigned char)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       conduit_uint16 res;
       std::stringstream ss(as_char8_str());
@@ -3641,50 +3641,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (unsigned short)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (unsigned short)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (unsigned short)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (unsigned short)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (unsigned short)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (unsigned short)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (unsigned short)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (unsigned short)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (unsigned short)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (unsigned short)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       unsigned short res;
       std::stringstream ss(as_char8_str());
@@ -3697,50 +3697,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (unsigned int)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (unsigned int)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (unsigned int)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (unsigned int)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (unsigned int)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (unsigned int)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (unsigned int)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (unsigned int)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (unsigned int)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (unsigned int)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       unsigned int res;
       std::stringstream ss(as_char8_str());
@@ -3753,50 +3753,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (unsigned long)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (unsigned long)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (unsigned long)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (unsigned long)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (unsigned long)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (unsigned long)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (unsigned long)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (unsigned long)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (unsigned long)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (unsigned long)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       unsigned long res;
       std::stringstream ss(as_char8_str());
@@ -3811,50 +3811,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (float)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (float)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (float)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (float)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (float)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (float)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (float)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (float)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (float)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (float)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       float res;
       std::stringstream ss(as_char8_str());
@@ -3868,50 +3868,50 @@ public:
   {
     const conduit_datatype* data = conduit_node_dtype(this->c_node);
     /* ints */
-    if (catalyst_conduit_datatype_is_int8(data))
+    if (conduit_datatype_is_int8(data))
     {
       return (double)as_int8();
     }
-    if (catalyst_conduit_datatype_is_int16(data))
+    if (conduit_datatype_is_int16(data))
     {
       return (double)as_int16();
     }
-    if (catalyst_conduit_datatype_is_int32(data))
+    if (conduit_datatype_is_int32(data))
     {
       return (double)as_int32();
     }
-    if (catalyst_conduit_datatype_is_int64(data))
+    if (conduit_datatype_is_int64(data))
     {
       return (double)as_int64();
     }
     /* conduit_uints */
-    if (catalyst_conduit_datatype_is_uint8(data))
+    if (conduit_datatype_is_uint8(data))
     {
       return (double)as_uint8();
     }
-    if (catalyst_conduit_datatype_is_uint16(data))
+    if (conduit_datatype_is_uint16(data))
     {
       return (double)as_uint16();
     }
-    if (catalyst_conduit_datatype_is_uint32(data))
+    if (conduit_datatype_is_uint32(data))
     {
       return (double)as_uint32();
     }
-    if (catalyst_conduit_datatype_is_uint64(data))
+    if (conduit_datatype_is_uint64(data))
     {
       return (double)as_uint64();
     }
     /* floats */
-    if (catalyst_conduit_datatype_is_float32(data))
+    if (conduit_datatype_is_float32(data))
     {
       return (double)as_float32();
     }
-    if (catalyst_conduit_datatype_is_float64(data))
+    if (conduit_datatype_is_float64(data))
     {
       return (double)as_float64();
     }
     // string case
-    if (catalyst_conduit_datatype_is_char8_str(data))
+    if (conduit_datatype_is_char8_str(data))
     {
       double res;
       std::stringstream ss(as_char8_str());
