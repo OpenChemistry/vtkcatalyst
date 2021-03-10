@@ -62,9 +62,11 @@ set(BASIC_TESTS
 # Add our tests
 ################################
 message(STATUS "Adding conduit lib unit tests")
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 foreach(TEST ${BASIC_TESTS})
     add_executable(${TEST} ${TEST}.cpp)
-    target_link_libraries(${TEST} ${GTEST_BOTH_LIBRARIES} catalyst)
+    target_link_libraries(${TEST} ${GTEST_BOTH_LIBRARIES} catalyst Threads::Threads)
     add_test(NAME ${TEST} COMMAND ${TEST})
 
 endforeach()

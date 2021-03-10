@@ -41,6 +41,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+#ifndef catalyst_conduit_error_hpp
+#define catalyst_conduit_error_hpp
 
 #include <exception>
 #include <iostream>
@@ -111,3 +113,5 @@ private:
 };
 
 }
+
+#endif
