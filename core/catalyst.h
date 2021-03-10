@@ -6,7 +6,6 @@
 #define catalyst_h
 
 #include "catalyst_api.h"
-#include "catalyst_conduit.hpp"
 #include "catalyst_export.h"
 #include "catalyst_version.h"
 
