@@ -37,3 +37,11 @@ build-test:linux-plain:
         - .cmake_build_artifacts
         - .linux_builder_tags
         - .run_automatically
+
+build-test:fedora33-mpi:
+    extends:
+        - .fedora33_mpi
+        - .cmake_build_linux
+        - .cmake_build_artifacts
+        - .linux_builder_tags
+        - .run_automatically
