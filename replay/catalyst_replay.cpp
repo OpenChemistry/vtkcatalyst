@@ -25,16 +25,20 @@ void replay_catalyst_initialize(const std::string& node_dir, int num_ranks, int 
   catalyst_initialize(params.c_node);
 }
 
-void replay_catalyst_execute(const std::string& node_dir, int num_ranks, int rank)
+void replay_catalyst_execute(
+  const std::string& node_dir, int num_ranks, int rank, unsigned long num_execute_invoc_per_rank)
 {
-  conduit_cpp::Node params;
-  std::stringstream node_path;
-  node_path << node_dir << "execute_params.conduit_bin"
-            << "." << num_ranks << "." << rank;
+  for (unsigned long i = 0; i < num_execute_invoc_per_rank; i++)
+  {
+    conduit_cpp::Node params;
+    std::stringstream node_path;
+    node_path << node_dir << "execute_invc" << i << "_params.conduit_bin"
+              << "." << num_ranks << "." << rank;
 
-  conduit_node_load(params.c_node, node_path.str().c_str(), "conduit_bin");
+    conduit_node_load(params.c_node, node_path.str().c_str(), "conduit_bin");
 
-  catalyst_execute(params.c_node);
+    catalyst_execute(params.c_node);
+  }
 }
 
 void replay_catalyst_finalize(const std::string& node_dir, int num_ranks, int rank)
@@ -62,20 +66,21 @@ void write_num_nodes_per_stage(
 
 // Parses relevant data from the filename passed in using regex matching.
 void parse_fname(const std::regex& fname_patterns, const std::string& fname, int num_ranks,
-  unsigned& num_initialize, unsigned& num_execute, unsigned& num_finalize)
+  unsigned& num_initialize, unsigned& num_execute, unsigned& num_finalize,
+  unsigned long& num_execute_invoc_per_rank)
 {
   std::smatch matches;
   std::string d_name_str(fname);
   std::regex_search(d_name_str, matches, fname_patterns);
 
-  if (matches.size() != 3)
+  if (matches.size() != 5)
   {
     return;
   }
 
-  std::string stage = matches[1];
+  // Check that we get the expected number of ranks
   unsigned num_ranks_retrieved = 0;
-  std::stringstream(matches[2]) >> num_ranks_retrieved;
+  std::stringstream(matches[4]) >> num_ranks_retrieved;
 
   // Error if the number of ranks aren't equal.
   if (num_ranks_retrieved != num_ranks)
@@ -85,6 +90,20 @@ void parse_fname(const std::regex& fname_patterns, const std::string& fname, int
         << num_ranks_retrieved << " ranks. These should match.";
     throw std::runtime_error(msg.str());
   }
+
+  // Check to see if we called execute. If we did, check if this is
+  // the highest invocation number so far, so we know how many calls
+  // we make.
+  if (matches[3].length())
+  {
+    unsigned long execute_invc_num;
+    std::stringstream(matches[3]) >> execute_invc_num;
+
+    if (execute_invc_num + 1 > num_execute_invoc_per_rank)
+      num_execute_invoc_per_rank = execute_invc_num + 1;
+  }
+
+  std::string stage = matches[1];
 
   if (stage == "initialize")
     num_initialize++;
@@ -103,7 +122,7 @@ void parse_fname(const std::regex& fname_patterns, const std::string& fname, int
 // data is from, etc.
 void parse_directory(const std::string& catalyst_data_dump_directory,
   const std::regex& fname_patterns, int num_ranks, unsigned& num_initialize, unsigned& num_execute,
-  unsigned& num_finalize)
+  unsigned& num_finalize, unsigned long& num_execute_invoc_per_rank)
 {
   WIN32_FIND_DATA ffd;
   HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -121,8 +140,8 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
   {
     if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
     {
-      parse_fname(
-        fname_patterns, ffd.cFileName, num_ranks, num_initialize, num_execute, num_finalize);
+      parse_fname(fname_patterns, ffd.cFileName, num_ranks, num_initialize, num_execute,
+        num_finalize, num_execute_invoc_per_rank);
     }
   } while (FindNextFile(hFind, &ffd) != 0);
   FindClose(hFind);
@@ -132,7 +151,7 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
 // POSIX implementation. See above for documentation.
 void parse_directory(const std::string& catalyst_data_dump_directory,
   const std::regex& fname_patterns, int num_ranks, unsigned& num_initialize, unsigned& num_execute,
-  unsigned& num_finalize)
+  unsigned& num_finalize, unsigned long& num_execute_invoc_per_rank)
 {
   DIR* dir = opendir(catalyst_data_dump_directory.c_str());
   if (!dir)
@@ -144,7 +163,8 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
 
   for (dirent* item = readdir(dir); item; item = readdir(dir))
   {
-    parse_fname(fname_patterns, item->d_name, num_ranks, num_initialize, num_execute, num_finalize);
+    parse_fname(fname_patterns, item->d_name, num_ranks, num_initialize, num_execute, num_finalize,
+      num_execute_invoc_per_rank);
   }
 
   closedir(dir);
@@ -154,18 +174,21 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
 // Opens the data dump directory and makes sure that the data
 // was output correctly. This includes things like making sure that
 // there was the correct number of files written out for each stage.
-void validate_data_dump(const std::string& catalyst_data_dump_directory, int num_ranks)
+void validate_data_dump(const std::string& catalyst_data_dump_directory, int num_ranks,
+  unsigned long& num_execute_invoc_per_rank)
 {
   // First check that all files in this directory were generated
-  // with same number of ranks
+  // with same number of ranks. Note that these are the TOTAL number of
+  // calls to a certain API function. This includes calls across
+  // ranks and timesteps.
   unsigned num_initialize = 0;
   unsigned num_execute = 0;
   unsigned num_finalize = 0;
   const std::regex fname_patterns(
-    "(initialize|execute|finalize)_params.conduit_bin\\.([0-9])+\\.[0-9]+$");
+    "^(initialize|execute|finalize)(_invc([0-9])*)?_params\\.conduit_bin\\.([0-9])+\\.[0-9]+$");
 
   parse_directory(catalyst_data_dump_directory, fname_patterns, num_ranks, num_initialize,
-    num_execute, num_finalize);
+    num_execute, num_finalize, num_execute_invoc_per_rank);
 
   // Check that none are 0
   if (!(num_initialize && num_execute && num_finalize))
@@ -176,12 +199,25 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
     throw std::runtime_error(msg.str());
   }
 
-  // Check that they're all equal
-  if (!(num_initialize == num_execute && num_initialize == num_finalize))
+  // Check that they're called the correct number of times.
+  // Initialize and finalize should be called once per rank
+  if (!(num_ranks == num_initialize && num_ranks == num_finalize))
   {
     std::stringstream msg;
-    msg << "Number of nodes saved for each stage do not match" << std::endl;
-    write_num_nodes_per_stage(msg, num_initialize, num_execute, num_finalize);
+    msg << "ERROR: Number of calls to initialize: " << num_initialize << std::endl
+        << "Number of calls to finalize: " << num_finalize << std::endl
+        << "Number of ranks: " << num_ranks << std::endl
+        << "These should all match." << std::endl;
+    throw std::runtime_error(msg.str());
+  }
+
+  // Execute is different since there are timesteps.
+  if (num_execute != num_ranks * num_execute_invoc_per_rank)
+  {
+    std::stringstream msg;
+    msg << "ERROR: Unexpected number of calls to execute." << std::endl
+        << "Expected: " << num_ranks * num_execute_invoc_per_rank << std::endl
+        << "Got: " << num_execute << std::endl;
     throw std::runtime_error(msg.str());
   }
 }
@@ -203,10 +239,12 @@ int main(int argc, char** argv)
 
   std::string catalyst_data_dump_directory(argv[1]);
 
-  validate_data_dump(catalyst_data_dump_directory, num_ranks);
+  unsigned long num_execute_invoc_per_rank = 0;
+  validate_data_dump(catalyst_data_dump_directory, num_ranks, num_execute_invoc_per_rank);
 
   replay_catalyst_initialize(catalyst_data_dump_directory, num_ranks, rank);
-  replay_catalyst_execute(catalyst_data_dump_directory, num_ranks, rank);
+  replay_catalyst_execute(
+    catalyst_data_dump_directory, num_ranks, rank, num_execute_invoc_per_rank);
   replay_catalyst_finalize(catalyst_data_dump_directory, num_ranks, rank);
 
   MPI_Finalize();
