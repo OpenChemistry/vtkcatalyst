@@ -34,7 +34,7 @@ if (BUILD_TESTING)
   )
 
   # Set up the data dump directory for the test
-  set(example_data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
+  set(example_data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump")
   file(MAKE_DIRECTORY ${example_data_dump_directory})
 
   # set test PATH to ensure our implementation of the Catalyst

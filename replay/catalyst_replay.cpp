@@ -4,8 +4,10 @@
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include "windows.h"
+#define PATH_SEP '\\'
 #else
 #include "dirent.h"
+#define PATH_SEP '/'
 #endif
 
 #include <regex>
@@ -222,6 +224,25 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
   }
 }
 
+// Makes sure that the catalyst_data_dump_directory string is formatted
+// correctly. This includes things like making sure that it isn't empty,
+// and that it ends with a slash.
+void validate_data_dump_str(std::string& catalyst_data_dump_directory)
+{
+  size_t path_len = catalyst_data_dump_directory.size();
+  if (!path_len)
+  {
+    std::stringstream msg;
+    msg << "ERROR: Empty data_dump_directory detected." << std::endl;
+    throw std::runtime_error(msg.str());
+  }
+
+  if (catalyst_data_dump_directory[path_len - 1] != PATH_SEP)
+  {
+    catalyst_data_dump_directory += PATH_SEP;
+  }
+}
+
 int main(int argc, char** argv)
 {
   MPI_Init(&argc, &argv);
@@ -238,6 +259,7 @@ int main(int argc, char** argv)
   }
 
   std::string catalyst_data_dump_directory(argv[1]);
+  validate_data_dump_str(catalyst_data_dump_directory);
 
   unsigned long num_execute_invoc_per_rank = 0;
   validate_data_dump(catalyst_data_dump_directory, num_ranks, num_execute_invoc_per_rank);
