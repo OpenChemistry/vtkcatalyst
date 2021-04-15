@@ -61,7 +61,8 @@ if (BUILD_TESTING)
 
   set_tests_properties(replay_test_write_out
     PROPERTIES
-      ENVIRONMENT "${environ_str}")
+      ENVIRONMENT "${environ_str}"
+      FIXTURES_SETUP write_out)
 
   add_test(
     NAME replay_test_read_in
@@ -71,6 +72,7 @@ if (BUILD_TESTING)
 
   set_tests_properties(replay_test_read_in
     PROPERTIES
-      WILL_FAIL TRUE)
+      WILL_FAIL TRUE
+      FIXTURES_REQUIRED write_out)
 
 endif()
