@@ -25,7 +25,7 @@ if (BUILD_TESTING)
     PRIVATE
       catalyst::catalyst)
 
-  set(num_ranks_test 1)
+  set(num_ranks_test 2)
   # Add a test for writing out the conduit nodes to disk
   add_test(
     NAME replay_test_write_out
