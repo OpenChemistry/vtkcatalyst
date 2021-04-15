@@ -66,6 +66,12 @@ void write_num_nodes_per_stage(
      << "Number of node files for finalize stage: " << num_finalize << std::endl;
 }
 
+void write_catalyst_data_dump_dir(
+  std::stringstream& ss, const std::string& catalyst_data_dump_directory)
+{
+  ss << "catalyst_data_dump_directory: " << catalyst_data_dump_directory << std::endl;
+}
+
 // Parses relevant data from the filename passed in using regex matching.
 void parse_fname(const std::regex& fname_patterns, const std::string& fname, int num_ranks,
   unsigned& num_initialize, unsigned& num_execute, unsigned& num_finalize,
@@ -198,6 +204,7 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
     std::stringstream msg;
     msg << "Missing node data for at least one stage." << std::endl;
     write_num_nodes_per_stage(msg, num_initialize, num_execute, num_finalize);
+    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
     throw std::runtime_error(msg.str());
   }
 
@@ -210,6 +217,7 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
         << "Number of calls to finalize: " << num_finalize << std::endl
         << "Number of ranks: " << num_ranks << std::endl
         << "These should all match." << std::endl;
+    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
     throw std::runtime_error(msg.str());
   }
 
@@ -220,6 +228,7 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
     msg << "ERROR: Unexpected number of calls to execute." << std::endl
         << "Expected: " << num_ranks * num_execute_invoc_per_rank << std::endl
         << "Got: " << num_execute << std::endl;
+    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
     throw std::runtime_error(msg.str());
   }
 }
@@ -233,7 +242,7 @@ void validate_data_dump_str(std::string& catalyst_data_dump_directory)
   if (!path_len)
   {
     std::stringstream msg;
-    msg << "ERROR: Empty data_dump_directory detected." << std::endl;
+    msg << "ERROR: Empty data_dump_directory path detected." << std::endl;
     throw std::runtime_error(msg.str());
   }
 

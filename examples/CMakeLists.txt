@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(CATALYST_EXAMPLES)
-
 if (CATALYST_BINARY_DIR)
-
   #------------------------------------------------------------------
   # add a test to do installation of catalyst
   set(install_prefix "${CMAKE_CURRENT_BINARY_DIR}/root")
@@ -26,59 +24,12 @@ if (CATALYST_BINARY_DIR)
     PROPERTIES
       FIXTURES_REQUIRED "install-prepare"
       FIXTURES_SETUP    "install")
+endif()
 
-  function(add_example2 dir mode root)
-    add_test(
-      NAME    "example-${mode}-${dir}-prepare"
-      COMMAND "${CMAKE_COMMAND}" -E rm -rf
-              "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}")
-    add_test(
-      NAME    "example-${mode}-${dir}"
-      COMMAND "${CMAKE_CTEST_COMMAND}"
-              --build-generator
-                "${CMAKE_GENERATOR}"
-              --build-and-test
-                "${CMAKE_CURRENT_SOURCE_DIR}/${dir}"
-                "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}"
-              --build-options
-                "-DBUILD_TESTING:BOOL=ON"
-                "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
-                "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
-                "-Dcatalyst_DIR:PATH=${root}/${CATALYST_INSTALL_PACKAGE_DIR}"
-                "-Dcatalyst_replay_command:PATH=${catalyst_replay_command}"
-              --test-command
-                "${CMAKE_CTEST_COMMAND}"
-                  -C $<CONFIGURATION>
-                  -V)
-    set_tests_properties("example-${mode}-${dir}"
-      PROPERTIES
-        FIXTURES_REQUIRED "fixture-${mode}-${dir}")
-    set_tests_properties("example-${mode}-${dir}-prepare"
-      PROPERTIES
-        FIXTURES_SETUP "fixture-${mode}-${dir}")
+include("${CMAKE_SOURCE_DIR}/cmake/catalyst-test-macros.cmake")
 
-    if (mode STREQUAL "install")
-      # install-based tests, depend on the install fixture.
-      set_tests_properties("example-${mode}-${dir}"
-        PROPERTIES
-          FIXTURES_REQUIRED "install")
-    endif()
-  endfunction()
-
-  function(add_example dir)
-    add_example2("${dir}" build "${CATALYST_BINARY_DIR}")
-    add_example2("${dir}" install "${install_prefix}/${CMAKE_INSTALL_PREFIX}")
-  endfunction()
-else ()
-  find_package(catalyst VERSION 2.0 REQUIRED)
-  macro(add_example dir)
-    add_subdirectory("${dir}")
-  endmacro()
-endif ()
-
-add_example(about)
-add_example(adaptor0)
+add_catalyst_example(about)
+add_catalyst_example(adaptor0)
 if (${CATALYST_USE_MPI})
-  add_example(replay)
-  add_example(replay_invalid)
+  add_catalyst_example(replay)
 endif()
