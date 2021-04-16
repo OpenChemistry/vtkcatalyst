@@ -2,6 +2,9 @@ set(headers
   catalyst.h
   catalyst_api.h
   catalyst_stub.h
+  catalyst.hpp
+  catalyst_conduit.hpp
+  catalyst_conduit_error.hpp
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_export.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_version.h)
 configure_file(catalyst_version.h.in catalyst_version.h)
