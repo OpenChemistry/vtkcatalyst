@@ -4496,7 +4496,7 @@ private:
   }
 };
 
-conduit_node* c_node(Node* n)
+inline conduit_node* c_node(Node* n)
 {
   return n ? n->c_node : nullptr;
 }
