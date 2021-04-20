@@ -4,4 +4,5 @@ project(CATALYST_REPLAY_TESTS)
 # MPI should be enabled already, but good to leave this check in
 if (${CATALYST_USE_MPI})
   add_catalyst_test(replay_ranks_mismatch)
+  add_catalyst_test(replay_no_data_dump_dir)
 endif()
