@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-project(CATALYST_REPLAY_RANKS_MISMATCH)
+project(CATALYST_REPLAY_MISSING_INITIALIZE_DATA)
 
 find_package(catalyst
   REQUIRED
@@ -10,12 +10,13 @@ find_package(catalyst
 get_filename_component(PARENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 set(src_dir "${PARENT_DIR}/common_src_dir")
 
-add_library(replay_ranks_mismatch_adaptor
+
+add_library(missing_initialize_adaptor
  "${src_dir}/common_replay_adaptor.cxx")
 
 # use this function call to mark any library as the
 # Catalyst API implementation.
-catalyst_library(TARGET replay_ranks_mismatch_adaptor)
+catalyst_library(TARGET missing_initialize_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
@@ -24,21 +25,18 @@ if (BUILD_TESTING)
   # However at runtime ensures the implementation built here
   # is being used.
   set(CMAKE_SKIP_BUILD_RPATH ON)
-  add_executable(replay_ranks_mismatch_driver "${src_dir}/common_replay_driver.cxx")
+  add_executable(missing_initialize_driver "${src_dir}/common_replay_driver.cxx")
 
-  target_link_libraries(replay_ranks_mismatch_driver
+  target_link_libraries(missing_initialize_driver
     PRIVATE
       catalyst::catalyst)
 
-  # Make sure that we error out if the number of ranks is different
-  set(num_ranks_write_out 1)
-  set(num_ranks_read_in 2)
+  set(num_ranks_test 2)
 
-  # Add a test for writing out the conduit nodes to disk
   add_test(
-    NAME replay_ranks_mismatch_write_out
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_write_out}
-            "$<TARGET_FILE:replay_ranks_mismatch_driver>"
+    NAME missing_initialize_write_out
+    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
+            "$<TARGET_FILE:missing_initialize_driver>"
   )
 
   # Set up the data dump directory for the test
@@ -60,24 +58,38 @@ if (BUILD_TESTING)
   endif()
 
   set(environ_str
-     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-     "${pathvar_name}=$<TARGET_FILE_DIR:replay_ranks_mismatch_adaptor>${sep}$ENV{${pathvar_name}}"
+    "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+    "${pathvar_name}=$<TARGET_FILE_DIR:missing_initialize_adaptor>${sep}$ENV{${pathvar_name}}"
     )
 
-  set_tests_properties(replay_ranks_mismatch_write_out
+  set_tests_properties(missing_initialize_write_out
     PROPERTIES
       ENVIRONMENT "${environ_str}"
-      FIXTURES_SETUP replay_ranks_mismatch_write_out_fixture)
+      FIXTURES_SETUP missing_initialize_write_out_fixture)
 
+
+  # Remove one of the ranks' initialize data
+  add_test(NAME remove_initialize
+           COMMAND "${CMAKE_COMMAND}" -E rm
+                   "${data_dump_directory}/initialize_params.conduit_bin.2.0")
+
+  set_tests_properties(remove_initialize
+    PROPERTIES
+      FIXTURES_REQUIRED missing_initialize_write_out_fixture
+      FIXTURES_SETUP remove_initialize_fixture)
+
+
+  # Add a test to check behavior when we're missing node data
+  # for one rank's initialize stage.
   add_test(
-    NAME replay_ranks_mismatch_read_in
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_read_in}
+    NAME missing_initialize_read_in
+    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
             ${catalyst_replay_command} ${data_dump_directory}
   )
 
-  set_tests_properties(replay_ranks_mismatch_read_in
+  set_tests_properties(missing_initialize_read_in
     PROPERTIES
       WILL_FAIL TRUE
-      FIXTURES_REQUIRED replay_ranks_mismatch_write_out_fixture)
+      FIXTURES_REQUIRED remove_initialize_fixture)
 
 endif()

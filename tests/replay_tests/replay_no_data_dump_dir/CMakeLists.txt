@@ -31,7 +31,6 @@ if (BUILD_TESTING)
     PRIVATE
       catalyst::catalyst)
 
-  # Make sure that we error out if the number of ranks is different
   set(num_ranks_test 2)
 
   # Not specifying a data_dump_dir should be fine when calling the stub implementation.
