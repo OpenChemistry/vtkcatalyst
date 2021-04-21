@@ -5,8 +5,14 @@ find_package(catalyst
   REQUIRED
   COMPONENTS SDK)
 
+# No need to repeat the same adaptor and driver multiple times
+# across tests
+get_filename_component(PARENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
+set(src_dir "${PARENT_DIR}/common_src_dir")
+
+
 add_library(no_data_dump_dir_adapter
- no_data_dump_dir_adapter.cxx)
+ "${src_dir}/common_replay_adaptor.cxx")
 
 # use this function call to mark any library as the
 # Catalyst API implementation.
@@ -19,7 +25,7 @@ if (BUILD_TESTING)
   # However at runtime ensures the implementation built here
   # is being used.
   set(CMAKE_SKIP_BUILD_RPATH ON)
-  add_executable(no_data_dump_dir_driver no_data_dump_dir_driver.cxx)
+  add_executable(no_data_dump_dir_driver "${src_dir}/common_replay_driver.cxx")
 
   target_link_libraries(no_data_dump_dir_driver
     PRIVATE

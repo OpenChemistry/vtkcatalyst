@@ -5,8 +5,13 @@ find_package(catalyst
   REQUIRED
   COMPONENTS SDK)
 
+# No need to repeat the same adaptor and driver multiple times
+# across tests
+get_filename_component(PARENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
+set(src_dir "${PARENT_DIR}/common_src_dir")
+
 add_library(replay_ranks_mismatch_adaptor
- replay_ranks_mismatch_adaptor.cxx)
+ "${src_dir}/common_replay_adaptor.cxx")
 
 # use this function call to mark any library as the
 # Catalyst API implementation.
@@ -19,7 +24,7 @@ if (BUILD_TESTING)
   # However at runtime ensures the implementation built here
   # is being used.
   set(CMAKE_SKIP_BUILD_RPATH ON)
-  add_executable(replay_ranks_mismatch_driver replay_ranks_mismatch_driver.cxx)
+  add_executable(replay_ranks_mismatch_driver "${src_dir}/common_replay_driver.cxx")
 
   target_link_libraries(replay_ranks_mismatch_driver
     PRIVATE
