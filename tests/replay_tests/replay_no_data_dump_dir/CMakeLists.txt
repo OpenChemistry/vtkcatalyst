@@ -55,13 +55,14 @@ if (BUILD_TESTING)
     set(sep ":")
   endif()
 
-  set(environ_str
-     "${pathvar_name}=$<TARGET_FILE_DIR:no_data_dump_dir_adapter>${sep}$ENV{${pathvar_name}}"
-    )
+
+  set(environ_with_impl
+    "${pathvar_name}=$<TARGET_FILE_DIR:no_data_dump_dir_adapter>${sep}$ENV{${pathvar_name}}"
+  )
 
   set_tests_properties(no_write_out
     PROPERTIES
-      ENVIRONMENT "${environ_str}"
+      ENVIRONMENT "${environ_with_impl}"
       FIXTURES_SETUP no_write_out_fixture)
 
   # Add a test to check behavior when no data_dump_dir is specified to replay
@@ -74,6 +75,7 @@ if (BUILD_TESTING)
 
   set_tests_properties(no_data_dump_dir_read_in
     PROPERTIES
+      ENVIRONMENT "${environ_with_impl}"
       WILL_FAIL TRUE
       FIXTURES_REQUIRED no_write_out_fixture)
 

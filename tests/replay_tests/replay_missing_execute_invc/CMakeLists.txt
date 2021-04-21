@@ -57,14 +57,19 @@ if (BUILD_TESTING)
     set(sep ":")
   endif()
 
-  set(environ_str
-    "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+
+  set(environ_with_impl
     "${pathvar_name}=$<TARGET_FILE_DIR:missing_execute_invc_adaptor>${sep}$ENV{${pathvar_name}}"
-    )
+  )
+
+  set(write_out_environ_str
+     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+     "${environ_with_impl}"
+  )
 
   set_tests_properties(missing_execute_invc_write_out
     PROPERTIES
-      ENVIRONMENT "${environ_str}"
+      ENVIRONMENT "${write_out_environ_str}"
       FIXTURES_SETUP missing_execute_invc_write_out_fixture)
 
 
@@ -89,6 +94,7 @@ if (BUILD_TESTING)
 
   set_tests_properties(missing_execute_invc_read_in
     PROPERTIES
+      ENVIRONMENT "${environ_with_impl}"
       WILL_FAIL TRUE
       FIXTURES_REQUIRED remove_execute_invc0_fixture)
 

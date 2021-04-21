@@ -59,14 +59,18 @@ if (BUILD_TESTING)
     set(sep ":")
   endif()
 
-  set(environ_str
+  set(environ_with_impl
+    "${pathvar_name}=$<TARGET_FILE_DIR:replay_ranks_mismatch_adaptor>${sep}$ENV{${pathvar_name}}"
+  )
+
+  set(write_out_environ_str
      "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-     "${pathvar_name}=$<TARGET_FILE_DIR:replay_ranks_mismatch_adaptor>${sep}$ENV{${pathvar_name}}"
-    )
+     "${environ_with_impl}"
+  )
 
   set_tests_properties(replay_ranks_mismatch_write_out
     PROPERTIES
-      ENVIRONMENT "${environ_str}"
+      ENVIRONMENT "${write_out_environ_str}"
       FIXTURES_SETUP replay_ranks_mismatch_write_out_fixture)
 
   add_test(
@@ -77,6 +81,7 @@ if (BUILD_TESTING)
 
   set_tests_properties(replay_ranks_mismatch_read_in
     PROPERTIES
+      ENVIRONMENT "${environ_with_impl}"
       WILL_FAIL TRUE
       FIXTURES_REQUIRED replay_ranks_mismatch_write_out_fixture)
 

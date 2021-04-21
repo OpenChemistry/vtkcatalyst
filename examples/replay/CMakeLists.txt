@@ -51,14 +51,18 @@ if (BUILD_TESTING)
     set(sep ":")
   endif()
 
-  set(environ_str
+  set(environ_with_impl
+    "${pathvar_name}=$<TARGET_FILE_DIR:catalyst_example_replay_adaptor>${sep}$ENV{${pathvar_name}}"
+  )
+
+  set(write_out_environ_str
      "CATALYST_DATA_DUMP_DIRECTORY=${example_data_dump_directory}"
-     "${pathvar_name}=$<TARGET_FILE_DIR:catalyst_example_replay_adaptor>${sep}$ENV{${pathvar_name}}"
-    )
+     "${environ_with_impl}"
+  )
 
   set_tests_properties(replay_test_write_out
     PROPERTIES
-      ENVIRONMENT "${environ_str}"
+      ENVIRONMENT "${write_out_environ_str}"
       FIXTURES_SETUP write_out)
 
   add_test(
@@ -69,6 +73,7 @@ if (BUILD_TESTING)
 
   set_tests_properties(replay_test_read_in
     PROPERTIES
+    ENVIRONMENT "${environ_with_impl}"
       FIXTURES_REQUIRED write_out)
 
 endif()
