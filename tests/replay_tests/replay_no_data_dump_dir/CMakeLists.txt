@@ -20,7 +20,6 @@ catalyst_library(TARGET no_data_dump_dir_adapter)
 
 include(CTest)
 if (BUILD_TESTING)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
@@ -33,6 +32,7 @@ if (BUILD_TESTING)
 
   set(num_ranks_if_mpi 2)
   if (${CATALYST_USE_MPI})
+    find_package(MPI COMPONENTS CXX C REQUIRED)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
@@ -78,7 +78,7 @@ if (BUILD_TESTING)
   set_tests_properties(no_data_dump_dir_read_in
     PROPERTIES
       ENVIRONMENT "${environ_with_impl}"
-      WILL_FAIL TRUE
+      PASS_REGULAR_EXPRESSION "ERROR: Expected 1 argument, the data dump directory"
       FIXTURES_REQUIRED no_write_out_fixture)
 
 endif()

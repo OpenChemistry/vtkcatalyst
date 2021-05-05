@@ -14,8 +14,9 @@
 
 #include <regex>
 #include <sstream>
-#include <stdexcept>
 #include <string>
+
+#include <cstdlib>
 
 void replay_catalyst_initialize(const std::string& node_dir, int num_ranks, int rank)
 {
@@ -59,17 +60,16 @@ void replay_catalyst_finalize(const std::string& node_dir, int num_ranks, int ra
 
 // Write out the number of node files for the
 // initialize, execute, and finalize stages to a stringstream.
-// These values are included when a related exception is thrown.
+// These values are included when we error out.
 void write_num_nodes_per_stage(
-  std::stringstream& ss, unsigned num_initialize, unsigned num_execute, unsigned num_finalize)
+  std::ostream& ss, unsigned num_initialize, unsigned num_execute, unsigned num_finalize)
 {
   ss << "Number of node files for initialization stage: " << num_initialize << std::endl
      << "Number of node files for execute stage: " << num_execute << std::endl
      << "Number of node files for finalize stage: " << num_finalize << std::endl;
 }
 
-void write_catalyst_data_dump_dir(
-  std::stringstream& ss, const std::string& catalyst_data_dump_directory)
+void write_catalyst_data_dump_dir(std::ostream& ss, const std::string& catalyst_data_dump_directory)
 {
   ss << "catalyst_data_dump_directory: " << catalyst_data_dump_directory << std::endl;
 }
@@ -95,10 +95,11 @@ void parse_fname(const std::regex& fname_patterns, const std::string& fname, int
   // Error if the number of ranks aren't equal.
   if (num_ranks_retrieved != num_ranks)
   {
-    std::stringstream msg;
-    msg << "Catalyst replayer was run with " << num_ranks << " ranks. Simulation was run with "
-        << num_ranks_retrieved << " ranks. These should match.";
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Mismatch in the number of ranks. "
+              << "Catalyst replayer was run with " << num_ranks
+              << " ranks. Simulation was run with " << num_ranks_retrieved
+              << " ranks. These should match.";
+    exit(EXIT_FAILURE);
   }
 
   // Check to see if we called execute. If we did, check if this is
@@ -141,9 +142,8 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
 
   if (hFind == INVALID_HANDLE_VALUE)
   {
-    std::stringstream msg;
-    msg << "Error opening directory " << catalyst_data_dump_directory;
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Error opening directory " << catalyst_data_dump_directory;
+    exit(EXIT_FAILURE);
   }
 
   do
@@ -166,9 +166,8 @@ void parse_directory(const std::string& catalyst_data_dump_directory,
   DIR* dir = opendir(catalyst_data_dump_directory.c_str());
   if (!dir)
   {
-    std::stringstream msg;
-    msg << "Error opening directory " << catalyst_data_dump_directory;
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Error opening directory " << catalyst_data_dump_directory;
+    exit(EXIT_FAILURE);
   }
 
   for (dirent* item = readdir(dir); item; item = readdir(dir))
@@ -203,35 +202,33 @@ void validate_data_dump(const std::string& catalyst_data_dump_directory, int num
   // Check that none are 0
   if (!(num_initialize && num_execute && num_finalize))
   {
-    std::stringstream msg;
-    msg << "Missing node data for at least one stage." << std::endl;
-    write_num_nodes_per_stage(msg, num_initialize, num_execute, num_finalize);
-    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Missing node data for at least one stage." << std::endl;
+    write_num_nodes_per_stage(std::cerr, num_initialize, num_execute, num_finalize);
+    write_catalyst_data_dump_dir(std::cerr, catalyst_data_dump_directory);
+    exit(EXIT_FAILURE);
   }
 
   // Check that they're called the correct number of times.
   // Initialize and finalize should be called once per rank
   if (!(num_ranks == num_initialize && num_ranks == num_finalize))
   {
-    std::stringstream msg;
-    msg << "ERROR: Number of calls to initialize: " << num_initialize << std::endl
-        << "Number of calls to finalize: " << num_finalize << std::endl
-        << "Number of ranks: " << num_ranks << std::endl
-        << "These should all match." << std::endl;
-    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Mismatch in the number of calls to initialize or finalize." << std::endl
+              << "Number of calls to initialize: " << num_initialize << std::endl
+              << "Number of calls to finalize: " << num_finalize << std::endl
+              << "Number of ranks: " << num_ranks << std::endl
+              << "These should all match." << std::endl;
+    write_catalyst_data_dump_dir(std::cerr, catalyst_data_dump_directory);
+    exit(EXIT_FAILURE);
   }
 
   // Execute is different since there are timesteps.
   if (num_execute != num_ranks * num_execute_invoc_per_rank)
   {
-    std::stringstream msg;
-    msg << "ERROR: Unexpected number of calls to execute." << std::endl
-        << "Expected: " << num_ranks * num_execute_invoc_per_rank << std::endl
-        << "Got: " << num_execute << std::endl;
-    write_catalyst_data_dump_dir(msg, catalyst_data_dump_directory);
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Unexpected number of calls to execute." << std::endl
+              << "Expected: " << num_ranks * num_execute_invoc_per_rank << std::endl
+              << "Got: " << num_execute << std::endl;
+    write_catalyst_data_dump_dir(std::cerr, catalyst_data_dump_directory);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -243,9 +240,8 @@ void validate_data_dump_str(std::string& catalyst_data_dump_directory)
   size_t path_len = catalyst_data_dump_directory.size();
   if (!path_len)
   {
-    std::stringstream msg;
-    msg << "ERROR: Empty data_dump_directory path detected." << std::endl;
-    throw std::runtime_error(msg.str());
+    std::cerr << "ERROR: Empty data_dump_directory path detected." << std::endl;
+    exit(EXIT_FAILURE);
   }
 
   if (catalyst_data_dump_directory[path_len - 1] != PATH_SEP)
@@ -271,7 +267,8 @@ int main(int argc, char** argv)
 
   if (argc != 2)
   {
-    throw std::runtime_error("Expected 1 argument");
+    std::cerr << "ERROR: Expected 1 argument, the data dump directory." << std::endl;
+    exit(EXIT_FAILURE);
   }
 
   std::string catalyst_data_dump_directory(argv[1]);

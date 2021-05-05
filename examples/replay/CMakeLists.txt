@@ -14,7 +14,6 @@ catalyst_library(TARGET catalyst_example_replay_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
@@ -28,6 +27,7 @@ if (BUILD_TESTING)
   set(num_ranks_if_mpi 2)
   set(mpi_prefix_or_blank)
   if (${CATALYST_USE_MPI})
+    find_package(MPI COMPONENTS CXX C REQUIRED)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()

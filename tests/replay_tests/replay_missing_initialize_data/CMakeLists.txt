@@ -20,7 +20,6 @@ catalyst_library(TARGET missing_initialize_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
@@ -34,6 +33,7 @@ if (BUILD_TESTING)
   set(num_ranks_if_mpi 2)
   set(mpi_prefix_or_blank)
   if (${CATALYST_USE_MPI})
+    find_package(MPI COMPONENTS CXX C REQUIRED)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
@@ -101,10 +101,17 @@ if (BUILD_TESTING)
     COMMAND ${mpi_prefix_or_blank} ${catalyst_replay_command} ${data_dump_directory}
   )
 
+  # The expected error message will be different based on how many files we write out,
+  # which depends on the number of ranks.
+  set(pass_str "ERROR: Missing node data for at least one stage")
+  if (${CATALYST_USE_MPI} AND ${num_ranks_if_mpi} GREATER 1)
+    set(pass_str "ERROR: Mismatch in the number of calls to initialize or finalize")
+  endif()
+
   set_tests_properties(missing_initialize_read_in
     PROPERTIES
       ENVIRONMENT "${environ_with_impl}"
-      WILL_FAIL TRUE
+      PASS_REGULAR_EXPRESSION ${pass_str}
       FIXTURES_REQUIRED remove_initialize_fixture)
 
 endif()

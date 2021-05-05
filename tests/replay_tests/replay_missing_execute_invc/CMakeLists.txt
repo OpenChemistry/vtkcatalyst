@@ -20,7 +20,6 @@ catalyst_library(TARGET missing_execute_invc_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
@@ -34,6 +33,7 @@ if (BUILD_TESTING)
   set(num_ranks_if_mpi 1)
   set(mpi_prefix_or_blank)
   if (${CATALYST_USE_MPI})
+    find_package(MPI COMPONENTS CXX C REQUIRED)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
@@ -104,7 +104,7 @@ if (BUILD_TESTING)
   set_tests_properties(missing_execute_invc_read_in
     PROPERTIES
       ENVIRONMENT "${environ_with_impl}"
-      WILL_FAIL TRUE
+      PASS_REGULAR_EXPRESSION "ERROR: Unexpected number of calls to execute"
       FIXTURES_REQUIRED remove_execute_invc0_fixture)
 
 endif()

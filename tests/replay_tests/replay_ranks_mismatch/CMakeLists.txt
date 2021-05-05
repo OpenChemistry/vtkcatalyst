@@ -19,7 +19,9 @@ catalyst_library(TARGET replay_ranks_mismatch_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
+  # We expect this test to only run if mpi is enabled
   find_package(MPI COMPONENTS CXX C REQUIRED)
+
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
@@ -82,7 +84,7 @@ if (BUILD_TESTING)
   set_tests_properties(replay_ranks_mismatch_read_in
     PROPERTIES
       ENVIRONMENT "${environ_with_impl}"
-      WILL_FAIL TRUE
+      PASS_REGULAR_EXPRESSION "ERROR: Mismatch in the number of ranks"
       FIXTURES_REQUIRED replay_ranks_mismatch_write_out_fixture)
 
 endif()
