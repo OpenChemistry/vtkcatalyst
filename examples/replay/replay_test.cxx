@@ -4,12 +4,19 @@
  */
 
 #include "catalyst.hpp"
+
+#ifdef CATALYST_USE_MPI
 #include "mpi.h"
+#endif
+
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+#ifdef CATALYST_USE_MPI
   MPI_Init(&argc, &argv);
+#endif
+
   conduit_cpp::Node node;
 
   int a = 10;
@@ -31,7 +38,9 @@ int main(int argc, char* argv[])
   node["stage"].set_char8_str("about");
   catalyst_about(conduit_cpp::c_node(&node));
 
+#ifdef CATALYST_USE_MPI
   MPI_Finalize();
+#endif
 
   return EXIT_SUCCESS;
 }

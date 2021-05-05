@@ -31,14 +31,17 @@ if (BUILD_TESTING)
     PRIVATE
       catalyst::catalyst)
 
-  set(num_ranks_test 2)
+  set(num_ranks_if_mpi 2)
+  if (${CATALYST_USE_MPI})
+    set(mpi_prefix_or_blank
+        ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
+  endif()
 
   # Not specifying a data_dump_dir should be fine when calling the stub implementation.
   # Nothing should be written out
   add_test(
     NAME no_write_out
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            "$<TARGET_FILE:no_data_dump_dir_driver>"
+    COMMAND ${mpi_prefix_or_blank} "$<TARGET_FILE:no_data_dump_dir_driver>"
   )
 
   # set test PATH to ensure our implementation of the Catalyst
@@ -69,8 +72,7 @@ if (BUILD_TESTING)
   # command. Should error out.
   add_test(
     NAME no_data_dump_dir_read_in
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            ${catalyst_replay_command}
+    COMMAND ${mpi_prefix_or_blank} ${catalyst_replay_command}
   )
 
   set_tests_properties(no_data_dump_dir_read_in

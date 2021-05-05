@@ -6,12 +6,10 @@
 #ifndef catalyst_stub_h
 #define catalyst_stub_h
 
-#ifdef CATALYST_USE_MPI
 #include "catalyst_dump_node.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#endif
 
 // This file provides functions to use when implementing custom Catalyst
 // implementation if you want to forward calls to the stub
@@ -19,25 +17,19 @@
 
 void catalyst_stub_initialize(const conduit_node* params)
 {
-#ifdef CATALYST_USE_MPI
   dump_node(params, "initialize", 0, false);
-#endif
 }
 
 void catalyst_stub_finalize(const conduit_node* params)
 {
-#ifdef CATALYST_USE_MPI
   dump_node(params, "finalize", 0, false);
-#endif
 }
 
 void catalyst_stub_execute(const conduit_node* params)
 {
-#ifdef CATALYST_USE_MPI
   static unsigned long invocations = 0;
   dump_node(params, "execute", invocations, true);
   invocations++;
-#endif
 }
 
 void catalyst_stub_about(conduit_node* params)

@@ -17,6 +17,7 @@ function(_add_example2 example_or_test dir mode root)
               "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
               "-Dcatalyst_DIR:PATH=${root}/${CATALYST_INSTALL_PACKAGE_DIR}"
               "-Dcatalyst_replay_command:PATH=${catalyst_replay_command}"
+              "-DCATALYST_USE_MPI:BOOL=${CATALYST_USE_MPI}"
             --test-command
               "${CMAKE_CTEST_COMMAND}"
                 -C $<CONFIGURATION>

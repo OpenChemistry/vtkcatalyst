@@ -25,12 +25,17 @@ if (BUILD_TESTING)
     PRIVATE
       catalyst::catalyst)
 
-  set(num_ranks_test 2)
+  set(num_ranks_if_mpi 2)
+  set(mpi_prefix_or_blank)
+  if (${CATALYST_USE_MPI})
+    set(mpi_prefix_or_blank
+        ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
+  endif()
+
   # Add a test for writing out the conduit nodes to disk
   add_test(
     NAME replay_test_write_out
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            "$<TARGET_FILE:replay_test>"
+    COMMAND ${mpi_prefix_or_blank} "$<TARGET_FILE:replay_test>"
   )
 
   # Set up the data dump directory for the test
@@ -67,8 +72,7 @@ if (BUILD_TESTING)
 
   add_test(
     NAME replay_test_read_in
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            ${catalyst_replay_command} ${example_data_dump_directory}
+    COMMAND ${mpi_prefix_or_blank} ${catalyst_replay_command} ${example_data_dump_directory}
   )
 
   set_tests_properties(replay_test_read_in

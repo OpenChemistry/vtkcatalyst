@@ -1,6 +1,8 @@
 #include <catalyst.hpp>
 
+#ifdef CATALYST_USE_MPI
 #include "mpi.h"
+#endif
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include "windows.h"
@@ -254,13 +256,18 @@ void validate_data_dump_str(std::string& catalyst_data_dump_directory)
 
 int main(int argc, char** argv)
 {
+
+#ifdef CATALYST_USE_MPI
   MPI_Init(&argc, &argv);
+#endif
 
   int num_ranks = 1;
   int rank = 0;
 
+#ifdef CATALYST_USE_MPI
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+#endif
 
   if (argc != 2)
   {
@@ -278,7 +285,9 @@ int main(int argc, char** argv)
     catalyst_data_dump_directory, num_ranks, rank, num_execute_invoc_per_rank);
   replay_catalyst_finalize(catalyst_data_dump_directory, num_ranks, rank);
 
+#ifdef CATALYST_USE_MPI
   MPI_Finalize();
+#endif
 
   return 0;
 }

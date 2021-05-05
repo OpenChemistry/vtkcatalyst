@@ -31,12 +31,16 @@ if (BUILD_TESTING)
     PRIVATE
       catalyst::catalyst)
 
-  set(num_ranks_test 1)
+  set(num_ranks_if_mpi 1)
+  set(mpi_prefix_or_blank)
+  if (${CATALYST_USE_MPI})
+    set(mpi_prefix_or_blank
+        ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
+  endif()
 
   add_test(
     NAME missing_execute_invc_write_out
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            "$<TARGET_FILE:missing_execute_invc_driver>"
+    COMMAND ${mpi_prefix_or_blank} "$<TARGET_FILE:missing_execute_invc_driver>"
   )
 
   # Set up the data dump directory for the test
@@ -74,9 +78,15 @@ if (BUILD_TESTING)
 
 
   # Remove one invocation of execute
-  add_test(NAME remove_execute_invc0
-           COMMAND "${CMAKE_COMMAND}" -E rm
-                   "${data_dump_directory}/execute_invc0_params.conduit_bin.1.0")
+  if (${CATALYST_USE_MPI})
+    add_test(NAME remove_execute_invc0
+             COMMAND "${CMAKE_COMMAND}" -E rm
+                     "${data_dump_directory}/execute_invc0_params.conduit_bin.${num_ranks_if_mpi}.0")
+  else()
+    add_test(NAME remove_execute_invc0
+             COMMAND "${CMAKE_COMMAND}" -E rm
+                     "${data_dump_directory}/execute_invc0_params.conduit_bin.1.0")
+  endif()
 
   set_tests_properties(remove_execute_invc0
     PROPERTIES
@@ -88,8 +98,7 @@ if (BUILD_TESTING)
   # for one execute invocation
   add_test(
     NAME missing_execute_invc_read_in
-    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_test}
-            ${catalyst_replay_command} ${data_dump_directory}
+    COMMAND ${mpi_prefix_or_blank} ${catalyst_replay_command} ${data_dump_directory}
   )
 
   set_tests_properties(missing_execute_invc_read_in

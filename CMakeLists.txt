@@ -45,11 +45,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_subdirectory(core)
 
 set(catalyst_replay_command)
-if(CATALYST_USE_MPI)
-  add_subdirectory(replay)
-else()
-  unset(catalyst_replay_command)
-endif()
+add_subdirectory(replay)
 
 add_subdirectory(thirdparty/conduit)
 

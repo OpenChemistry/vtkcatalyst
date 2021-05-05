@@ -6,8 +6,12 @@
 #ifndef catalyst_dump_node_h
 #define catalyst_dump_node_h
 
+#ifdef CATALYST_USE_MPI
 #include "mpi.h"
+#endif
+
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -24,8 +28,10 @@ char* construct_full_path(
   int num_ranks = 1;
   int rank = 0;
 
+#ifdef CATALYST_USE_MPI
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+#endif
 
   size_t out_dir_len = strlen(out_dir);
   if (!out_dir_len)
