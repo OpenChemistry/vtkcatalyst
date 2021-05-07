@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 #ifdef CATALYST_USE_MPI
   MPI_Init(&argc, &argv);
 #endif
+
   conduit_cpp::Node node;
 
   int a = 10;
@@ -24,14 +25,14 @@ int main(int argc, char* argv[])
   catalyst_initialize(conduit_cpp::c_node(&node));
 
   node["stage"].set_char8_str("execute");
+  node["data"] = ++a;
   for (unsigned i = 0; i < 3; i++)
   {
-    node["data"] = a++;
     catalyst_execute(conduit_cpp::c_node(&node));
   }
 
   node["stage"].set_char8_str("finalize");
-  node["data"] = a++;
+  node["data"] = ++a;
   catalyst_finalize(conduit_cpp::c_node(&node));
 
   node["stage"].set_char8_str("about");
