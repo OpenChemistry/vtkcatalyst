@@ -1442,3 +1442,38 @@ TEST(conduit_node_set, check_assignment_from_cstyle_vec)
   EXPECT_EQ(f_ptr[0], f_vec[0]);
   EXPECT_EQ(d_ptr[0], d_vec[0]);
 }
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, c_to_cpp_roundtrip)
+{
+  Node n;
+  n["a"] = (int32)5;
+
+  conduit_node* n_c_node = c_node(&n);
+  conduit_node* n_a_c_node = conduit_node_fetch(n_c_node, "a");
+  EXPECT_EQ(conduit_node_as_int32(n_a_c_node), (int32)5);
+
+  Node n_roundtrip = cpp_node(n_c_node);
+
+  EXPECT_EQ(n_roundtrip["a"].as_int32(), (int32)5);
+
+  // Check no copy
+  EXPECT_EQ(n_roundtrip.data_ptr(), n.data_ptr());
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, c_to_cpp_destruct)
+{
+  Node n;
+  n["a"] = (int32)5;
+  conduit_node* n_c_node = c_node(&n);
+
+  {
+    Node n_roundtrip = cpp_node(n_c_node);
+    EXPECT_EQ(n_roundtrip["a"].as_int32(), (int32)5);
+  }
+
+  // Check going out of scope didn't deallocate the memory.
+  Node n_a = n["a"];
+  EXPECT_EQ(n_a.as_int32(), (int32)5);
+}
