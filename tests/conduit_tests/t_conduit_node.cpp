@@ -430,19 +430,20 @@ TEST(conduit_node, index_operator_with_path_no_copy)
 
   // No copy with copy constructor
   Node n_a_copy1 = n["a"];
-  EXPECT_EQ(n_a_copy1.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_copy1.c_node, nullptr);
+  Node n_a_copy2 = n["a"];
+  EXPECT_EQ(c_node(&n_a_copy1), c_node(&n_a_copy2));
+  EXPECT_NE(c_node(&n_a_copy1), nullptr);
 
   // Same should hold if we're constructing a const object
   const Node n_a_const_copy1 = n["a"];
-  EXPECT_EQ(n_a_const_copy1.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_const_copy1.c_node, nullptr);
+  EXPECT_EQ(c_node(&n_a_const_copy1), c_node(&n_a_copy1));
+  EXPECT_NE(c_node(&n_a_const_copy1), nullptr);
 
   // No copy with assignment operator
-  Node n_a_copy2;
-  n_a_copy2 = n["a"];
-  EXPECT_EQ(n_a_copy2.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_copy2.c_node, nullptr);
+  Node n_a_copy3;
+  n_a_copy3 = n["a"];
+  EXPECT_EQ(c_node(&n_a_copy3), c_node(&n_a_copy1));
+  EXPECT_NE(c_node(&n_a_copy3), nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -453,19 +454,20 @@ TEST(conduit_node, index_operator_with_index_no_copy)
 
   // No copy with copy constructor
   Node n_0_copy1 = n[0];
-  EXPECT_EQ(n_0_copy1.c_node, n[0].c_node);
-  EXPECT_NE(n_0_copy1.c_node, nullptr);
+  Node n_0_copy2 = n[0];
+  EXPECT_EQ(c_node(&n_0_copy1), c_node(&n_0_copy2));
+  EXPECT_NE(c_node(&n_0_copy1), nullptr);
 
   // Same should hold if we're constructing a const object
   const Node n_0_const_copy1 = n[0];
-  EXPECT_EQ(n_0_const_copy1.c_node, n[0].c_node);
-  EXPECT_NE(n_0_const_copy1.c_node, nullptr);
+  EXPECT_EQ(c_node(&n_0_const_copy1), c_node(&n_0_copy1));
+  EXPECT_NE(c_node(&n_0_const_copy1), nullptr);
 
   // No copy with assignment operator
-  Node n_0_copy2;
-  n_0_copy2 = n[0];
-  EXPECT_EQ(n_0_copy2.c_node, n[0].c_node);
-  EXPECT_NE(n_0_copy2.c_node, nullptr);
+  Node n_0_copy3;
+  n_0_copy3 = n[0];
+  EXPECT_EQ(c_node(&n_0_copy3), c_node(&n_0_copy1));
+  EXPECT_NE(c_node(&n_0_copy3), nullptr);
 }
 
 // -----------------------------------------------------------------------------
@@ -490,9 +492,10 @@ TEST(conduit_node, check_const_access_path)
   // Requested path also shouldn't be added.
   EXPECT_FALSE(n_a.has_path("nonexistant_child"));
 
-  // No copying should be done.
-  const Node n_a_b(n_a["b"]);
-  EXPECT_EQ(n["a/b"].c_node, n_a_b.c_node);
+  // No copying should be done internally.
+  const Node n_a_b_copy1(n_a["b"]);
+  const Node n_a_b_copy2(n_a["b"]);
+  EXPECT_EQ(c_node(&n_a_b_copy1), c_node(&n_a_b_copy2));
 }
 
 // -----------------------------------------------------------------------------
@@ -511,10 +514,11 @@ TEST(conduit_node, check_const_access_index)
   EXPECT_EQ(ptr_vals_const[0], arr[0]);
   EXPECT_EQ(ptr_vals_const[1], arr[1]);
 
-  // No copying should be done, move semantics should still apply.
+  // No copying should be done internally, move semantics should still apply.
   // Check move constructor first.
-  const Node n_0_0(n_0[0]);
-  EXPECT_EQ(n[0][0].c_node, n_0_0.c_node);
+  const Node n_0_0_copy1(n_0[0]);
+  const Node n_0_0_copy2(n_0[0]);
+  EXPECT_EQ(c_node(&n_0_0_copy1), c_node(&n_0_0_copy2));
 }
 
 //-----------------------------------------------------------------------------

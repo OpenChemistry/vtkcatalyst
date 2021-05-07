@@ -95,8 +95,6 @@ namespace conduit_cpp
 class Node
 {
 public:
-  conduit_node* c_node;
-
   Node()
     : c_node(conduit_node_create())
   {
@@ -118,6 +116,10 @@ public:
       conduit_node_destroy(this->c_node);
     }
   }
+
+  friend conduit_node* c_node(const Node* n);
+  friend Node cpp_node(conduit_node* n);
+
   /////////////////////////////////////////////////////////////////////////////
   // The above code will need to be copy and pasted between revisions.
   /////////////////////////////////////////////////////////////////////////////
@@ -4490,15 +4492,27 @@ public:
   }
 
 private:
+  conduit_node* c_node;
+
   explicit Node(conduit_node* other)
     : c_node(other)
   {
   }
 };
 
-inline conduit_node* c_node(Node* n)
+inline conduit_node* c_node(const Node* n)
 {
   return n ? n->c_node : nullptr;
 }
+
+inline Node cpp_node(conduit_node* n)
+{
+  conduit_node* n2 = conduit_node_create();
+  // Setting it as external tells the underlying conduit_node
+  // that we do not own this data. So, we won't ever free it.
+  conduit_node_set_external_node(n2, n);
+  return Node(n2);
+}
+
 }
 #endif

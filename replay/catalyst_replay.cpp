@@ -25,9 +25,9 @@ void replay_catalyst_initialize(const std::string& node_dir, int num_ranks, int 
   node_path << node_dir << "initialize_params.conduit_bin"
             << "." << num_ranks << "." << rank;
 
-  conduit_node_load(params.c_node, node_path.str().c_str(), "conduit_bin");
+  conduit_node_load(c_node(&params), node_path.str().c_str(), "conduit_bin");
 
-  catalyst_initialize(params.c_node);
+  catalyst_initialize(c_node(&params));
 }
 
 void replay_catalyst_execute(
@@ -40,9 +40,9 @@ void replay_catalyst_execute(
     node_path << node_dir << "execute_invc" << i << "_params.conduit_bin"
               << "." << num_ranks << "." << rank;
 
-    conduit_node_load(params.c_node, node_path.str().c_str(), "conduit_bin");
+    conduit_node_load(c_node(&params), node_path.str().c_str(), "conduit_bin");
 
-    catalyst_execute(params.c_node);
+    catalyst_execute(c_node(&params));
   }
 }
 
@@ -53,9 +53,9 @@ void replay_catalyst_finalize(const std::string& node_dir, int num_ranks, int ra
   node_path << node_dir << "finalize_params.conduit_bin"
             << "." << num_ranks << "." << rank;
 
-  conduit_node_load(params.c_node, node_path.str().c_str(), "conduit_bin");
+  conduit_node_load(c_node(&params), node_path.str().c_str(), "conduit_bin");
 
-  catalyst_finalize(params.c_node);
+  catalyst_finalize(c_node(&params));
 }
 
 // Write out the number of node files for the
