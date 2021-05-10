@@ -22,6 +22,14 @@
     variables:
         CMAKE_CONFIGURATION: linux_plain
 
+.centos7_mpich_addon:
+    variables:
+        MODULES: mpi/mpich-x86_64
+        # Even with SHM size of 512m, SIGBUS still happened. Let's just use the
+        # network instead for reliability.
+        # https://wiki.mpich.org/mpich/index.php/Frequently_Asked_Questions#Q:_Why_MPI_Put_raises_SIGBUS_error_inside_docker.3F
+        MPIR_CVAR_NOLOCAL: 1
+
 .fedora31:
     image: "kitware/paraview:ci-superbuild-fedora31-20200218"
 
@@ -34,6 +42,30 @@
 
     variables:
         CMAKE_CONFIGURATION: linux_plain
+
+
+.fedora33:
+    image: "kitware/paraview:ci-fedora33-20210221"
+    variables:
+        GIT_SUBMODULE_STRATEGY: none
+        GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab-kitware-sciviz-ci
+
+.fedora_mpich_addon:
+    variables:
+        MODULES: mpi/mpich-x86_64
+        # Even with SHM size of 512m, SIGBUS still happened. Let's just use the
+        # network instead for reliability.
+        # https://wiki.mpich.org/mpich/index.php/Frequently_Asked_Questions#Q:_Why_MPI_Put_raises_SIGBUS_error_inside_docker.3F
+        MPIR_CVAR_NOLOCAL: 1
+
+.fedora33_mpi:
+    extends:
+        - .fedora33
+        - .fedora_mpich_addon
+
+    variables:
+        CMAKE_CONFIGURATION: fedora33_mpi
+
 
 ## Tags
 
@@ -52,6 +84,8 @@
     - cmake --version
     - ninja --version
     - "$LAUNCHER .gitlab/ci/gtest.sh"
+    # Load any modules that may be necessary.
+    - '[ -n "$MODULES" ] && . /etc/profile.d/modules.sh && module load $MODULES'
 
 .cmake_build_linux:
     stage: build-test

@@ -6,13 +6,32 @@
 #ifndef catalyst_stub_h
 #define catalyst_stub_h
 
+#include "catalyst_dump_node.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 // This file provides functions to use when implementing custom Catalyst
 // implementation if you want to forward calls to the stub
 // implementation.
 
-void catalyst_stub_initialize(const conduit_node*) {}
-void catalyst_stub_finalize(const conduit_node*) {}
-void catalyst_stub_execute(const conduit_node*) {}
+void catalyst_stub_initialize(const conduit_node* params)
+{
+  dump_node(params, "initialize", 0, false);
+}
+
+void catalyst_stub_finalize(const conduit_node* params)
+{
+  dump_node(params, "finalize", 0, false);
+}
+
+void catalyst_stub_execute(const conduit_node* params)
+{
+  static unsigned long invocations = 0;
+  dump_node(params, "execute", invocations, true);
+  invocations++;
+}
+
 void catalyst_stub_about(conduit_node* params)
 {
   conduit_node_set_path_char8_str(params, "catalyst/version", CATALYST_VERSION);

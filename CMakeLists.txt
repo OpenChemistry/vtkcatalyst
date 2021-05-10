@@ -9,6 +9,7 @@ project(CATALYST VERSION 2.0 LANGUAGES C CXX)
 option(CATALYST_BUILD_SHARED_LIBS "Enable shared libs" ON)
 option(CATALYST_BUILD_TESTING "Enable testing" ON)
 option(CATALYST_BUILD_STUB_IMPLEMENTATION "Enable stub implementation" ON)
+option(CATALYST_USE_MPI "Enable MPI related features" OFF)
 
 #------------------------------------------------------------------------------
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -30,6 +31,10 @@ set(CATALYST_ABI_VERSION "${CATALYST_VERSION_MAJOR}" CACHE INTERNAL "")
 # Catalyst library itself, but all the internal dependencies.
 c_set_if_not_set(CATALYST_CUSTOM_LIBRARY_SUFFIX "_catalyst${CATALYST_VERSION}")
 
+if(CATALYST_USE_MPI)
+  find_package(MPI COMPONENTS CXX C REQUIRED)
+endif()
+
 # Some default settings.
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 set(CMAKE_C_VISIBILITY_PRESET "hidden")
@@ -38,7 +43,12 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(core)
+
+set(catalyst_replay_command)
+add_subdirectory(replay)
+
 add_subdirectory(thirdparty/conduit)
+
 if (CATALYST_BUILD_STUB_IMPLEMENTATION)
   add_subdirectory(catalyst)
 endif()
@@ -54,6 +64,8 @@ include(cInstallCMakePackage)
 if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
   include(CTest)
+  include("${CMAKE_SOURCE_DIR}/cmake/catalyst-test-macros.cmake")
+  add_install_test()
   add_subdirectory(examples)
 
   find_package(GTest)

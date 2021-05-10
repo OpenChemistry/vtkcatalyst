@@ -430,19 +430,20 @@ TEST(conduit_node, index_operator_with_path_no_copy)
 
   // No copy with copy constructor
   Node n_a_copy1 = n["a"];
-  EXPECT_EQ(n_a_copy1.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_copy1.c_node, nullptr);
+  Node n_a_copy2 = n["a"];
+  EXPECT_EQ(c_node(&n_a_copy1), c_node(&n_a_copy2));
+  EXPECT_NE(c_node(&n_a_copy1), nullptr);
 
   // Same should hold if we're constructing a const object
   const Node n_a_const_copy1 = n["a"];
-  EXPECT_EQ(n_a_const_copy1.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_const_copy1.c_node, nullptr);
+  EXPECT_EQ(c_node(&n_a_const_copy1), c_node(&n_a_copy1));
+  EXPECT_NE(c_node(&n_a_const_copy1), nullptr);
 
   // No copy with assignment operator
-  Node n_a_copy2;
-  n_a_copy2 = n["a"];
-  EXPECT_EQ(n_a_copy2.c_node, n["a"].c_node);
-  EXPECT_NE(n_a_copy2.c_node, nullptr);
+  Node n_a_copy3;
+  n_a_copy3 = n["a"];
+  EXPECT_EQ(c_node(&n_a_copy3), c_node(&n_a_copy1));
+  EXPECT_NE(c_node(&n_a_copy3), nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -453,19 +454,20 @@ TEST(conduit_node, index_operator_with_index_no_copy)
 
   // No copy with copy constructor
   Node n_0_copy1 = n[0];
-  EXPECT_EQ(n_0_copy1.c_node, n[0].c_node);
-  EXPECT_NE(n_0_copy1.c_node, nullptr);
+  Node n_0_copy2 = n[0];
+  EXPECT_EQ(c_node(&n_0_copy1), c_node(&n_0_copy2));
+  EXPECT_NE(c_node(&n_0_copy1), nullptr);
 
   // Same should hold if we're constructing a const object
   const Node n_0_const_copy1 = n[0];
-  EXPECT_EQ(n_0_const_copy1.c_node, n[0].c_node);
-  EXPECT_NE(n_0_const_copy1.c_node, nullptr);
+  EXPECT_EQ(c_node(&n_0_const_copy1), c_node(&n_0_copy1));
+  EXPECT_NE(c_node(&n_0_const_copy1), nullptr);
 
   // No copy with assignment operator
-  Node n_0_copy2;
-  n_0_copy2 = n[0];
-  EXPECT_EQ(n_0_copy2.c_node, n[0].c_node);
-  EXPECT_NE(n_0_copy2.c_node, nullptr);
+  Node n_0_copy3;
+  n_0_copy3 = n[0];
+  EXPECT_EQ(c_node(&n_0_copy3), c_node(&n_0_copy1));
+  EXPECT_NE(c_node(&n_0_copy3), nullptr);
 }
 
 // -----------------------------------------------------------------------------
@@ -490,9 +492,10 @@ TEST(conduit_node, check_const_access_path)
   // Requested path also shouldn't be added.
   EXPECT_FALSE(n_a.has_path("nonexistant_child"));
 
-  // No copying should be done.
-  const Node n_a_b(n_a["b"]);
-  EXPECT_EQ(n["a/b"].c_node, n_a_b.c_node);
+  // No copying should be done internally.
+  const Node n_a_b_copy1(n_a["b"]);
+  const Node n_a_b_copy2(n_a["b"]);
+  EXPECT_EQ(c_node(&n_a_b_copy1), c_node(&n_a_b_copy2));
 }
 
 // -----------------------------------------------------------------------------
@@ -511,10 +514,11 @@ TEST(conduit_node, check_const_access_index)
   EXPECT_EQ(ptr_vals_const[0], arr[0]);
   EXPECT_EQ(ptr_vals_const[1], arr[1]);
 
-  // No copying should be done, move semantics should still apply.
+  // No copying should be done internally, move semantics should still apply.
   // Check move constructor first.
-  const Node n_0_0(n_0[0]);
-  EXPECT_EQ(n[0][0].c_node, n_0_0.c_node);
+  const Node n_0_0_copy1(n_0[0]);
+  const Node n_0_0_copy2(n_0[0]);
+  EXPECT_EQ(c_node(&n_0_0_copy1), c_node(&n_0_0_copy2));
 }
 
 //-----------------------------------------------------------------------------
@@ -1437,4 +1441,39 @@ TEST(conduit_node_set, check_assignment_from_cstyle_vec)
 
   EXPECT_EQ(f_ptr[0], f_vec[0]);
   EXPECT_EQ(d_ptr[0], d_vec[0]);
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, c_to_cpp_roundtrip)
+{
+  Node n;
+  n["a"] = (int32)5;
+
+  conduit_node* n_c_node = c_node(&n);
+  conduit_node* n_a_c_node = conduit_node_fetch(n_c_node, "a");
+  EXPECT_EQ(conduit_node_as_int32(n_a_c_node), (int32)5);
+
+  Node n_roundtrip = cpp_node(n_c_node);
+
+  EXPECT_EQ(n_roundtrip["a"].as_int32(), (int32)5);
+
+  // Check no copy
+  EXPECT_EQ(n_roundtrip.data_ptr(), n.data_ptr());
+}
+
+//-----------------------------------------------------------------------------
+TEST(conduit_node, c_to_cpp_destruct)
+{
+  Node n;
+  n["a"] = (int32)5;
+  conduit_node* n_c_node = c_node(&n);
+
+  {
+    Node n_roundtrip = cpp_node(n_c_node);
+    EXPECT_EQ(n_roundtrip["a"].as_int32(), (int32)5);
+  }
+
+  // Check going out of scope didn't deallocate the memory.
+  Node n_a = n["a"];
+  EXPECT_EQ(n_a.as_int32(), (int32)5);
 }
