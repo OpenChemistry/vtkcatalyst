@@ -10,6 +10,7 @@ option(CATALYST_BUILD_SHARED_LIBS "Enable shared libs" ON)
 option(CATALYST_BUILD_TESTING "Enable testing" ON)
 option(CATALYST_BUILD_STUB_IMPLEMENTATION "Enable stub implementation" ON)
 option(CATALYST_USE_MPI "Enable MPI related features" OFF)
+option(CATALYST_BUILD_REPLAY "Build the catalyst replay executable" ON)
 
 #------------------------------------------------------------------------------
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -44,8 +45,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(core)
 
-set(catalyst_replay_command)
-add_subdirectory(replay)
+if(CATALYST_BUILD_REPLAY)
+  set(catalyst_replay_command)
+  add_subdirectory(replay)
+endif()
 
 add_subdirectory(thirdparty/conduit)
 
@@ -60,6 +63,7 @@ include(cInstallCMakePackage)
 # Testing, we build:
 # 1.) examples and their tests
 # 2.) Some conduit-native tests to test our wrapped C API
+# 3.) catalyst_replay tests, if enabled
 # That's our testing suite.
 if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
