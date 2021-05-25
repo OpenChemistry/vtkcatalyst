@@ -3,8 +3,11 @@ project(CATALYST_EXAMPLES)
 
 set(examples
     about
-    adaptor0
-    replay)
+    adaptor0)
+
+if(CATALYST_BUILD_REPLAY)
+  list(APPEND examples replay)
+endif()
 
 if (NOT DEFINED CATALYST_BINARY_DIR)
   find_package(catalyst VERSION 2.0 REQUIRED)

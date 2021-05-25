@@ -38,6 +38,14 @@ build-test:linux-plain:
         - .linux_builder_tags
         - .run_automatically
 
+build-test:linux-replay:
+    extends:
+        - .centos7_replay
+        - .cmake_build_linux
+        - .cmake_build_artifacts
+        - .linux_builder_tags
+        - .run_automatically
+
 build-test:fedora33-mpi:
     extends:
         - .fedora33_mpi
