@@ -7,7 +7,7 @@ Catalyst.
 Building with Catalyst
 ======================
 
-To use Catalyst API in any code, the code must be built against an
+To use the Catalyst API in any code, the code must be built against an
 implementation of the Catalyst API. While one can use any implementation of the
 Catalyst API, the stub implementation is probably the easiest to build against
 since it doesn't have any external dependencies besides compiler tools.
@@ -45,16 +45,16 @@ and the link against the `catalyst::catalyst` target. This is done as follows:
     target_link_library(simulation_target
       PRIVATE catalyst::catalyst)
 
-Now when you run `cmake` on your simulation code, a new  cache variable,
-`catalyst_DIR` can be used to help CMake find your Catalyst install. You can
-it to the directory containing `catalyst-config.cmake` file either in the
-Catalyst build directory or Catalyst install directory.
+Now, when you run `cmake` on your simulation code, a new cache variable
+`catalyst_DIR` can be set to the directory containing the file `catalyst-config.cmake`
+to help CMake find where you built Catalyst. That file can be found in either the
+Catalyst build directory or the Catalyst install directory.
 
 
 Using `make` (or similar)
 -------------------------
 
-If now using CMake as the build system generator for your simulation code, it's
+If now using CMake as the build system generator for your simulation code, it is
 still easy to make it aware of Catalyst. You simply need to pass the include
 path i.e. the location where the Catalyst headers are available, and the
 location and library to link against.
