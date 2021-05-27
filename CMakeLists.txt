@@ -70,7 +70,7 @@ include(cInstallCMakePackage)
 if (CATALYST_BUILD_TESTING)
   set(BUILD_TESTING ON)
   include(CTest)
-  include("${CMAKE_SOURCE_DIR}/cmake/catalyst-test-macros.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/catalyst-test-macros.cmake")
   add_install_test()
   add_subdirectory(examples)
 
