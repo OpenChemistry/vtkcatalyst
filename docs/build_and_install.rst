@@ -17,7 +17,7 @@ Building
 
 Catalyst uses CMake to generate build system scripts and projects, such as
 Makefiles or Ninja build files. While IDE generators (Xcode and Visual Studio)
-are supported, Ninja is highly recommended.
+are supported, `Ninja`_ is highly recommended.
 
 To do a fresh build, start with an empty directory as follows:
 
@@ -81,3 +81,4 @@ Important `CMake`_ options that affect how Catalyst is built are:
 .. _`Git`: https://git-scm.com/
 .. _`CMake`: https://cmake.org
 .. _`CMake Docs`: https://cmake.org/documentation/
+.. _`Ninja`:https://ninja-build.org
