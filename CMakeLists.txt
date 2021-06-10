@@ -10,7 +10,6 @@ include(CMakeDependentOption)
 # already defined.
 option(CATALYST_BUILD_SHARED_LIBS "Enable shared libs" ON)
 option(CATALYST_BUILD_TESTING "Enable testing" ON)
-option(CATALYST_BUILD_STUB_IMPLEMENTATION "Enable stub implementation" ON)
 option(CATALYST_BUILD_REPLAY "Build the catalyst replay executable" ON)
 cmake_dependent_option(CATALYST_USE_MPI "Enable MPI related features" OFF "CATALYST_BUILD_REPLAY" OFF)
 
@@ -54,10 +53,6 @@ if(CATALYST_BUILD_REPLAY)
 endif()
 
 add_subdirectory(thirdparty/conduit)
-
-if (CATALYST_BUILD_STUB_IMPLEMENTATION)
-  add_subdirectory(catalyst)
-endif()
 
 # include install/package rules.
 include(cInstallCMakePackage)

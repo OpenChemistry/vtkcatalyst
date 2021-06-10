@@ -7,29 +7,28 @@
 #include <catalyst.hpp>
 #include <catalyst_stub.h>
 
-//-----------------------------------------------------------------------------
-void catalyst_initialize(const conduit_node* params)
-{
-  conduit_cpp::Node temp;
-  temp.to_double();
+#include "catalyst_impl_stub.h"
 
-  catalyst_stub_initialize(params);
+//-----------------------------------------------------------------------------
+enum catalyst_error catalyst_initialize_stub(const conduit_node* params)
+{
+  return catalyst_stub_initialize(params);
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_execute(const conduit_node* params)
+enum catalyst_error catalyst_execute_stub(const conduit_node* params)
 {
-  catalyst_stub_execute(params);
+  return catalyst_stub_execute(params);
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_finalize(const conduit_node* params)
+enum catalyst_error catalyst_finalize_stub(const conduit_node* params)
 {
-  catalyst_stub_finalize(params);
+  return catalyst_stub_finalize(params);
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_about(conduit_node* params)
+enum catalyst_error catalyst_about_stub(conduit_node* params)
 {
-  catalyst_stub_about(params);
+  return catalyst_stub_about(params);
 }
