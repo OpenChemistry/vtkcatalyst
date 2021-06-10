@@ -12,6 +12,7 @@
 #define PATH_SEP '/'
 #endif
 
+#include <iostream>
 #include <regex>
 #include <sstream>
 #include <string>
