@@ -3,15 +3,25 @@
  * accompanying License.txt
  */
 
+#define _GNU_SOURCE
+
 #include "catalyst_api.h"
 #include "catalyst_impl.h"
 
 #include "conduit_node.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+typedef HMODULE catalyst_handle_t;
+#else
+#include <dlfcn.h>
+#include <stdio.h>
 typedef void* catalyst_handle_t;
+#endif
 
 static char* default_search_path();
 static catalyst_handle_t handle_default();
@@ -155,3 +165,98 @@ enum catalyst_error catalyst_about(conduit_node* params)
   impl_check(about);
   return (*impl->about)(params);
 }
+
+#ifdef _WIN32
+char* default_search_path()
+{
+  // TODO
+  return NULL;
+}
+
+catalyst_handle_t handle_default()
+{
+  return NULL;
+}
+
+catalyst_handle_t handle_open(const char* directory, const char* libname)
+{
+  // TODO
+  return NULL;
+}
+
+void* handle_load_symbol(catalyst_handle_t handle, const char* symbol)
+{
+  return (void*)GetProcAddress(handle, symbol);
+}
+
+int handle_is_valid(catalyst_handle_t handle)
+{
+  return handle != NULL;
+}
+#else
+char* default_search_path()
+{
+  catalyst_handle_t handle = dlsym(NULL, "catalyst_initialize");
+  if (!handle)
+  {
+    return NULL;
+  }
+
+  Dl_info info;
+  int ret = dladdr(handle, &info);
+  if (ret == 0 || !info.dli_saddr || !info.dli_fname)
+  {
+    return NULL;
+  }
+
+  char* dirsep = strrchr(info.dli_fname, '/');
+  *dirsep = '\0';
+
+  size_t dirlen = strlen(info.dli_fname) + 9 + 1;
+  char* directory_name = (char*)malloc(dirlen);
+  if (!directory_name)
+  {
+    return NULL;
+  }
+
+  snprintf(directory_name, dirlen, "%s/catalyst", info.dli_fname);
+
+  return directory_name;
+}
+
+catalyst_handle_t handle_default()
+{
+  return NULL;
+}
+
+catalyst_handle_t handle_open(const char* directory, const char* libname)
+{
+  size_t path_len = strlen(directory) + strlen(libname) + 9 + 7 + 1;
+  char* full_library_path = (char*)malloc(path_len);
+  if (!full_library_path)
+  {
+    return NULL;
+  }
+
+  snprintf(full_library_path, path_len, "%s/libcatalyst-%s.so", directory, libname);
+
+  catalyst_handle_t handle = dlopen(full_library_path, RTLD_LAZY | RTLD_LOCAL);
+  if (!handle)
+  {
+    printf("failed to open library: %s\n", dlerror());
+  }
+
+  free(full_library_path);
+  return handle;
+}
+
+void* handle_load_symbol(catalyst_handle_t handle, const char* symbol)
+{
+  return dlsym(handle, symbol);
+}
+
+int handle_is_valid(catalyst_handle_t handle)
+{
+  return handle != NULL;
+}
+#endif
