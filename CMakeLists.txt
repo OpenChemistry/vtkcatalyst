@@ -46,7 +46,7 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-add_subdirectory(core)
+add_subdirectory(src)
 
 if(CATALYST_BUILD_REPLAY)
   set(catalyst_replay_command)
