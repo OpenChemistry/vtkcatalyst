@@ -1,6 +1,7 @@
 set(headers
   catalyst.h
   catalyst_api.h
+  catalyst_impl.h
   catalyst_stub.h
   catalyst.hpp
   catalyst_conduit.hpp

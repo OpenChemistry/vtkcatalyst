@@ -3,3 +3,5 @@
   - All Catalyst API functions now return an error code. This is primarily to
     allow `catalyst_initialize` to return the status of the backing
     implementation.
+  - There is now a structure containing the functions that are needed for
+    Catalyst.
