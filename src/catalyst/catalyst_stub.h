@@ -8,6 +8,7 @@
 
 #include "catalyst_api.h"
 #include "catalyst_dump_node.h"
+#include "catalyst_version.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -13,35 +13,39 @@ configure_file(catalyst_version.h.in catalyst_version.h)
 
 #------------------------------------------------------------
 # Add an interface library just to setup include dirs.
-add_library(core INTERFACE)
-target_include_directories(core
+add_library(catalyst_headers INTERFACE)
+target_include_directories(catalyst_headers
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
-add_library(catalyst::core ALIAS core)
+add_library(catalyst::catalyst_headers ALIAS catalyst_headers)
+
+add_library(catalyst
+  catalyst_api.c
+  catalyst_api_default.cpp
+  ${headers})
+target_link_libraries(catalyst
+  PUBLIC
+    catalyst::conduit
+    catalyst::catalyst_headers
+  PRIVATE
+    ${CMAKE_DL_LIBS})
+add_library(catalyst::catalyst ALIAS catalyst)
 
 if (CATALYST_USE_MPI)
-  target_link_libraries(core INTERFACE MPI::MPI_C)
-  target_compile_definitions(core INTERFACE CATALYST_USE_MPI)
-endif()
+  target_link_libraries(catalyst INTERFACE MPI::MPI_C)
+  target_compile_definitions(catalyst INTERFACE CATALYST_USE_MPI)
+endif ()
 
-c_install_targets(core)
+c_install_targets(catalyst catalyst_headers)
 c_install_headers(
   HEADERS ${headers})
 
 #-------------------------------------------------------------
 # Generate export header.
-# Since we want to use generate_export_header() from CMake,
-# we create a dummy library to help us generate the export header
-# here.
-set(CMAKE_CONFIGURABLE_FILE_CONTENT "#error \"this file should not be compiled!\"")
-configure_file("${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/dummy.cxx")
-unset(CMAKE_CONFIGURABLE_FILE_CONTENT)
-add_library(dummy SHARED EXCLUDE_FROM_ALL ${CMAKE_CURRENT_BINARY_DIR}/dummy.cxx)
-set_target_properties(dummy
+set_target_properties(catalyst
   PROPERTIES
     DEFINE_SYMBOL catalyst_EXPORTS)
 include(GenerateExportHeader)
-generate_export_header(dummy BASE_NAME catalyst)
+generate_export_header(catalyst)
