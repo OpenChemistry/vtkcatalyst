@@ -32,7 +32,7 @@ if (BUILD_TESTING)
 
   set(num_ranks_if_mpi 1)
   set(mpi_prefix_or_blank)
-  if (${CATALYST_USE_MPI})
+  if (CATALYST_USE_MPI)
     find_package(MPI COMPONENTS CXX C REQUIRED)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
@@ -78,7 +78,7 @@ if (BUILD_TESTING)
 
 
   # Remove one invocation of execute
-  if (${CATALYST_USE_MPI})
+  if (CATALYST_USE_MPI)
     add_test(NAME remove_execute_invc0
              COMMAND "${CMAKE_COMMAND}" -E rm
                      "${data_dump_directory}/execute_invc0_params.conduit_bin.${num_ranks_if_mpi}.0")

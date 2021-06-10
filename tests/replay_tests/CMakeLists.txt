@@ -3,7 +3,7 @@ project(CATALYST_REPLAY_TESTS)
 
 # These tests require that we use num_ranks != 1 at least once.
 # Hence, we can not run it unless MPI is enabled
-if (${CATALYST_USE_MPI})
+if (CATALYST_USE_MPI)
   add_catalyst_test(replay_high_num_ranks)
   add_catalyst_test(replay_ranks_mismatch)
 endif()
