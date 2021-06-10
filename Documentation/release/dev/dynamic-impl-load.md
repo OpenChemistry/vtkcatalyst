@@ -9,6 +9,12 @@ To select an implementation, the `catalyst_load/implementation` and
 `catalyst_load/search_paths/*` settings passed into `catalyst_initialize` are
 used to select and find the implementation library and load it.
 
+Instead of the `catalyst_library` CMake API applying properties to an existing
+target, there is now `catalyst_implementation` to create an implementation
+given a target and implementation name. The actual implementation will also
+need to be added to the target either through the `SOURCES` argument or using
+`target_sources`.
+
   - All Catalyst API functions now return an error code. This is primarily to
     allow `catalyst_initialize` to return the status of the backing
     implementation.

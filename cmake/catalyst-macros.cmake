@@ -2,74 +2,98 @@
 # API used to build Catalyst API implementations.
 
 #[==[
-Mark a target as the Catalyst API implementation.
+Make a catalyst implementation library.
 
 ~~~{.cmake}
-catalyst_library(
-  TARGET    <target>
+catalyst_implementation(
+  TARGET  <target>
+  NAME    <name>
+  [EXPORT <export>]
+  [SOURCES <source>...]
   [LIBRARY_DESTINATION <destination>]
-  [INSTALL_EXPORT_DEFAULT]
   )
 ~~~
 
-The `TARGET` identifies the target added using an `add_library` call.
-This function ensures that properties on the target are set up
-appropriately so that the generated library is ABI compatible
-with the Catalyst stub implementation.
+The `TARGET` identifies the target to create in this function. This function
+creates source files to adapt to the Catalyst ABI and creates a header for use
+in the actual implementation.
 
-`LIBRARY_DESTINATION` if specified, is used to determine the install destination.
-If not specified, no install rule is added.
+`LIBRARY_DESTINATION` defaults to `${CMAKE_INSTALL_LIBDIR}/catalyst` and
+indicates where the library will be placed in the build and install tree.
 
-`INSTALL_EXPORT_DEFAULT` is useful in projects that include Catalyst as a
-sub-project (instead of using it externally) to build Catalyst implementations.
-For such projects, the Catalyst library is often built as a part of the project.
-Providing INSTALL_EXPORT_DEFAULT ensures that the Catalyst implementation is
-added as a part of the export set for the Catalyst targets so that
-`find_package(catalyst ... )` can work seamlessly.
-If `LIBRARY_DESTINATION` must be specified if `INSTALL_EXPORT_DEFAULT`
-specified.
-
-
+The library will be installed with the export set provided to `EXPORT` if
+given.
 #]==]
-function(catalyst_library)
-  cmake_parse_arguments(PARSE_ARGV 0 arg "INSTALL_EXPORT_DEFAULT" "TARGET;LIBRARY_DESTINATION" "")
-  if (arg_UNPARSED_ARGUMENT)
+function (catalyst_implementation)
+  cmake_parse_arguments(PARSE_ARGV 0 catalyst_impl
+    ""
+    "NAME;TARGET;LIBRARY_DESTINATION;EXPORT"
+    "SOURCES")
+  if (catalyst_impl_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR
-      "Unknown argument(s) passed to 'catalyst_library': '${arg_UNPARSED_ARGUMENT}'")
-  endif()
-  if (arg_INSTALL_EXPORT_DEFAULT AND NOT (arg_TARGET STREQUAL "catalyst"))
-    message(WARNING
-      "Target not named 'catalyst'. find_package(catalyst .. ) may not work as "
-      "expected.")
-  endif()
-  if (arg_INSTALL_EXPORT_DEFAULT AND NOT DEFINED arg_LIBRARY_DESTINATION)
-    message(WARNING
-      "'INSTALL_EXPORT_DEFAULT' specified without 'LIBRARY_DESTINATION'."
-      "Argument has no effect.")
-  endif()
+      "Unknown argument(s) passed to 'catalyst_implementation': '${catalyst_impl_UNPARSED_ARGUMENTS}'")
+  endif ()
 
-  target_link_libraries(${arg_TARGET}
-    PUBLIC
-      catalyst::core
-      catalyst::conduit_headers
+  if (NOT catalyst_impl_NAME)
+    message(FATAL_ERROR
+      "The `NAME` argument is required for `catalyst_implementation`.")
+  endif ()
+
+  if (NOT catalyst_impl_TARGET)
+    message(FATAL_ERROR
+      "The `TARGET` argument is required for `catalyst_implementation`.")
+  endif ()
+
+  if (NOT catalyst_impl_LIBRARY_DESTINATION)
+    set(catalyst_impl_LIBRARY_DESTINATION
+      "${CMAKE_INSTALL_LIBDIR}/catalyst")
+  endif ()
+
+  configure_file(
+    "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/catalyst_impl.c.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.c"
+    @ONLY)
+  configure_file(
+    "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/catalyst_impl.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.h"
+    @ONLY)
+
+  if (BUILD_SHARED_LIBS)
+    set(catalyst_impl_library_type MODULE)
+  else ()
+    set(catalyst_impl_library_type STATIC)
+  endif ()
+
+  if (catalyst_impl_LIBRARY_DESTINATION)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${catalyst_impl_LIBRARY_DESTINATION}")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${catalyst_impl_LIBRARY_DESTINATION}")
+  endif ()
+
+  add_library("${catalyst_impl_TARGET}" "${catalyst_impl_library_type}"
+    "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.c"
+    "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.h"
+    ${catalyst_impl_SOURCES})
+  target_include_directories("${catalyst_impl_TARGET}"
     PRIVATE
-      catalyst::conduit
-      catalyst::blueprint)
-  set_target_properties(${arg_TARGET}
+      "${CMAKE_CURRENT_BINARY_DIR}")
+  target_link_libraries("${catalyst_impl_TARGET}"
+    PUBLIC
+      catalyst::catalyst)
+  set_target_properties("${catalyst_impl_TARGET}"
     PROPERTIES
-      VERSION   "${CATALYST_ABI_VERSION}"
-      SOVERSION "${CATALYST_ABI_VERSION}"
-      OUTPUT_NAME "catalyst")
+      OUTPUT_NAME "catalyst-${catalyst_impl_NAME}")
 
-  set (_exports)
-  if (arg_INSTALL_EXPORT_DEFAULT)
-    set (_exports EXPORT Catalyst)
-  endif()
-  if (arg_LIBRARY_DESTINATION)
+  set(catalyst_impl_export_args)
+  if (catalyst_impl_EXPORT)
+    set(catalyst_impl_export_args
+      EXPORT "${catalyst_impl_EXPORT}")
+  endif ()
+
+  if (catalyst_impl_LIBRARY_DESTINATION)
     install(
-      TARGETS ${arg_TARGET}
-      ${_exports}
-      RUNTIME DESTINATION ${arg_LIBRARY_DESTINATION}
-      LIBRARY DESTINATION ${arg_LIBRARY_DESTINATION})
-  endif()
-endfunction()
+      TARGETS "${catalyst_impl_TARGET}"
+      ${catalyst_impl_export_args}
+      RUNTIME DESTINATION "${catalyst_impl_LIBRARY_DESTINATION}"
+      LIBRARY DESTINATION "${catalyst_impl_LIBRARY_DESTINATION}")
+  endif ()
+endfunction ()

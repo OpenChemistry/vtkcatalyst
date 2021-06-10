@@ -37,35 +37,32 @@ implementation.
                  REQUIRED
                  COMPONENTS SDK)
 
-    # Use `add_library` to add a library with the C (or C++) code
-    # that is your implementation the Catalyst API.
-    add_library(MyCustomCatalystImpl
-                MyCustomCatalystImpl.cxx)
+    # use this function call to create a Catalyst API implementation.
+    catalyst_implementation(
+      TARGET  MyCustomCatalystImpl
+      NAME    MyImplName
+      SOURCES MyCustomCatalystImpl.cxx)
 
-    # use this function call to mark any library as the
-    # Catalyst API implementation.
-    catalyst_library(
-      TARGET MyCustomCatalystImpl)
-
-That is it! `catalyst_library` sets up appropriate CMake
-target-properties on the library including setting its name and version number.
-This function is only available when the `SDK` component is explicitly requested
-in the `find_package(catalyst .. )` call.
+That is it! `catalyst_implementation` creates the library with the appropriate
+CMake target-properties on the library including setting its name and version
+number. This function is only available when the `SDK` component is explicitly
+requested in the `find_package(catalyst .. )` call.
 
 Implementing Catalyst API
 =========================
 
 Providing an implementation for the Catalyst API implies providing code for the
 four `catalyst_` functions that are part of the Catalyst API,
-`catalyst_initialize`, `catalyst_finalize`, `catalyst_execute`, and
-`catalyst_about`.
+`catalyst_initialize_MyImplName`, `catalyst_finalize_MyImplName`,
+`catalyst_execute_MyImplName`, and `catalyst_about_MyImplName`.
 
-To do that, simply include `catalyst.h` header in your implementation file and
-add definitions for these functions. Definitions for all the four functions must
-be provided. You can choose to invoke the default stub implementation for any of
-the functions by including the `catalyst_stub.h` header and then calling
-`catalyst_stub_initialize`, `catalyst_stub_finalize`, `catalyst_stub_execute`,
-or `catalyst_stub_about` in your implementations for the corresponding methods.
+To do that, simply include `catalyst.h` and `catalyst_impl_MyImplName.h`
+headers in your implementation file and add definitions for these functions.
+Definitions for all the four functions must be provided. You can choose to
+invoke the default stub implementation for any of the functions by including
+the `catalyst_stub.h` header and then calling `catalyst_stub_initialize`,
+`catalyst_stub_finalize`, `catalyst_stub_execute`, or `catalyst_stub_about` in
+your implementations for the corresponding methods.
 
 If your custom implementation is using C++, you can include
 `c/conduit_cpp_to_c.hpp` headers to convert the `conduit_node` pointer to a
@@ -81,7 +78,7 @@ the `conduit::Node` API which is generally friendlier than the C API.
 
     ...
 
-    enum catalyst_error catalyst_about(conduit_node* params)
+    enum catalyst_error catalyst_about_MyImplName(conduit_node* params)
     {
       // convert to conduit::Node
       conduit::Node &cpp_params = (*conduit::cpp_node(params));
