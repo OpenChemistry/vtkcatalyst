@@ -31,7 +31,6 @@ if (BUILD_TESTING)
       catalyst::catalyst)
 
   set(num_ranks 10)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
   set(mpi_prefix
       ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks})
 

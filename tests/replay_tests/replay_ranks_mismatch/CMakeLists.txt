@@ -19,9 +19,6 @@ catalyst_library(TARGET replay_ranks_mismatch_adaptor)
 
 include(CTest)
 if (BUILD_TESTING)
-  # We expect this test to only run if mpi is enabled
-  find_package(MPI COMPONENTS CXX C REQUIRED)
-
   # Add a test that links against the standard Catalyst library
   # However at runtime ensures the implementation built here
   # is being used.
