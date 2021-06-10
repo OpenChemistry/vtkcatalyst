@@ -7,12 +7,14 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "catalyst_impl_replay.h"
+
 // Call the stub implementation and check the node passed in.
 
 //-----------------------------------------------------------------------------
-void catalyst_initialize(const conduit_node* params)
+enum catalyst_error catalyst_initialize_replay(const conduit_node* params)
 {
-  catalyst_stub_initialize(params);
+  enum catalyst_error err = catalyst_stub_initialize(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "initialize")
@@ -30,12 +32,14 @@ void catalyst_initialize(const conduit_node* params)
     msg << "ERROR: Expected node data to be equal to 10, got " << n["data"].as_int32() << std::endl;
     throw std::runtime_error(msg.str());
   }
+
+  return err;
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_execute(const conduit_node* params)
+enum catalyst_error catalyst_execute_replay(const conduit_node* params)
 {
-  catalyst_stub_execute(params);
+  enum catalyst_error err = catalyst_stub_execute(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "execute")
@@ -54,12 +58,14 @@ void catalyst_execute(const conduit_node* params)
         << std::endl;
     throw std::runtime_error(msg.str());
   }
+
+  return err;
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_finalize(const conduit_node* params)
+enum catalyst_error catalyst_finalize_replay(const conduit_node* params)
 {
-  catalyst_stub_finalize(params);
+  enum catalyst_error err = catalyst_stub_finalize(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "finalize")
@@ -78,10 +84,12 @@ void catalyst_finalize(const conduit_node* params)
 
     throw std::runtime_error(msg.str());
   }
+
+  return err;
 }
 
 //-----------------------------------------------------------------------------
-void catalyst_about(conduit_node* params)
+enum catalyst_error catalyst_about_replay(conduit_node* params)
 {
-  catalyst_stub_about(params);
+  return catalyst_stub_about(params);
 }
