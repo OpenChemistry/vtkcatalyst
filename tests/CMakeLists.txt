@@ -1,7 +1,8 @@
 find_package(GTest)
 if (GTest_FOUND)
   add_subdirectory(conduit_tests)
-  if(CATALYST_BUILD_REPLAY)
-    add_subdirectory(replay_tests)
-  endif()
 endif ()
+
+if(CATALYST_BUILD_REPLAY)
+  add_subdirectory(replay_tests)
+endif()
