@@ -1,3 +1,5 @@
+add_subdirectory(catalyst_tests)
+
 find_package(GTest)
 if (GTest_FOUND)
   add_subdirectory(conduit_tests)
