@@ -65,9 +65,6 @@ if (CATALYST_BUILD_TESTING)
   add_install_test()
   add_subdirectory(examples)
 
-  find_package(GTest)
-  if (GTEST_FOUND)
-    add_subdirectory(tests)
-  endif()
+  add_subdirectory(tests)
 endif()
 #------------------------------------------------------------------------------
