@@ -10,8 +10,8 @@ include(CMakeDependentOption)
 # already defined.
 option(CATALYST_BUILD_SHARED_LIBS "Enable shared libs" ON)
 option(CATALYST_BUILD_TESTING "Enable testing" ON)
-option(CATALYST_BUILD_REPLAY "Build the catalyst replay executable" ON)
-cmake_dependent_option(CATALYST_USE_MPI "Enable MPI related features" OFF "CATALYST_BUILD_REPLAY" OFF)
+option(CATALYST_BUILD_TOOLS "Build the catalyst tools" ON)
+option(CATALYST_USE_MPI "Enable MPI related features" OFF)
 
 #------------------------------------------------------------------------------
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -46,11 +46,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(src)
-
-if(CATALYST_BUILD_REPLAY)
-  set(catalyst_replay_command)
-  add_subdirectory(replay)
-endif()
 
 add_subdirectory(thirdparty/conduit)
 
