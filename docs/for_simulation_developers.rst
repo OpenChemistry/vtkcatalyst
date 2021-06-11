@@ -84,7 +84,7 @@ catalyst_initialize
 
 .. code-block:: c
 
-  void catalyst_initialize(const conduit_node* params);
+  enum catalyst_error catalyst_initialize(const conduit_node* params);
 
 This function must be called once to initialize Catalyst. Metadata that can be
 used to configure the initialize is provided using a `params` pointer.
@@ -94,7 +94,7 @@ catalyst_finalize
 
 .. code-block:: c
 
-  void catalyst_finalize(const conduit_node* params);
+  enum catalyst_error catalyst_finalize(const conduit_node* params);
 
 This function must be called once to finalize Catalyst. Metadata is passed using
 `params` pointer.
@@ -104,7 +104,7 @@ catalyst_execute
 
 .. code-block:: c
 
-  void catalyst_execute(const conduit_node* params);
+  enum catalyst_error catalyst_execute(const conduit_node* params);
 
 This function is called for every time step as the simulation advances. This is
 the call in which the analysis may execute. `params` provides metadata as well
@@ -116,7 +116,7 @@ catalyst_about
 
 .. code-block:: c
 
-  void catalyst_about(conduit_node* params);
+  enum catalyst_error catalyst_about(conduit_node* params);
 
 This function fills up the `params` instance with metadata about the Catalyst
 library being used.

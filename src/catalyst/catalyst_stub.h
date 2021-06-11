@@ -6,6 +6,7 @@
 #ifndef catalyst_stub_h
 #define catalyst_stub_h
 
+#include "catalyst_api.h"
 #include "catalyst_dump_node.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,24 +16,27 @@
 // implementation if you want to forward calls to the stub
 // implementation.
 
-inline void catalyst_stub_initialize(const conduit_node* params)
+inline enum catalyst_error catalyst_stub_initialize(const conduit_node* params)
 {
   dump_node(params, "initialize", 0, false);
+  return catalyst_error_ok;
 }
 
-inline void catalyst_stub_finalize(const conduit_node* params)
+inline enum catalyst_error catalyst_stub_finalize(const conduit_node* params)
 {
   dump_node(params, "finalize", 0, false);
+  return catalyst_error_ok;
 }
 
-inline void catalyst_stub_execute(const conduit_node* params)
+inline enum catalyst_error catalyst_stub_execute(const conduit_node* params)
 {
   static unsigned long invocations = 0;
   dump_node(params, "execute", invocations, true);
   invocations++;
+  return catalyst_error_ok;
 }
 
-inline void catalyst_stub_about(conduit_node* params)
+inline enum catalyst_error catalyst_stub_about(conduit_node* params)
 {
   conduit_node_set_path_char8_str(params, "catalyst/version", CATALYST_VERSION);
   conduit_node_set_path_char8_str(params, "catalyst/abi_version", CATALYST_ABI_VERSION);
@@ -43,6 +47,8 @@ inline void catalyst_stub_about(conduit_node* params)
   conduit_about(conduit_info);
   conduit_node_set_path_node(params, "catalyst/tpl/conduit", conduit_info);
   conduit_node_destroy(conduit_info);
+
+  return catalyst_error_ok;
 }
 
 #endif
