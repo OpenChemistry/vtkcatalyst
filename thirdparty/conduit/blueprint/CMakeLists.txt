@@ -49,7 +49,7 @@ set(blueprint_c_sources
 
 #-------------------------------------------------------------------------
 # build blueprint library
-add_library(blueprint STATIC
+add_library(blueprint OBJECT
   ${blueprint_sources}
   ${blueprint_c_sources})
 target_link_libraries(blueprint
@@ -61,6 +61,12 @@ target_include_directories(blueprint
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/c>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
+if (BUILD_SHARED_LIBS)
+  target_compile_definitions(blueprint
+    PRIVATE
+      conduit_EXPORTS
+      conduit_blueprint_EXPORTS)
+endif ()
 add_library(catalyst::blueprint ALIAS blueprint)
 c_install_targets(blueprint)
 c_install_headers(

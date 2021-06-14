@@ -57,13 +57,12 @@
 // -- define proper lib exports for various platforms -- 
 //-----------------------------------------------------------------------------
 
-// xxx(kitware) keep all CONDUIT_API hidden.
-//
-// #cmakedefine CONDUIT_WINDOWS_DLL_EXPORTS "${CONDUIT_WINDOWS_DLL_EXPORTS}"
-//#if defined(CONDUIT_EXPORTS) || defined(conduit_EXPORTS)
-//    /* define catch all def */
-//    #define CONDUIT_EXPORTS_DEFINED 1
-//#endif
+#cmakedefine CONDUIT_WINDOWS_DLL_EXPORTS "${CONDUIT_WINDOWS_DLL_EXPORTS}"
+
+#if defined(CONDUIT_EXPORTS) || defined(conduit_EXPORTS)
+    /* define catch all def */
+    #define CONDUIT_EXPORTS_DEFINED 1
+#endif
 
 #if defined(_WIN32)
     #if defined(CONDUIT_WINDOWS_DLL_EXPORTS)
@@ -88,7 +87,7 @@
     #if __GNUC__ >= 4 && defined(CONDUIT_EXPORTS_DEFINED)
        #define CONDUIT_API __attribute__ ((visibility("default")))
     #else
-       #define CONDUIT_API __attribute__ ((visibility("hidden")))
+        #define CONDUIT_API /* hidden by default */
     #endif
 #endif
 

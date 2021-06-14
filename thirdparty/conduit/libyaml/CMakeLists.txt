@@ -18,7 +18,7 @@ set(libyaml_headers
     include/catalyst_yaml_mangle.h
     src/yaml_private.h)
 
-add_library(libyaml STATIC
+add_library(libyaml OBJECT
   ${libyaml_sources})
 target_include_directories(libyaml
   PUBLIC

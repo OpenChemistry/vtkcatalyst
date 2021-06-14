@@ -27,10 +27,22 @@ add_library(catalyst
   ${headers})
 target_link_libraries(catalyst
   PUBLIC
-    catalyst::conduit
+    catalyst::conduit_headers
     catalyst::catalyst_headers
   PRIVATE
+    conduit
+    blueprint
+    libyaml
+    b64
     ${CMAKE_DL_LIBS})
+
+if (BUILD_SHARED_LIBS)
+  target_compile_definitions(catalyst
+    PRIVATE
+      conduit_EXPORTS
+      conduit_blueprint_EXPORTS)
+endif ()
+
 add_library(catalyst::catalyst ALIAS catalyst)
 
 if (CATALYST_USE_MPI)

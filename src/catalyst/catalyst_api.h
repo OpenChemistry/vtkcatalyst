@@ -6,6 +6,8 @@
 #ifndef catalyst_api_h
 #define catalyst_api_h
 
+#include <catalyst_export.h>
+
 // include mangled conduit C API.
 #include <conduit.h>
 

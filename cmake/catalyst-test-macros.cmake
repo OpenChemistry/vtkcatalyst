@@ -11,23 +11,17 @@ function(_add_example2 example_or_test dir mode root)
             "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}")
   add_test(
     NAME    "${example_or_test}-${mode}-${dir}"
-    COMMAND "${CMAKE_CTEST_COMMAND}"
-            --build-generator
-              "${CMAKE_GENERATOR}"
-            --build-and-test
-              "${CMAKE_CURRENT_SOURCE_DIR}/${dir}"
-              "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}"
-            --build-options
-              "-DBUILD_TESTING:BOOL=ON"
-              "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
-              "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
-              "-Dcatalyst_DIR:PATH=${root}/${CATALYST_INSTALL_PACKAGE_DIR}"
-              ${replay_argument}
-              "-DCATALYST_USE_MPI:BOOL=${CATALYST_USE_MPI}"
-            --test-command
-              "${CMAKE_CTEST_COMMAND}"
-                -C $<CONFIGURATION>
-                -V)
+    COMMAND "${CMAKE_COMMAND}"
+            "-DCMAKE_GENERATOR=${CMAKE_GENERATOR}"
+            "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+            "-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}"
+            "-DCATALYST_INSTALL_PACKAGE_DIR=${CATALYST_INSTALL_PACKAGE_DIR}"
+            ${replay_argument}
+            "-Droot=${root}"
+            "-Ddir=${dir}"
+            "-Dmode=${mode}"
+            "-Dcatalyst_runtime_dir=$<TARGET_FILE_DIR:catalyst>"
+            -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/catalyst-test-path-setting.cmake")
   set_tests_properties("${example_or_test}-${mode}-${dir}"
     PROPERTIES
       FIXTURES_REQUIRED "fixture-${mode}-${dir}")
