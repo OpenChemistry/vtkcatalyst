@@ -20,6 +20,7 @@ cd build
 
 cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="$GIT_CLONE_PATH/.gitlab/gtest" \
     -DBUILD_GMOCK=OFF \
     -Dgtest_disable_pthreads=ON \
     ..
