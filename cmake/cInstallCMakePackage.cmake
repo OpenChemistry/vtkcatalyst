@@ -23,6 +23,10 @@ configure_package_config_file(
 
 configure_file("${CMAKE_CURRENT_LIST_DIR}/catalyst-macros.cmake"
                "${_binary_package_dir}/catalyst-macros.cmake" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/catalyst_impl.c.in"
+               "${_binary_package_dir}/catalyst_impl.c.in" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/catalyst_impl.h.in"
+               "${_binary_package_dir}/catalyst_impl.h.in" COPYONLY)
 #------------------------------------------------------------------------------
 # Get install directory functional
 
@@ -37,4 +41,6 @@ install(
   FILES       "${_binary_package_dir}/catalyst-version.cmake"
               "${_binary_package_dir}/catalyst-config.cmake"
               "${_binary_package_dir}/catalyst-macros.cmake"
+              "${_binary_package_dir}/catalyst_impl.c.in"
+              "${_binary_package_dir}/catalyst_impl.h.in"
   DESTINATION "${CATALYST_INSTALL_PACKAGE_DIR}")

@@ -13,30 +13,55 @@
 
 int main(int argc, char* argv[])
 {
+  if (argc < 2)
+  {
+    return EXIT_FAILURE;
+  }
+
 #ifdef CATALYST_USE_MPI
   MPI_Init(&argc, &argv);
 #endif
 
   conduit_cpp::Node node;
+  int ret = EXIT_SUCCESS;
+  enum catalyst_error err;
 
   int a = 10;
   node["data"].set_int32(a);
   node["stage"].set_char8_str("initialize");
-  catalyst_initialize(conduit_cpp::c_node(&node));
+  node["catalyst_load"]["implementation"].set_char8_str("replay");
+  node["catalyst_load"]["search_paths"]["example"].set_char8_str(argv[1]);
+  err = catalyst_initialize(conduit_cpp::c_node(&node));
+  if (err != catalyst_error_ok)
+  {
+    ret = EXIT_FAILURE;
+  }
 
   node["stage"].set_char8_str("execute");
   node["data"] = ++a;
   for (unsigned i = 0; i < 3; i++)
   {
-    catalyst_execute(conduit_cpp::c_node(&node));
+    err = catalyst_execute(conduit_cpp::c_node(&node));
+    if (err != catalyst_error_ok)
+    {
+      ret = EXIT_FAILURE;
+    }
   }
 
   node["stage"].set_char8_str("finalize");
   node["data"] = ++a;
-  catalyst_finalize(conduit_cpp::c_node(&node));
+  err = catalyst_finalize(conduit_cpp::c_node(&node));
+  if (err != catalyst_error_ok)
+  {
+    ret = EXIT_FAILURE;
+  }
 
   node["stage"].set_char8_str("about");
-  catalyst_about(conduit_cpp::c_node(&node));
+  err = catalyst_about(conduit_cpp::c_node(&node));
+  if (err != catalyst_error_ok)
+  {
+    ret = EXIT_FAILURE;
+  }
 
 #ifdef CATALYST_USE_MPI
   MPI_Finalize();
