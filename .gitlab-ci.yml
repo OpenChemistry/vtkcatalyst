@@ -28,8 +28,6 @@ stages:
 
 # Linux
 
-## Normal build
-
 build-test:fedora33:
     extends:
         - .fedora33_basic
