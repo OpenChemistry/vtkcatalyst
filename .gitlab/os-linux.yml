@@ -2,52 +2,9 @@
 
 ## Base images
 
-### CentOS
-#
-# CentOS 7 is the primary deployment platform. This gains us maximum
-# compatibility with many Linux distros while also providing easy ways to get
-# newer compilers.
-
-.centos7:
-    image: "kitware/paraview:ci-superbuild-centos7-20200210"
-
-    variables:
-        GIT_SUBMODULE_STRATEGY: none
-        LAUNCHER: "scl enable devtoolset-7 --"
-        GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab-kitware-sciviz-ci
-
-.centos7_plain:
-    extends: .centos7
-
-    variables:
-        CMAKE_CONFIGURATION: linux_plain
-
-.centos7_replay:
-    extends: .centos7
-
-    variables:
-        CMAKE_CONFIGURATION: linux_replay
-
-
-
-.fedora31:
-    image: "kitware/paraview:ci-superbuild-fedora31-20200218"
-
-    variables:
-        GIT_SUBMODULE_STRATEGY: none
-        GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab-kitware-sciviz-ci
-
-.fedora31_plain:
-    extends: .fedora31
-
-    variables:
-        CMAKE_CONFIGURATION: linux_plain
-
-
 .fedora33:
-    image: "kitware/paraview:ci-fedora33-20210221"
+    image: "kitware/paraview:ci-catalyst-fedora33-20210614"
     variables:
-        GIT_SUBMODULE_STRATEGY: none
         GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab-kitware-sciviz-ci
 
 .fedora_mpich_addon:
@@ -58,20 +15,34 @@
         # https://wiki.mpich.org/mpich/index.php/Frequently_Asked_Questions#Q:_Why_MPI_Put_raises_SIGBUS_error_inside_docker.3F
         MPIR_CVAR_NOLOCAL: 1
 
-.fedora33_mpi:
+.fedora33_basic:
+    extends:
+        - .fedora33
+
+    variables:
+        CMAKE_CONFIGURATION: fedora33
+
+.fedora33_replay:
+    extends:
+        - .fedora33
+
+    variables:
+        CMAKE_CONFIGURATION: fedora33_replay
+
+.fedora33_mpi_replay:
     extends:
         - .fedora33
         - .fedora_mpich_addon
 
     variables:
-        CMAKE_CONFIGURATION: fedora33_mpi
-
+        CMAKE_CONFIGURATION: fedora33_mpi_replay
 
 ## Tags
 
 .linux_builder_tags:
     tags:
         - build
+        - paraview
         - docker
         - linux
 

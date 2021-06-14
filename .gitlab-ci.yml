@@ -30,25 +30,25 @@ stages:
 
 ## Normal build
 
-build-test:linux-plain:
+build-test:fedora33:
     extends:
-        - .centos7_plain
+        - .fedora33_basic
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
         - .run_automatically
 
-build-test:linux-replay:
+build-test:fedora33-replay:
     extends:
-        - .centos7_replay
+        - .fedora33_replay
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
         - .run_automatically
 
-build-test:fedora33-mpi:
+build-test:fedora33-mpi-replay:
     extends:
-        - .fedora33_mpi
+        - .fedora33_mpi_replay
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
