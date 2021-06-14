@@ -169,8 +169,38 @@ enum catalyst_error catalyst_about(conduit_node* params)
 #ifdef _WIN32
 char* default_search_path()
 {
-  // TODO
-  return NULL;
+  MEMORY_BASIC_INFORMATION mbi;
+  VirtualQuery(catalyst_initialize, &mbi, sizeof(mbi));
+  wchar_t pathBuf[16384];
+  if (!GetModuleFileNameW((HMODULE)mbi.AllocationBase, pathBuf, sizeof(pathBuf)))
+  {
+    return NULL;
+  }
+
+  size_t size = WideCharToMultiByte(CP_UTF8, 0, pathBuf, -1, NULL, 0, NULL, NULL);
+  char* path_utf8 = (char*)malloc(size);
+  if (!path_utf8)
+  {
+    return NULL;
+  }
+  path_utf8[0] = '\0';
+  WideCharToMultiByte(CP_UTF8, 0, pathBuf, -1, path_utf8, size, NULL, NULL);
+
+  // The Windows API will always use `\` separators here.
+  char* dirsep = strrchr(path_utf8, '\\');
+  *dirsep = '\0';
+
+  size_t dirlen = strlen(path_utf8) + 9 + 1;
+  char* directory_name = (char*)malloc(dirlen);
+  if (!directory_name)
+  {
+    return NULL;
+  }
+
+  snprintf(directory_name, dirlen, "%s/catalyst", path_utf8);
+  free(path_utf8);
+
+  return directory_name;
 }
 
 catalyst_handle_t handle_default()
@@ -180,8 +210,19 @@ catalyst_handle_t handle_default()
 
 catalyst_handle_t handle_open(const char* directory, const char* libname)
 {
-  // TODO
-  return NULL;
+  size_t path_len = strlen(directory) + strlen(libname) + 9 + 5 + 1;
+  char* full_library_path = (char*)malloc(path_len);
+  if (!full_library_path)
+  {
+    return NULL;
+  }
+
+  snprintf(full_library_path, path_len, "%s/catalyst-%s.dll", directory, libname);
+
+  catalyst_handle_t handle = LoadLibraryExA(full_library_path, NULL, 0);
+
+  free(full_library_path);
+  return handle;
 }
 
 void* handle_load_symbol(catalyst_handle_t handle, const char* symbol)
