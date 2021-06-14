@@ -18,6 +18,6 @@ cd "$target"
 mkdir build
 cd build
 
-cmake .. -DBUILD_GMOCK=OFF -Dgtest_disable_pthreads=ON
+cmake -GNinja .. -DBUILD_GMOCK=OFF -Dgtest_disable_pthreads=ON
 cmake --build .
 cmake --build . --target install
