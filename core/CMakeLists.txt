@@ -20,9 +20,8 @@ target_include_directories(core
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 add_library(catalyst::core ALIAS core)
 
-if (${CATALYST_USE_MPI})
-  target_link_libraries(core INTERFACE ${MPI_LIBRARIES})
-  target_include_directories(core INTERFACE ${MPI_INCLUDE_PATH})
+if (CATALYST_USE_MPI)
+  target_link_libraries(core INTERFACE MPI::MPI_C)
   target_compile_definitions(core INTERFACE CATALYST_USE_MPI)
 endif()
 

@@ -17,6 +17,7 @@ cmake_dependent_option(CATALYST_USE_MPI "Enable MPI related features" OFF "CATAL
 #------------------------------------------------------------------------------
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(catalyst-macros)
+include(catalyst-internal-macros)
 include(cCompilerChecks)
 include(cInitializeBuildType)
 include(cDirectories)

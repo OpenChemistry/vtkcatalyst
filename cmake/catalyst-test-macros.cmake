@@ -1,4 +1,10 @@
 function(_add_example2 example_or_test dir mode root)
+  set(replay_argument)
+  if (TARGET catalyst_replay)
+    set(replay_argument
+      "-Dcatalyst_replay_command:PATH=$<TARGET_FILE:catalyst_replay>")
+  endif ()
+
   add_test(
     NAME    "${example_or_test}-${mode}-${dir}-prepare"
     COMMAND "${CMAKE_COMMAND}" -E rm -rf
@@ -16,7 +22,7 @@ function(_add_example2 example_or_test dir mode root)
               "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
               "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
               "-Dcatalyst_DIR:PATH=${root}/${CATALYST_INSTALL_PACKAGE_DIR}"
-              "-Dcatalyst_replay_command:PATH=${catalyst_replay_command}"
+              ${replay_argument}
               "-DCATALYST_USE_MPI:BOOL=${CATALYST_USE_MPI}"
             --test-command
               "${CMAKE_CTEST_COMMAND}"

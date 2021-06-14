@@ -32,8 +32,7 @@ if (BUILD_TESTING)
 
   set(num_ranks_if_mpi 2)
   set(mpi_prefix_or_blank)
-  if (${CATALYST_USE_MPI})
-    find_package(MPI COMPONENTS CXX C REQUIRED)
+  if (CATALYST_USE_MPI)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
@@ -78,7 +77,7 @@ if (BUILD_TESTING)
 
 
   # Remove one of the ranks' initialize data
-  if (${CATALYST_USE_MPI})
+  if (CATALYST_USE_MPI)
     add_test(NAME remove_initialize
              COMMAND "${CMAKE_COMMAND}" -E rm
                      "${data_dump_directory}/initialize_params.conduit_bin.${num_ranks_if_mpi}.0")
@@ -104,7 +103,7 @@ if (BUILD_TESTING)
   # The expected error message will be different based on how many files we write out,
   # which depends on the number of ranks.
   set(pass_str "ERROR: Missing node data for at least one stage")
-  if (${CATALYST_USE_MPI} AND ${num_ranks_if_mpi} GREATER 1)
+  if (CATALYST_USE_MPI AND ${num_ranks_if_mpi} GREATER 1)
     set(pass_str "ERROR: Mismatch in the number of calls to initialize or finalize")
   endif()
 

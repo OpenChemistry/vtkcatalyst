@@ -3,7 +3,7 @@
  * accompanying License.txt
  */
 
-#include "catalyst.hpp"
+#include <catalyst.hpp>
 
 #ifdef CATALYST_USE_MPI
 #include "mpi.h"

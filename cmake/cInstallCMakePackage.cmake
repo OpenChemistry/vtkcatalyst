@@ -6,7 +6,6 @@ set(_binary_package_dir "${CMAKE_BINARY_DIR}/${CATALYST_INSTALL_PACKAGE_DIR}")
 # These are targets for users of Catalyst
 # i.e the simulation codes.
 export(
-  # TARGETS   core conduit catalyst
   EXPORT    Catalyst
   NAMESPACE catalyst::
   FILE      ${_binary_package_dir}/catalyst-targets.cmake)

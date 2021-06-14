@@ -12,6 +12,7 @@
 #define PATH_SEP '/'
 #endif
 
+#include <iostream>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -156,7 +157,10 @@ int parse_directory(const std::string& catalyst_data_dump_directory,
         num_execute, num_finalize, num_execute_invoc_per_rank);
 
       if (status != 0)
+      {
+        FindClose(hFind);
         return 1;
+      }
     }
   } while (FindNextFile(hFind, &ffd) != 0);
   FindClose(hFind);
@@ -182,7 +186,10 @@ int parse_directory(const std::string& catalyst_data_dump_directory,
       num_finalize, num_execute_invoc_per_rank);
 
     if (status != 0)
+    {
+      closedir(dir);
       return 1;
+    }
   }
 
   closedir(dir);

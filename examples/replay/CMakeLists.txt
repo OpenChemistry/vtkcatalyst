@@ -26,8 +26,7 @@ if (BUILD_TESTING)
 
   set(num_ranks_if_mpi 2)
   set(mpi_prefix_or_blank)
-  if (${CATALYST_USE_MPI})
-    find_package(MPI COMPONENTS CXX C REQUIRED)
+  if (CATALYST_USE_MPI)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
