@@ -68,7 +68,8 @@ foreach (test IN LISTS basic_tests)
     add_executable("${test}" "${test}.cpp")
     target_link_libraries("${test}"
         PRIVATE
-            ${GTEST_BOTH_LIBRARIES}
+            GTest::gtest
+            GTest::gtest_main
             catalyst
             Threads::Threads)
     add_test(NAME "${test}" COMMAND "${test}")
