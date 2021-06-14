@@ -96,7 +96,7 @@ add_library(conduit STATIC
     ${conduit_c_sources})
 target_link_libraries(conduit
   PUBLIC
-    catalyst::core
+    catalyst::catalyst_headers
     catalyst::conduit_headers
   PRIVATE
     libyaml
