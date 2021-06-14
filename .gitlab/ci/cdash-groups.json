@@ -1,0 +1,19 @@
+{
+    "latest-catalyst": [
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora33]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora33_replay]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora33_mpi_replay]"
+        }
+    ]
+}
