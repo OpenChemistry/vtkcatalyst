@@ -55,10 +55,10 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "catalyst_export.h"
 #include "catalyst_conduit_mangle.h"
 #include "conduit_bitwidth_style_types.h"
 #include "conduit_endianness_types.h"
+#include "conduit_exports.h"
 
 //-----------------------------------------------------------------------------
 // -- begin extern C
@@ -73,51 +73,51 @@ extern "C" {
 
 typedef void  conduit_datatype;
 
-CATALYST_EXPORT int conduit_datatype_is_empty(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_object(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_list(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_empty(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_object(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_list(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_number(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_floating_point(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_integer(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_signed_integer(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_unsigned_integer(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_number(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_floating_point(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_integer(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_signed_integer(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_unsigned_integer(const conduit_datatype *cdatatype);
     
-CATALYST_EXPORT int conduit_datatype_is_int8(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_int16(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_int32(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_int64(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_int8(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_int16(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_int32(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_int64(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_uint8(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_uint16(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_uint32(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_uint64(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_uint8(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_uint16(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_uint32(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_uint64(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_float32(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_float64(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_float32(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_float64(const conduit_datatype *cdatatype);
 
 // skipping b/c we don't provide this yet, unsure if we will
-// CATALYST_EXPORT int conduit_datatype_is_index_t(const conduit_datatype *cdatatype);
+// CONDUIT_API int conduit_datatype_is_index_t(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_char(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_short(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_int(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_long(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_char(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_short(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_int(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_long(const conduit_datatype *cdatatype);
     
-CATALYST_EXPORT int conduit_datatype_is_unsigned_char(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_unsigned_short(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_unsigned_int(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_unsigned_long(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_unsigned_char(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_unsigned_short(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_unsigned_int(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_unsigned_long(const conduit_datatype *cdatatype);
  
-CATALYST_EXPORT int conduit_datatype_is_float(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_double(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_float(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_double(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_string(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_char8_str(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_string(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_char8_str(const conduit_datatype *cdatatype);
 
-CATALYST_EXPORT int conduit_datatype_is_little_endian(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_is_big_endian(const conduit_datatype *cdatatype);
-CATALYST_EXPORT int conduit_datatype_endianness_matches_machine(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_little_endian(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_is_big_endian(const conduit_datatype *cdatatype);
+CONDUIT_API int conduit_datatype_endianness_matches_machine(const conduit_datatype *cdatatype);
 
 #ifdef __cplusplus
 }

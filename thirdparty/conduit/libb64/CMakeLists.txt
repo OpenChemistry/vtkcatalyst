@@ -10,7 +10,7 @@ set(libb64_headers
     include/b64/encode.h
     include/b64/catalyst_b64_mangle.h)
 
-add_library(b64 STATIC
+add_library(b64 OBJECT
   ${libb64_sources})
 target_include_directories(b64
   PUBLIC
