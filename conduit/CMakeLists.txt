@@ -91,16 +91,20 @@ c_install_targets(conduit_headers)
 
 #-------------------------------------------------------------------------
 # build conduit library
-add_library(conduit STATIC
+add_library(conduit OBJECT
     ${conduit_sources}
     ${conduit_c_sources})
 target_link_libraries(conduit
   PUBLIC
-    catalyst::catalyst_headers
     catalyst::conduit_headers
   PRIVATE
     libyaml
     b64
     rapidjson)
+if (BUILD_SHARED_LIBS)
+  target_compile_definitions(conduit
+    PRIVATE
+      conduit_EXPORTS)
+endif ()
 add_library(catalyst::conduit ALIAS conduit)
 c_install_targets(conduit)

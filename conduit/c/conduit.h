@@ -54,7 +54,7 @@
 //-----------------------------------------------------------------------------
 // -- includes for the public conduit c interface -- 
 //-----------------------------------------------------------------------------
-#include "catalyst_export.h"
+
 #include "catalyst_conduit_mangle.h"
 #include "conduit_node.h"
 #include "conduit_datatype.h"
@@ -71,7 +71,7 @@ extern "C" {
 // -- general conduit c interface methods --
 //-----------------------------------------------------------------------------
 
-CATALYST_EXPORT void conduit_about(conduit_node *cnode);
+CONDUIT_API void conduit_about(conduit_node *cnode);
 
 #ifdef __cplusplus
 }

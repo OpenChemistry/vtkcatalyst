@@ -73,7 +73,7 @@ extern "C" {
 //-----------------------------------------------------------------------------
 /// Allows other libraries to provide an alternate info message handler.
 //-----------------------------------------------------------------------------
-CATALYST_EXPORT void conduit_utils_set_info_handler( void(*on_info)
+CONDUIT_API void conduit_utils_set_info_handler( void(*on_info)
                                                      (const char *,
                                                       const char *,
                                                       int));
@@ -81,7 +81,7 @@ CATALYST_EXPORT void conduit_utils_set_info_handler( void(*on_info)
 //-----------------------------------------------------------------------------
 /// Allows other libraries to provide an alternate warning handler.
 //-----------------------------------------------------------------------------
-CATALYST_EXPORT void conduit_utils_set_warning_handler( void(*on_warning)
+CONDUIT_API void conduit_utils_set_warning_handler( void(*on_warning)
                                                          (const char *,
                                                           const char *,
                                                           int));
@@ -89,7 +89,7 @@ CATALYST_EXPORT void conduit_utils_set_warning_handler( void(*on_warning)
 //-----------------------------------------------------------------------------
 /// Allows other libraries to provide an alternate error handler.
 //-----------------------------------------------------------------------------
-CATALYST_EXPORT void conduit_utils_set_error_handler( void(*on_error)
+CONDUIT_API void conduit_utils_set_error_handler( void(*on_error)
                                                        (const char *,
                                                         const char *,
                                                         int));
