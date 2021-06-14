@@ -237,7 +237,7 @@ int handle_is_valid(catalyst_handle_t handle)
 #else
 char* default_search_path()
 {
-  catalyst_handle_t handle = dlsym(NULL, "catalyst_initialize");
+  catalyst_handle_t handle = dlsym(RTLD_DEFAULT, "catalyst_initialize");
   if (!handle)
   {
     return NULL;
