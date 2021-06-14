@@ -18,8 +18,9 @@ The `TARGET` identifies the target to create in this function. This function
 creates source files to adapt to the Catalyst ABI and creates a header for use
 in the actual implementation.
 
-`LIBRARY_DESTINATION` defaults to `${CMAKE_INSTALL_LIBDIR}/catalyst` and
-indicates where the library will be placed in the build and install tree.
+`LIBRARY_DESTINATION` defaults to `${CMAKE_INSTALL_BINDIR}/catalyst` on Windows
+and `${CMAKE_INSTALL_LIBDIR}/catalyst` elsewhere and indicates where the
+library will be placed in the build and install tree.
 
 The library will be installed with the export set provided to `EXPORT` if
 given.
@@ -45,8 +46,13 @@ function (catalyst_implementation)
   endif ()
 
   if (NOT catalyst_impl_LIBRARY_DESTINATION)
-    set(catalyst_impl_LIBRARY_DESTINATION
-      "${CMAKE_INSTALL_LIBDIR}/catalyst")
+    if (WIN32)
+      set(catalyst_impl_LIBRARY_DESTINATION
+        "${CMAKE_INSTALL_BINDIR}/catalyst")
+    else ()
+      set(catalyst_impl_LIBRARY_DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/catalyst")
+    endif ()
   endif ()
 
   configure_file(
