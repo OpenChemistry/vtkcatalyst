@@ -27,6 +27,7 @@ add_library(catalyst
   ${headers})
 target_link_libraries(catalyst
   PUBLIC
+    catalyst::blueprint_headers
     catalyst::conduit_headers
     catalyst::catalyst_headers
   PRIVATE
