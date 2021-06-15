@@ -47,7 +47,7 @@
 ################################
 # Core (conduit lib) Unit Tests
 ################################
-set(BASIC_TESTS
+set(basic_tests
     t_conduit_node
     t_conduit_node_compare
     t_conduit_node_info
@@ -64,9 +64,13 @@ set(BASIC_TESTS
 message(STATUS "Adding conduit lib unit tests")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-foreach(TEST ${BASIC_TESTS})
-    add_executable(${TEST} ${TEST}.cpp)
-    target_link_libraries(${TEST} ${GTEST_BOTH_LIBRARIES} catalyst Threads::Threads)
-    add_test(NAME ${TEST} COMMAND ${TEST})
-
-endforeach()
+foreach (test IN LISTS basic_tests)
+    add_executable("${test}" "${test}.cpp")
+    target_link_libraries("${test}"
+        PRIVATE
+            GTest::gtest
+            GTest::gtest_main
+            catalyst
+            Threads::Threads)
+    add_test(NAME "${test}" COMMAND "${test}")
+endforeach ()

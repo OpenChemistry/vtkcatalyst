@@ -2,6 +2,9 @@ set(CATALYST_BUILD_TESTING             ON CACHE BOOL "")
 set(CATALYST_BUILD_STUB_IMPLEMENTATION ON CACHE BOOL "")
 set(CATALYST_BUILD_SHARED_LIBS         ON CACHE BOOL "")
 
+set(CMAKE_PREFIX_PATH "$ENV{GIT_CLONE_PATH}/.gitlab/gtest"
+  CACHE STRING "")
+
 function (configuration_flag variable configuration)
   if ("$ENV{CMAKE_CONFIGURATION}" MATCHES "${configuration}")
     set("${variable}" ON CACHE BOOL "")

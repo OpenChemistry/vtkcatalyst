@@ -5,6 +5,8 @@ include:
 
     # OS builds.
     - local: .gitlab/os-linux.yml
+    - local: .gitlab/os-macos.yml
+    - local: .gitlab/os-windows.yml
 
 stages:
     - build-test
@@ -28,8 +30,6 @@ stages:
 
 # Linux
 
-## Normal build
-
 build-test:fedora33:
     extends:
         - .fedora33_basic
@@ -52,4 +52,40 @@ build-test:fedora33-mpi-replay:
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
+        - .run_automatically
+
+# macOS
+
+build-test:macos-arm64-replay:
+    extends:
+        - .macos_arm64_replay
+        - .cmake_build_macos
+        - .cmake_build_artifacts
+        - .macos_arm64_builder_tags
+        - .run_automatically
+
+build-test:macos-x86_64-replay:
+    extends:
+        - .macos_x86_64_replay
+        - .cmake_build_macos
+        - .cmake_build_artifacts
+        - .macos_x86_64_builder_tags
+        - .run_automatically
+
+# Windows
+
+build-test:windows-vs2019-mpi-replay:
+    extends:
+        - .windows_vs2019_mpi_replay
+        - .cmake_build_windows
+        - .cmake_build_artifacts
+        - .windows_builder_tags
+        - .run_automatically
+
+build-test:windows-vs2019-replay:
+    extends:
+        - .windows_vs2019_replay
+        - .cmake_build_windows
+        - .cmake_build_artifacts
+        - .windows_mpi_builder_tags
         - .run_automatically
