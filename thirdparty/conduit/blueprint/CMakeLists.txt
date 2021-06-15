@@ -47,6 +47,19 @@ set(blueprint_c_sources
     c/conduit_blueprint_mesh_c.cpp
     )
 
+add_library(blueprint_headers INTERFACE)
+add_library(catalyst::blueprint_headers ALIAS blueprint_headers)
+target_include_directories(blueprint_headers
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/c>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
+c_install_headers(
+  HEADERS ${blueprint_headers}
+          ${blueprint_c_headers})
+c_install_targets(blueprint_headers)
+
 #-------------------------------------------------------------------------
 # build blueprint library
 add_library(blueprint OBJECT
@@ -54,13 +67,8 @@ add_library(blueprint OBJECT
   ${blueprint_c_sources})
 target_link_libraries(blueprint
   PUBLIC
+    catalyst::blueprint_headers
     catalyst::conduit)
-target_include_directories(blueprint
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/c>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-    $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(blueprint
     PRIVATE
@@ -69,6 +77,3 @@ if (BUILD_SHARED_LIBS)
 endif ()
 add_library(catalyst::blueprint ALIAS blueprint)
 c_install_targets(blueprint)
-c_install_headers(
-  HEADERS ${blueprint_headers}
-          ${blueprint_c_headers})
