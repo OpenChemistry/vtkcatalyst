@@ -4,13 +4,14 @@ include(CMakeBasics)
 include(BasicTypeChecks)
 include("cmake/BitwidthMapping.cmake")
 
+configure_file(conduit_endianness_types.h conduit_endianness_types.h COPYONLY)
 configure_file(conduit_config.h.in conduit_config.h)
 configure_file(conduit_bitwidth_style_types.h.in conduit_bitwidth_style_types.h)
 configure_file(conduit_exports.h.in conduit_exports.h)
 
 
 set(conduit_core_headers
-    conduit_endianness_types.h
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_endianness_types.h
     ${CMAKE_CURRENT_BINARY_DIR}/conduit_exports.h
     ${CMAKE_CURRENT_BINARY_DIR}/conduit_config.h
     ${CMAKE_CURRENT_BINARY_DIR}/conduit_bitwidth_style_types.h
@@ -80,12 +81,10 @@ add_library(catalyst::conduit_headers ALIAS conduit_headers)
 target_include_directories(conduit_headers
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/c>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 c_install_headers(
   HEADERS ${conduit_core_headers}
-          ${conduit_headers}
           ${conduit_c_headers})
 c_install_targets(conduit_headers)
 
@@ -94,6 +93,9 @@ c_install_targets(conduit_headers)
 add_library(conduit OBJECT
     ${conduit_sources}
     ${conduit_c_sources})
+target_include_directories(conduit
+  PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(conduit
   PUBLIC
     catalyst::conduit_headers
