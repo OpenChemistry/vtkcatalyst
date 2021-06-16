@@ -32,3 +32,9 @@ enum catalyst_error catalyst_about_stub(conduit_node* params)
 {
   return catalyst_stub_about(params);
 }
+
+//-----------------------------------------------------------------------------
+enum catalyst_error catalyst_results_stub(conduit_node* params)
+{
+  return catalyst_stub_results(params);
+}

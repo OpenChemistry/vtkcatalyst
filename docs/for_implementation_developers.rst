@@ -52,17 +52,18 @@ Implementing Catalyst API
 =========================
 
 Providing an implementation for the Catalyst API implies providing code for the
-four ``catalyst_`` functions that are part of the Catalyst API,
+five ``catalyst_`` functions that are part of the Catalyst API,
 ``catalyst_initialize_MyImplName``, ``catalyst_finalize_MyImplName``,
-``catalyst_execute_MyImplName``, and ``catalyst_about_MyImplName``.
+``catalyst_execute_MyImplName``, ``catalyst_about_MyImplName`` and
+``catalyst_results_MyImplName``.
 
 To do that, simply include ``catalyst.h`` and ``catalyst_impl_MyImplName.h``
 headers in your implementation file and add definitions for these functions.
 Definitions for all the four functions must be provided. You can choose to
 invoke the default stub implementation for any of the functions by including
 the ``catalyst_stub.h`` header and then calling ``catalyst_stub_initialize``,
-``catalyst_stub_finalize``, ``catalyst_stub_execute``, or ``catalyst_stub_about`` in
-your implementations for the corresponding methods.
+``catalyst_stub_finalize``, ``catalyst_stub_execute``, ``catalyst_stub_about`` or
+``catalyst_stub_results`` in your implementations for the corresponding methods.
 
 If your custom implementation is using C++, you can include
 ``c/conduit_cpp_to_c.hpp`` headers to convert the ``conduit_node`` pointer to a

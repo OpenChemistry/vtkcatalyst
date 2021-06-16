@@ -57,6 +57,12 @@ extern "C"
    */
   CATALYST_EXPORT enum catalyst_error catalyst_about(conduit_node* params);
 
+  /**
+   * Get results from the catalyst library.
+   * TODO: add more docs.
+   */
+  CATALYST_EXPORT enum catalyst_error catalyst_results(conduit_node* params);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

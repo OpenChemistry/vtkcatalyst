@@ -187,7 +187,7 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
   }
 
   // Ensure that all required API functions are provided.
-  if (!impl->initialize || !impl->execute || !impl->finalize || !impl->about)
+  if (!impl->initialize || !impl->execute || !impl->finalize || !impl->about || !impl->results)
   {
     impl = NULL;
     return catalyst_error_incomplete;
@@ -240,6 +240,12 @@ enum catalyst_error catalyst_about(conduit_node* params)
 {
   impl_check(about);
   return (*impl->about)(params);
+}
+
+enum catalyst_error catalyst_results(conduit_node* params)
+{
+  impl_check(results);
+  return (*impl->results)(params);
 }
 
 #ifdef _WIN32

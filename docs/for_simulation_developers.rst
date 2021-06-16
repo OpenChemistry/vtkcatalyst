@@ -162,6 +162,15 @@ e.g.
 Refer to `Conduit`_ documentation for details of the ``C`` API. [TODO: there are
 no docs for Conduit C API upstream].
 
+catalyst_results
+----------------
+
+.. code-block:: c
+
+  enum catalyst_error catalyst_results(conduit_node* params);
+
+TODO: catalyst_results documentation.
+
 
 .. _CMake: https://www.cmake.org
 
