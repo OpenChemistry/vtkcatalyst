@@ -4,6 +4,12 @@ configure_file (conduit_blueprint_exports.h.in
                 conduit_blueprint_exports.h)
 
 
+# Specify core headers
+#
+set(blueprint_core_headers
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
+)
+
 # Specify all headers
 #
 set(blueprint_headers
@@ -13,7 +19,6 @@ set(blueprint_headers
     conduit_blueprint_mcarray.hpp
     conduit_blueprint_mcarray_examples.hpp
     conduit_blueprint_zfparray.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
 )
 
 #
@@ -51,12 +56,11 @@ add_library(blueprint_headers INTERFACE)
 add_library(catalyst::blueprint_headers ALIAS blueprint_headers)
 target_include_directories(blueprint_headers
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/c>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 c_install_headers(
-  HEADERS ${blueprint_headers}
+  HEADERS ${blueprint_core_headers}
           ${blueprint_c_headers})
 c_install_targets(blueprint_headers)
 
@@ -65,6 +69,10 @@ c_install_targets(blueprint_headers)
 add_library(blueprint OBJECT
   ${blueprint_sources}
   ${blueprint_c_sources})
+target_include_directories(blueprint
+  PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../conduit>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(blueprint
   PUBLIC
     catalyst::blueprint_headers
