@@ -1,5 +1,5 @@
 Debugging and Catalyst Replay
-######################################
+#############################
 
 To simplify the process of debugging in-situ pipelines, catalyst now
 supports the serialization of conduit_nodes. During each API call,
@@ -10,7 +10,7 @@ needing to re-run their simulation when debugging.
 
 
 Serializing Nodes and Writing to Disk
-=============
+=====================================
 
 To use the `catalyst_replay` command, nodes must first be written to disk.
 The steps to do this are simple:
@@ -38,7 +38,7 @@ into the 0th invocation of `catalyst_execute`, which was called by 2nd of
 two ranks (since rank indices are 0-indexed).
 
 Replaying API Calls with `catalyst_replay`
-=============
+==========================================
 
 After the node data has been written out to disk, the `catalyst_replay`
 command can be used to read the node data back into memory and execute the
