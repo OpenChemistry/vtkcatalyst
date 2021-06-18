@@ -89,19 +89,15 @@ the ``conduit::Node`` API which is generally friendlier than the C API.
 
 
 On successful build of your project, you should get a shared library named
-``libcatalyst.so``, ``libcatalyst.dylib``, or ``catalyst.dll`` on Linux, macOS, and
-Windows respectively.
+``libcatalyst-ImplName.so``, ``libcatalyst-ImplName.so``, or
+``catalyst-ImplName.dll`` on Linux, macOS, and Windows respectively.
 
 Using your Catalyst implementation
 ==================================
 
 Now, to use your implementation with any simulation or code built with the stub
 Catalyst implementation, all you need to do is to make sure your Catalyst
-library is found and loaded by the runtime loader on your platform. On most
-systems, this typically means you setup an environment variable with the path to
-your implementation before launching the simulation executable. On linux, this
-can be done using the ``LD_LIBRARAY_PATH`` variable (or ``DYLD_LIBRARAY_PATH`` or
-``PATH`` on macOS and Windows).
+library is found and loaded by ``catalyst_initialize``.
 
 
 
