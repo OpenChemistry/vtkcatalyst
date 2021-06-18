@@ -89,6 +89,17 @@ catalyst_initialize
 This function must be called once to initialize Catalyst. Metadata that can be
 used to configure the initialize is provided using a ``params`` pointer.
 
+The catalyst will attempt to load the implementation named using
+`params["catalyst_load/implementation"]`. If no implementation is named, a
+default implementation using the stub functions will be used.
+
+If an implementation is named, it will be loaded at runtime using ``dlopen``
+(or the platform equivalent) by searching the nodes specified under the
+``params["catalyst_load/search_paths"]`` node. Once found, it will be loaded
+and inspected for compatibility. If it is compatible, the implementation will
+be loaded and made available. The return code indicates the error received, if
+any.
+
 catalyst_finalize
 -----------------
 
