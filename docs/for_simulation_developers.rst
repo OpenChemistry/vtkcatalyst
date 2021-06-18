@@ -90,8 +90,10 @@ This function must be called once to initialize Catalyst. Metadata that can be
 used to configure the initialize is provided using a ``params`` pointer.
 
 The catalyst will attempt to load the implementation named using
-`params["catalyst_load/implementation"]`. If no implementation is named, a
-default implementation using the stub functions will be used.
+``params["catalyst_load/implementation"]``. If not specified, but the
+``CATALYST_IMPLEMENTATION_NAME`` environment variable is, it will be used. If
+no implementation is named, a default implementation using the stub functions
+will be used.
 
 If an implementation is named, it will be loaded at runtime using ``dlopen``
 (or the platform equivalent) by searching the nodes specified under the

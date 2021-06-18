@@ -49,6 +49,11 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
     impl_name = conduit_node_fetch_path_as_char8_str(p, "catalyst_load/implementation");
   }
 
+  if (!impl_name)
+  {
+    impl_name = getenv("CATALYST_IMPLEMENTATION_NAME");
+  }
+
   if (impl_name)
   {
     catalyst_handle_t handle = handle_default();
