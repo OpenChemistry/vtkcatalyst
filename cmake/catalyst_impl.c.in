@@ -14,6 +14,7 @@
 
 EXPORT_SYMBOL
 struct catalyst_impl catalyst_api_impl = {
+    1, // Structure version.
     catalyst_initialize_@catalyst_impl_NAME@,
     catalyst_execute_@catalyst_impl_NAME@,
     catalyst_finalize_@catalyst_impl_NAME@,
