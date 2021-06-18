@@ -97,9 +97,12 @@ will be used.
 
 If an implementation is named, it will be loaded at runtime using ``dlopen``
 (or the platform equivalent) by searching the nodes specified under the
-``params["catalyst_load/search_paths"]`` node. Once found, it will be loaded
-and inspected for compatibility. If it is compatible, the implementation will
-be loaded and made available. The return code indicates the error received, if
+``params["catalyst_load/search_paths"]`` node. Next, the paths specified by
+the ``CATALYST_IMPLEMENTATION_PATHS`` (using ``;`` as a separator on Windows
+and ``:`` otherwise) will be searched. Finally, the ``catalyst`` directory
+beside ``libcatalyst`` will be searched. Once found, it will be loaded and
+inspected for compatibility. If it is compatible, the implementation will be
+loaded and made available. The return code indicates the error received, if
 any.
 
 catalyst_finalize

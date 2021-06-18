@@ -17,10 +17,12 @@
 #ifdef _WIN32
 #include <windows.h>
 typedef HMODULE catalyst_handle_t;
+#define PATH_SEPARATOR ';'
 #else
 #include <dlfcn.h>
 #include <stdio.h>
 typedef void* catalyst_handle_t;
+#define PATH_SEPARATOR ':'
 #endif
 
 static char* default_search_path();
@@ -76,6 +78,47 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
             }
           }
         }
+      }
+    }
+
+    // Search the environment path
+    if (!handle_is_valid(handle))
+    {
+      const char* search_env = getenv("CATALYST_IMPLEMENTATION_PATHS");
+      if (search_env)
+      {
+        char* paths = strdup(search_env);
+        if (paths)
+        {
+          char* pathsep = paths;
+          char* curpath = paths;
+          while (*pathsep)
+          {
+            int newpath = 0;
+            if (*pathsep == PATH_SEPARATOR)
+            {
+              *pathsep = '\0';
+              newpath = 1;
+            }
+
+            if (newpath)
+            {
+              handle = handle_open(curpath, impl_name);
+              if (handle_is_valid(handle))
+              {
+                break;
+              }
+            }
+
+            ++pathsep;
+            if (newpath)
+            {
+              curpath = pathsep;
+            }
+          }
+        }
+
+        free(paths);
       }
     }
 

@@ -8,8 +8,9 @@ automatically.
 To select an implementation, the `catalyst_load/implementation` and
 `catalyst_load/search_paths/*` settings passed into `catalyst_initialize` are
 used to select and find the implementation library and load it. As a fallback,
-the environment variable `CATALYST_IMPLEMENTATION_NAME` is used as the
-implementation name to load.
+the environment variables `CATALYST_IMPLEMENTATION_NAME` and
+`CATALYST_IMPLEMENTATION_PATHS` are used as the implementation name as a
+list of paths to search for implementations, respectively.
 
 Instead of the `catalyst_library` CMake API applying properties to an existing
 target, there is now `catalyst_implementation` to create an implementation
