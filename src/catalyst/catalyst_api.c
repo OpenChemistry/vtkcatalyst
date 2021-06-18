@@ -34,6 +34,50 @@ static int handle_is_valid(catalyst_handle_t handle);
 static struct catalyst_impl const* impl = NULL;
 extern struct catalyst_impl const default_impl;
 
+static catalyst_handle_t handle_from_env(const char* impl_name)
+{
+  catalyst_handle_t handle = handle_default();
+
+  const char* search_env = getenv("CATALYST_IMPLEMENTATION_PATHS");
+  if (search_env)
+  {
+    char* paths = strdup(search_env);
+    if (paths)
+    {
+      char* pathsep = paths;
+      char* curpath = paths;
+      while (*pathsep)
+      {
+        int newpath = 0;
+        if (*pathsep == PATH_SEPARATOR)
+        {
+          *pathsep = '\0';
+          newpath = 1;
+        }
+
+        if (newpath)
+        {
+          handle = handle_open(curpath, impl_name);
+          if (handle_is_valid(handle))
+          {
+            break;
+          }
+        }
+
+        ++pathsep;
+        if (newpath)
+        {
+          curpath = pathsep;
+        }
+      }
+    }
+
+    free(paths);
+  }
+
+  return handle;
+}
+
 static enum catalyst_error catalyst_load(const conduit_node* params)
 {
   // Ensure that an implementation has not already been loaded.
@@ -45,13 +89,22 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
   // C APIs all expect non-const pointers.
   conduit_node* p = (conduit_node*)params;
 
+  const char* prefer_env = getenv("CATALYST_IMPLEMENTATION_PREFER_ENV");
+  int should_prefer_env = prefer_env && *prefer_env;
+
   char* impl_name = NULL;
-  if (conduit_node_has_path(p, "catalyst_load/implementation"))
+
+  if (should_prefer_env)
+  {
+    impl_name = getenv("CATALYST_IMPLEMENTATION_NAME");
+  }
+
+  if (!impl_name && conduit_node_has_path(p, "catalyst_load/implementation"))
   {
     impl_name = conduit_node_fetch_path_as_char8_str(p, "catalyst_load/implementation");
   }
 
-  if (!impl_name)
+  if (!impl_name && !should_prefer_env)
   {
     impl_name = getenv("CATALYST_IMPLEMENTATION_NAME");
   }
@@ -59,7 +112,13 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
   if (impl_name)
   {
     catalyst_handle_t handle = handle_default();
-    if (conduit_node_has_path(p, "catalyst_load/search_paths"))
+
+    if (should_prefer_env)
+    {
+      handle = handle_from_env(impl_name);
+    }
+
+    if (!handle_is_valid(handle) && conduit_node_has_path(p, "catalyst_load/search_paths"))
     {
       conduit_node* search_paths = conduit_node_fetch(p, "catalyst_load/search_paths");
       if (search_paths)
@@ -81,45 +140,9 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
       }
     }
 
-    // Search the environment path
-    if (!handle_is_valid(handle))
+    if (!handle_is_valid(handle) && !should_prefer_env)
     {
-      const char* search_env = getenv("CATALYST_IMPLEMENTATION_PATHS");
-      if (search_env)
-      {
-        char* paths = strdup(search_env);
-        if (paths)
-        {
-          char* pathsep = paths;
-          char* curpath = paths;
-          while (*pathsep)
-          {
-            int newpath = 0;
-            if (*pathsep == PATH_SEPARATOR)
-            {
-              *pathsep = '\0';
-              newpath = 1;
-            }
-
-            if (newpath)
-            {
-              handle = handle_open(curpath, impl_name);
-              if (handle_is_valid(handle))
-              {
-                break;
-              }
-            }
-
-            ++pathsep;
-            if (newpath)
-            {
-              curpath = pathsep;
-            }
-          }
-        }
-
-        free(paths);
-      }
+      handle = handle_from_env(impl_name);
     }
 
     // Search the default path

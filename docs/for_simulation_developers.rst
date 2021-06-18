@@ -105,6 +105,10 @@ inspected for compatibility. If it is compatible, the implementation will be
 loaded and made available. The return code indicates the error received, if
 any.
 
+The search priority of the ``CATALYST_IMPLEMENTATION_`` environment variables
+may be made first by setting teh ``CATALYST_IMPLEMENTATION_PREFER_ENV``
+environment variable to a non-empty value.
+
 catalyst_finalize
 -----------------
 

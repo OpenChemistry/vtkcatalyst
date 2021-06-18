@@ -12,6 +12,11 @@ the environment variables `CATALYST_IMPLEMENTATION_NAME` and
 `CATALYST_IMPLEMENTATION_PATHS` are used as the implementation name as a
 list of paths to search for implementations, respectively.
 
+The `CATALYST_IMPLEMENTATION_` environment variables may be instead preferred
+over the `catalyst_load/` settings by setting the
+`CATALYST_IMPLEMENTATION_PREFER_ENV` environment variable to a non-empty
+string.
+
 Instead of the `catalyst_library` CMake API applying properties to an existing
 target, there is now `catalyst_implementation` to create an implementation
 given a target and implementation name. The actual implementation will also
