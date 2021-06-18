@@ -30,6 +30,8 @@ extern "C"
     catalyst_error_not_catalyst,
     // The library did not provide all of the required API functions.
     catalyst_error_incomplete,
+    // The library did not provide a supported version of the API.
+    catalyst_error_unsupported_version,
   };
 
   /**

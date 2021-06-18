@@ -7,6 +7,7 @@
 #include "catalyst_stub.h"
 
 extern "C" struct catalyst_impl const default_impl = {
+  1,
   catalyst_stub_initialize,
   catalyst_stub_finalize,
   catalyst_stub_execute,

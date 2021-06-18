@@ -110,6 +110,11 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
     return catalyst_error_not_catalyst;
   }
 
+  if (impl->version != 1)
+  {
+    return catalyst_error_unsupported_version;
+  }
+
   // Ensure that all required API functions are provided.
   if (!impl->initialize || !impl->execute || !impl->finalize || !impl->about)
   {
