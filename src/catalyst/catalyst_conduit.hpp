@@ -92,6 +92,143 @@ namespace conduit_cpp
     CATALYST_CONDUIT_ERROR("An error occurred at:")                                                \
   }
 
+class Node;
+
+class DataType
+{
+public:
+  ~DataType() = default;
+
+  enum class Id
+  {
+    int8,
+    int16,
+    int32,
+    int64,
+
+    uint8,
+    uint16,
+    uint32,
+    uint64,
+
+    float32,
+    float64,
+
+    unknown,
+  };
+
+  friend class Node;
+
+  bool is_valid() const { return this->c_dtype != nullptr; }
+
+  Id id() const
+  {
+    if (this->is_valid())
+    {
+      return Id::unknown;
+    }
+
+    if (this->is_int8())
+    {
+      return Id::int8;
+    }
+    if (this->is_int16())
+    {
+      return Id::int16;
+    }
+    if (this->is_int32())
+    {
+      return Id::int32;
+    }
+    if (this->is_int64())
+    {
+      return Id::int64;
+    }
+
+    if (this->is_uint8())
+    {
+      return Id::uint8;
+    }
+    if (this->is_uint16())
+    {
+      return Id::uint16;
+    }
+    if (this->is_uint32())
+    {
+      return Id::uint32;
+    }
+    if (this->is_uint64())
+    {
+      return Id::uint64;
+    }
+
+    if (this->is_float32())
+    {
+      return Id::float32;
+    }
+    if (this->is_float64())
+    {
+      return Id::float64;
+    }
+
+    return Id::unknown;
+  }
+
+  bool is_empty() const { return conduit_datatype_is_empty(this->c_dtype); }
+  bool is_object() const { return conduit_datatype_is_object(this->c_dtype); }
+  bool is_list() const { return conduit_datatype_is_list(this->c_dtype); }
+
+  bool is_number() const { return conduit_datatype_is_number(this->c_dtype); }
+  bool is_floating_point() const { return conduit_datatype_is_floating_point(this->c_dtype); }
+  bool is_integer() const { return conduit_datatype_is_integer(this->c_dtype); }
+  bool is_signed_integer() const { return conduit_datatype_is_signed_integer(this->c_dtype); }
+  bool is_unsigned_integer() const { return conduit_datatype_is_unsigned_integer(this->c_dtype); }
+
+  bool is_int8() const { return conduit_datatype_is_int8(this->c_dtype); }
+  bool is_int16() const { return conduit_datatype_is_int16(this->c_dtype); }
+  bool is_int32() const { return conduit_datatype_is_int32(this->c_dtype); }
+  bool is_int64() const { return conduit_datatype_is_int64(this->c_dtype); }
+
+  bool is_uint8() const { return conduit_datatype_is_uint8(this->c_dtype); }
+  bool is_uint16() const { return conduit_datatype_is_uint16(this->c_dtype); }
+  bool is_uint32() const { return conduit_datatype_is_uint32(this->c_dtype); }
+  bool is_uint64() const { return conduit_datatype_is_uint64(this->c_dtype); }
+
+  bool is_float32() const { return conduit_datatype_is_float32(this->c_dtype); }
+  bool is_float64() const { return conduit_datatype_is_float64(this->c_dtype); }
+
+  bool is_char() const { return conduit_datatype_is_char(this->c_dtype); }
+  bool is_short() const { return conduit_datatype_is_short(this->c_dtype); }
+  bool is_int() const { return conduit_datatype_is_int(this->c_dtype); }
+  bool is_long() const { return conduit_datatype_is_long(this->c_dtype); }
+
+  bool is_unsigned_char() const { return conduit_datatype_is_unsigned_char(this->c_dtype); }
+  bool is_unsigned_short() const { return conduit_datatype_is_unsigned_short(this->c_dtype); }
+  bool is_unsigned_int() const { return conduit_datatype_is_unsigned_int(this->c_dtype); }
+  bool is_unsigned_long() const { return conduit_datatype_is_unsigned_long(this->c_dtype); }
+
+  bool is_float() const { return conduit_datatype_is_float(this->c_dtype); }
+  bool is_double() const { return conduit_datatype_is_double(this->c_dtype); }
+
+  bool is_string() const { return conduit_datatype_is_string(this->c_dtype); }
+  bool is_char8_str() const { return conduit_datatype_is_char8_str(this->c_dtype); }
+
+  bool is_little_endian() const { return conduit_datatype_is_little_endian(this->c_dtype); }
+  bool is_big_endian() const { return conduit_datatype_is_big_endian(this->c_dtype); }
+  bool endianness_matches_machine() const
+  {
+    return conduit_datatype_endianness_matches_machine(this->c_dtype);
+  }
+
+private:
+  DataType(const conduit_datatype* dtype)
+    : c_dtype(dtype)
+  {
+  }
+
+  const conduit_datatype* c_dtype;
+};
+
 class Node
 {
 public:
@@ -2561,7 +2698,8 @@ public:
   ///  These methods provide general info about the node.
   //-----------------------------------------------------------------------------
 
-  const conduit_datatype* c_dtype() { return conduit_node_dtype(this->c_node); }
+  DataType dtype() const { return DataType(this->c_dtype()); }
+  const conduit_datatype* c_dtype() const { return conduit_node_dtype(this->c_node); }
 
   //-------------------------------------------------------------------------
   /// contiguous checks
