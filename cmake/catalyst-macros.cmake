@@ -1,6 +1,8 @@
 # Macros and other CMake code part of the Catalyst SDK i.e.
 # API used to build Catalyst API implementations.
 
+set(_catalyst_macro_directory "${CMAKE_CURRENT_LIST_DIR}")
+
 #[==[
 Make a catalyst implementation library.
 
@@ -55,12 +57,24 @@ function (catalyst_implementation)
     endif ()
   endif ()
 
+  if (NOT DEFINED _catalyst_macro_directory)
+    set(_catalyst_macro_directory "${CMAKE_CURRENT_FUNCTION_LIST_DIR}")
+  endif ()
+  if (NOT _catalyst_macro_directory)
+    message(FATAL_ERROR
+      "`catalyst_implementation` does not know where its source files are; "
+      "`find_package(catalyst)` was performed outside this scope and its "
+      "tracking variables are not available. Either update to CMake 3.17 or "
+      "ensure that catalyst is found within the scope where "
+      "`catalyst_implementation` is used.")
+  endif ()
+
   configure_file(
-    "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/catalyst_impl.c.in"
+    "${_catalyst_macro_directory}/catalyst_impl.c.in"
     "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.c"
     @ONLY)
   configure_file(
-    "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/catalyst_impl.h.in"
+    "${_catalyst_macro_directory}/catalyst_impl.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/catalyst_impl_${catalyst_impl_NAME}.h"
     @ONLY)
 
