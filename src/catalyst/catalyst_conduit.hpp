@@ -1416,143 +1416,57 @@ public:
   ///  Direct access to data at leaf types.
   //-----------------------------------------------------------------------------
 
+#define catalyst_conduit_as(dname)                                                                 \
+  conduit_##dname as_##dname() const                                                               \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##dname(this->c_node));                     \
+  }
+
   // signed integer scalars
-  conduit_int8 as_int8() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int8(this->c_node));
-  }
-  conduit_int16 as_int16() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int16(this->c_node));
-  }
-  conduit_int32 as_int32() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int32(this->c_node));
-  }
-  conduit_int64 as_int64() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int64(this->c_node));
-  }
+  catalyst_conduit_as(int8);
+  catalyst_conduit_as(int16);
+  catalyst_conduit_as(int32);
+  catalyst_conduit_as(int64);
 
   // unsigned integer scalars
-  conduit_uint8 as_uint8() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint8(this->c_node));
-  }
-  conduit_uint16 as_uint16() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint16(this->c_node));
-  }
-  conduit_uint32 as_uint32() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint32(this->c_node));
-  }
-  conduit_uint64 as_uint64() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint64(this->c_node));
-  }
+  catalyst_conduit_as(uint8);
+  catalyst_conduit_as(uint16);
+  catalyst_conduit_as(uint32);
+  catalyst_conduit_as(uint64);
 
   // floating point scalars
-  conduit_float32 as_float32() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float32(this->c_node));
-  }
-  conduit_float64 as_float64() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float64(this->c_node));
+  catalyst_conduit_as(float32);
+  catalyst_conduit_as(float64);
+
+#undef catalyst_conduit_as
+
+#define catalyst_conduit_as_ptr(dname)                                                             \
+  conduit_##dname* as_##dname##_ptr()                                                              \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##dname##_ptr(this->c_node));               \
+  }                                                                                                \
+  const conduit_##dname* as_##dname##_ptr() const                                                  \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##dname##_ptr(this->c_node));               \
   }
 
   // signed integers via pointers
-  conduit_int8* as_int8_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int8_ptr(this->c_node));
-  }
-  conduit_int16* as_int16_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int16_ptr(this->c_node));
-  }
-  conduit_int32* as_int32_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int32_ptr(this->c_node));
-  }
-  conduit_int64* as_int64_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int64_ptr(this->c_node));
-  }
+  catalyst_conduit_as_ptr(int8);
+  catalyst_conduit_as_ptr(int16);
+  catalyst_conduit_as_ptr(int32);
+  catalyst_conduit_as_ptr(int64);
 
   // unsigned integers via pointers
-  conduit_uint8* as_uint8_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint8_ptr(this->c_node));
-  }
-  conduit_uint16* as_uint16_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint16_ptr(this->c_node));
-  }
-  conduit_uint32* as_uint32_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint32_ptr(this->c_node));
-  }
-  conduit_uint64* as_uint64_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint64_ptr(this->c_node));
-  }
+  catalyst_conduit_as_ptr(uint8);
+  catalyst_conduit_as_ptr(uint16);
+  catalyst_conduit_as_ptr(uint32);
+  catalyst_conduit_as_ptr(uint64);
 
   // floating point via pointers
-  conduit_float32* as_float32_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float32_ptr(this->c_node));
-  }
-  conduit_float64* as_float64_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float64_ptr(this->c_node));
-  }
+  catalyst_conduit_as_ptr(float32);
+  catalyst_conduit_as_ptr(float64);
 
-  // signed integers via pointers
-  const conduit_int8* as_int8_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int8_ptr(this->c_node));
-  }
-  const conduit_int16* as_int16_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int16_ptr(this->c_node));
-  }
-  const conduit_int32* as_int32_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int32_ptr(this->c_node));
-  }
-  const conduit_int64* as_int64_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int64_ptr(this->c_node));
-  }
-
-  // unsigned integers via pointers
-  const conduit_uint8* as_uint8_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint8_ptr(this->c_node));
-  }
-  const conduit_uint16* as_uint16_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint16_ptr(this->c_node));
-  }
-  const conduit_uint32* as_uint32_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint32_ptr(this->c_node));
-  }
-  const conduit_uint64* as_uint64_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_uint64_ptr(this->c_node));
-  }
-
-  // floating point via pointers
-  const conduit_float32* as_float32_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float32_ptr(this->c_node));
-  }
-  const conduit_float64* as_float64_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float64_ptr(this->c_node));
-  }
+#undef catalyst_conduit_as_ptr
 
   // char8_str cases
   char* as_char8_str()
@@ -1583,186 +1497,69 @@ public:
   ///  Direct access to data at leaf types (native c++ types)
   //-----------------------------------------------------------------------------`
 
-  // c style scalar
-  char as_char() const { CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_char(this->c_node)); }
-  short as_short() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_short(this->c_node));
+#define catalyst_conduit_c_as(cname, joined)                                                       \
+  cname as_##joined() const                                                                        \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##joined(this->c_node));                    \
   }
-  int as_int() const { CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int(this->c_node)); }
-  long as_long() const { CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_long(this->c_node)); }
+
+  // c style scalar
+  catalyst_conduit_c_as(char, char);
+  catalyst_conduit_c_as(short, short);
+  catalyst_conduit_c_as(int, int);
+  catalyst_conduit_c_as(long, long);
 
   // signed integer scalars
-  signed char as_signed_char() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_char(this->c_node));
-  }
-  signed short as_signed_short() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_short(this->c_node));
-  }
-  signed int as_signed_int() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_int(this->c_node));
-  }
-  signed long as_signed_long() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_long(this->c_node));
-  }
+  catalyst_conduit_c_as(signed char, signed_char);
+  catalyst_conduit_c_as(signed short, signed_short);
+  catalyst_conduit_c_as(signed int, signed_int);
+  catalyst_conduit_c_as(signed long, signed_long);
 
   // unsigned integer scalars
-  unsigned char as_unsigned_char() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_char(this->c_node));
-  }
-  unsigned short as_unsigned_short() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_short(this->c_node));
-  }
-  unsigned int as_unsigned_int() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_int(this->c_node));
-  }
-  unsigned long as_unsigned_long() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_long(this->c_node));
-  }
+  catalyst_conduit_c_as(unsigned char, unsigned_char);
+  catalyst_conduit_c_as(unsigned short, unsigned_short);
+  catalyst_conduit_c_as(unsigned int, unsigned_int);
+  catalyst_conduit_c_as(unsigned long, unsigned_long);
 
   // floating point scalars
-  float as_float() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float(this->c_node));
-  }
-  double as_double() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_double(this->c_node));
+  catalyst_conduit_c_as(float, float);
+  catalyst_conduit_c_as(double, double);
+
+#undef catalyst_conduit_c_as
+
+#define catalyst_conduit_c_as_ptr(cname, joined)                                                   \
+  cname* as_##joined##_ptr()                                                                       \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##joined##_ptr(this->c_node));              \
+  }                                                                                                \
+  const cname* as_##joined##_ptr() const                                                           \
+  {                                                                                                \
+    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_##joined##_ptr(this->c_node));              \
   }
 
   // c style via pointer
-  char* as_char_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_char_ptr(this->c_node));
-  }
-  short* as_short_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_short_ptr(this->c_node));
-  }
-  int* as_int_ptr() { CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int_ptr(this->c_node)); }
-  long* as_long_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_long_ptr(this->c_node));
-  }
+  catalyst_conduit_c_as_ptr(char, char);
+  catalyst_conduit_c_as_ptr(short, short);
+  catalyst_conduit_c_as_ptr(int, int);
+  catalyst_conduit_c_as_ptr(long, long);
 
   // signed integers via pointers
-  signed char* as_signed_char_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_char_ptr(this->c_node));
-  }
-  signed short* as_signed_short_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_short_ptr(this->c_node));
-  }
-  signed int* as_signed_int_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_int_ptr(this->c_node));
-  }
-  signed long* as_signed_long_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_long_ptr(this->c_node));
-  }
+  catalyst_conduit_c_as_ptr(signed char, signed_char);
+  catalyst_conduit_c_as_ptr(signed short, signed_short);
+  catalyst_conduit_c_as_ptr(signed int, signed_int);
+  catalyst_conduit_c_as_ptr(signed long, signed_long);
 
   // unsigned integers via pointers
-  unsigned char* as_unsigned_char_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_char_ptr(this->c_node));
-  }
-  unsigned short* as_unsigned_short_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_short_ptr(this->c_node));
-  }
-  unsigned int* as_unsigned_int_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_int_ptr(this->c_node));
-  }
-  unsigned long* as_unsigned_long_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_long_ptr(this->c_node));
-  }
+  catalyst_conduit_c_as_ptr(unsigned char, unsigned_char);
+  catalyst_conduit_c_as_ptr(unsigned short, unsigned_short);
+  catalyst_conduit_c_as_ptr(unsigned int, unsigned_int);
+  catalyst_conduit_c_as_ptr(unsigned long, unsigned_long);
 
   // floating point via pointers
-  float* as_float_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float_ptr(this->c_node));
-  }
-  double* as_double_ptr()
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_double_ptr(this->c_node));
-  }
+  catalyst_conduit_c_as_ptr(float, float);
+  catalyst_conduit_c_as_ptr(double, double);
 
-  // char via pointer (const variant)
-  const char* as_char_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_char_ptr(this->c_node));
-  }
-  const short* as_short_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_short_ptr(this->c_node));
-  }
-  const int* as_int_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_int_ptr(this->c_node));
-  }
-  const long* as_long_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_long_ptr(this->c_node));
-  }
-
-  // signed integers via pointers (const variants)
-  const signed char* as_signed_char_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_char_ptr(this->c_node));
-  }
-  const signed short* as_signed_short_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_short_ptr(this->c_node));
-  }
-  const signed int* as_signed_int_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_int_ptr(this->c_node));
-  }
-  const signed long* as_signed_long_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_signed_long_ptr(this->c_node));
-  }
-
-  // unsigned integers via pointers (const variants)
-  const unsigned char* as_unsigned_char_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_char_ptr(this->c_node));
-  }
-  const unsigned short* as_unsigned_short_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_short_ptr(this->c_node));
-  }
-  const unsigned int* as_unsigned_int_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_int_ptr(this->c_node));
-  }
-  const unsigned long* as_unsigned_long_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_unsigned_long_ptr(this->c_node));
-  }
-
-  // floating point via pointers (const variants)
-  const float* as_float_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_float_ptr(this->c_node));
-  }
-
-  const double* as_double_ptr() const
-  {
-    CATALYST_CONDUIT_WRAP_EXCEP(return conduit_node_as_double_ptr(this->c_node));
-  }
+#undef catalyst_conduit_c_as_ptr
 
 private:
   conduit_node* c_node;
