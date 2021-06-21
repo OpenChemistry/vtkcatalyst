@@ -988,411 +988,143 @@ public:
   // --  assignment operators for scalar types ---
   //-----------------------------------------------------------------------------
 
+#define catalyst_conduit_assign(dtype)                                                             \
+  Node& operator=(dtype data)                                                                      \
+  {                                                                                                \
+    set(data);                                                                                     \
+    return *this;                                                                                  \
+  }
+
   //-----------------------------------------------------------------------------
   // signed integer scalar types
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_int8 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_int16 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_int32 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_int64 data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(conduit_int8);
+  catalyst_conduit_assign(conduit_int16);
+  catalyst_conduit_assign(conduit_int32);
+  catalyst_conduit_assign(conduit_int64);
 
   //-----------------------------------------------------------------------------
   // unsigned integer scalar types
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_uint8 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_uint16 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_uint32 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_uint64 data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(conduit_uint8);
+  catalyst_conduit_assign(conduit_uint16);
+  catalyst_conduit_assign(conduit_uint32);
+  catalyst_conduit_assign(conduit_uint64);
 
   //-----------------------------------------------------------------------------
   // floating point scalar types
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_float32 data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(conduit_float64 data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(conduit_float32);
+  catalyst_conduit_assign(conduit_float64);
 
   //-----------------------------------------------------------------------------
   // assignment operator gap methods for scalar c-native types
   //-----------------------------------------------------------------------------
-  //-----------------------------------------------------------------------------
-  Node& operator=(char data)
-  {
-    set(data);
-    return *this;
-  }
 
-  //-----------------------------------------------------------------------------
+  catalyst_conduit_assign(char);
+
 #ifndef CONDUIT_USE_CHAR
-  //-----------------------------------------------------------------------------
-  Node& operator=(signed char data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(signed char);
+  catalyst_conduit_assign(unsigned char);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(unsigned char data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //-----------------------------------------------------------------------------
-#endif // end use char check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_SHORT
-  //-----------------------------------------------------------------------------
-  Node& operator=(short data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(signed short);
+  catalyst_conduit_assign(unsigned short);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(unsigned short data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use short check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_INT
-  //-----------------------------------------------------------------------------
-  Node& operator=(int data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(signed int);
+  catalyst_conduit_assign(unsigned int);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(unsigned int data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use int check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_LONG
-  //-----------------------------------------------------------------------------
-  Node& operator=(long data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(signed long);
+  catalyst_conduit_assign(unsigned long);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(unsigned long data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use long check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_FLOAT
-  //-----------------------------------------------------------------------------
-  Node& operator=(float data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use float check
-  //-----------------------------------------------------------------------------
+  catalyst_conduit_assign(float);
+#endif
 
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_DOUBLE
-  //-----------------------------------------------------------------------------
-  Node& operator=(double data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use double check
-  //-----------------------------------------------------------------------------
+  catalyst_conduit_assign(double);
+#endif
 
   //-----------------------------------------------------------------------------
   // -- assignment operators for string types --
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::string& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const char* data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::string&);
+  catalyst_conduit_assign(const char*);
 
   //-----------------------------------------------------------------------------
   // -- assignment operators for std::vector types ---
   //-----------------------------------------------------------------------------
+
   //-----------------------------------------------------------------------------
   // signed integer array types via std::vector
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_int8>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_int16>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_int32>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_int64>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<conduit_int8>&);
+  catalyst_conduit_assign(const std::vector<conduit_int16>&);
+  catalyst_conduit_assign(const std::vector<conduit_int32>&);
+  catalyst_conduit_assign(const std::vector<conduit_int64>&);
 
   //-----------------------------------------------------------------------------
   // unsigned integer array types via std::vector
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_uint8>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_uint16>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_uint32>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_uint64>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<conduit_uint8>&);
+  catalyst_conduit_assign(const std::vector<conduit_uint16>&);
+  catalyst_conduit_assign(const std::vector<conduit_uint32>&);
+  catalyst_conduit_assign(const std::vector<conduit_uint64>&);
 
   //-----------------------------------------------------------------------------
   // floating point array types via std::vector
   //-----------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_float32>& data)
-  {
-    set(data);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------//
-  Node& operator=(const std::vector<conduit_float64>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<conduit_float32>&);
+  catalyst_conduit_assign(const std::vector<conduit_float64>&);
 
   //-----------------------------------------------------------------------------
   // assignment operator gap methods for vector c-native types
   //-----------------------------------------------------------------------------
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<char>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<char>&);
 
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_CHAR
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<signed char>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<signed char>&);
+  catalyst_conduit_assign(const std::vector<unsigned char>&);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<unsigned char>& data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use char check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_SHORT
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<short>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<signed short>&);
+  catalyst_conduit_assign(const std::vector<unsigned short>&);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<unsigned short>& data)
-  {
-    set(data);
-    return *this;
-  }    //-----------------------------------------------------------------------------
-#endif // end use short check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_INT
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<int>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<signed int>&);
+  catalyst_conduit_assign(const std::vector<unsigned int>&);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<unsigned int>& data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use int check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_LONG
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<long>& data)
-  {
-    set(data);
-    return *this;
-  }
+  catalyst_conduit_assign(const std::vector<signed long>&);
+  catalyst_conduit_assign(const std::vector<unsigned long>&);
+#endif
 
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<unsigned long>& data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use long check
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_FLOAT
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<float>& data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use float check
-  //-----------------------------------------------------------------------------
+  catalyst_conduit_assign(const std::vector<float>&);
+#endif
 
-  //-----------------------------------------------------------------------------
 #ifndef CONDUIT_USE_DOUBLE
-  //-----------------------------------------------------------------------------
-  Node& operator=(const std::vector<double>& data)
-  {
-    set(data);
-    return *this;
-  }
-  //-----------------------------------------------------------------------------
-#endif // end use double check
-  //-----------------------------------------------------------------------------
+  catalyst_conduit_assign(const std::vector<double>&);
+#endif
+
+#undef catalyst_conduit_assign
 
   //-----------------------------------------------------------------------------
   //
