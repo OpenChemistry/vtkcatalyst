@@ -291,29 +291,35 @@ public:
 
 #undef catalyst_conduit_setter
 
-  void set(const char data) { conduit_node_set_char(this->c_node, data); }
+#define catalyst_conduit_c_setter(cname, joined)                                                   \
+  void set(cname data) { conduit_node_set_##joined(this->c_node, data); }
+
+  catalyst_conduit_c_setter(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set(const signed char data) { conduit_node_set_signed_char(this->c_node, data); }
-  void set(const unsigned char data) { conduit_node_set_unsigned_char(this->c_node, data); }
+  catalyst_conduit_c_setter(signed char, signed_char);
+  catalyst_conduit_c_setter(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set(const short data) { conduit_node_set_short(this->c_node, data); }
-  void set(const unsigned short data) { conduit_node_set_unsigned_short(this->c_node, data); }
+  catalyst_conduit_c_setter(signed short, signed_short);
+  catalyst_conduit_c_setter(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set(const int data) { conduit_node_set_int(this->c_node, data); }
-  void set(const unsigned int data) { conduit_node_set_unsigned_int(this->c_node, data); }
+  catalyst_conduit_c_setter(signed int, signed_int);
+  catalyst_conduit_c_setter(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set(const long data) { conduit_node_set_long(this->c_node, data); }
-  void set(const unsigned long data) { conduit_node_set_unsigned_long(this->c_node, data); }
+  catalyst_conduit_c_setter(signed long, signed_long);
+  catalyst_conduit_c_setter(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set(const float data) { conduit_node_set_float(this->c_node, data); }
+  catalyst_conduit_c_setter(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set(const double data) { conduit_node_set_double(this->c_node, data); }
+  catalyst_conduit_c_setter(double, double);
 #endif
+
+#undef catalyst_conduit_c_setter
+
   void set_string(const std::string& data)
   {
     conduit_node_set_char8_str(this->c_node, data.c_str());
@@ -346,67 +352,37 @@ public:
 
 #undef catalyst_conduit_setter_vector
 
-  void set(const std::vector<char>& data)
-  {
-    conduit_node_set_char_ptr(this->c_node, std::vector<char>(data).data(), data.size());
+#define catalyst_conduit_c_setter_vector(cname, joined)                                            \
+  void set(const std::vector<cname>& data)                                                         \
+  {                                                                                                \
+    conduit_node_set_##joined##_ptr(this->c_node, const_cast<cname*>(data.data()), data.size());   \
   }
+
+  catalyst_conduit_c_setter_vector(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set(const std::vector<signed char>& data)
-  {
-    conduit_node_set_signed_char_ptr(
-      this->c_node, std::vector<signed char>(data).data(), data.size());
-  }
-  void set(const std::vector<unsigned char>& data)
-  {
-    conduit_node_set_unsigned_char_ptr(
-      this->c_node, std::vector<unsigned char>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(signed char, signed_char);
+  catalyst_conduit_c_setter_vector(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set(const std::vector<short>& data)
-  {
-    conduit_node_set_short_ptr(this->c_node, std::vector<short>(data).data(), data.size());
-  }
-  void set(const std::vector<unsigned short>& data)
-  {
-    conduit_node_set_unsigned_short_ptr(
-      this->c_node, std::vector<unsigned short>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(signed short, signed_short);
+  catalyst_conduit_c_setter_vector(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set(const std::vector<int>& data)
-  {
-    conduit_node_set_int_ptr(this->c_node, std::vector<int>(data).data(), data.size());
-  }
-  void set(const std::vector<unsigned int>& data)
-  {
-    conduit_node_set_unsigned_int_ptr(
-      this->c_node, std::vector<unsigned int>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(signed int, signed_int);
+  catalyst_conduit_c_setter_vector(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set(const std::vector<long>& data)
-  {
-    conduit_node_set_long_ptr(this->c_node, std::vector<long>(data).data(), data.size());
-  }
-  void set(const std::vector<unsigned long>& data)
-  {
-    conduit_node_set_unsigned_long_ptr(
-      this->c_node, std::vector<unsigned long>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(signed long, signed_long);
+  catalyst_conduit_c_setter_vector(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set(const std::vector<float>& data)
-  {
-    conduit_node_set_float_ptr(this->c_node, std::vector<float>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set(const std::vector<double>& data)
-  {
-    conduit_node_set_double_ptr(this->c_node, std::vector<double>(data).data(), data.size());
-  }
+  catalyst_conduit_c_setter_vector(double, double);
 #endif
+
+#undef catalyst_conduit_c_setter_vector
 
 #define catalyst_conduit_setter_ptr(dname)                                                         \
   void set_##dname##_ptr(const conduit_##dname* data, conduit_index_t num_elements = 1,            \
@@ -438,6 +414,15 @@ public:
 
 #undef catalyst_conduit_setter_ptr
 
+#define catalyst_conduit_c_setter_ptr(cname, joined)                                               \
+  void set(const cname* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,        \
+    conduit_index_t stride = sizeof(cname), conduit_index_t element_bytes = sizeof(cname),         \
+    conduit_index_t endianness = 0)                                                                \
+  {                                                                                                \
+    conduit_node_set_##joined##_ptr_detailed(this->c_node, const_cast<cname*>(data), num_elements, \
+      offset, stride, element_bytes, endianness);                                                  \
+  }
+
   void set_char_ptr(const char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
     conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_CHAR), conduit_index_t endianness = 0)
@@ -446,92 +431,30 @@ public:
       stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
-  void set(const signed char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_signed_char_ptr_detailed(this->c_node, const_cast<signed char*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set(const unsigned char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_unsigned_char_ptr_detailed(this->c_node, const_cast<unsigned char*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(signed char, signed_char);
+  catalyst_conduit_c_setter_ptr(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set(const short* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_short_ptr_detailed(this->c_node, const_cast<short*>(data), num_elements,
-      offset, stride, element_bytes, endianness);
-  }
-  void set(const unsigned short* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_unsigned_short_ptr_detailed(this->c_node, const_cast<unsigned short*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(signed short, signed_short);
+  catalyst_conduit_c_setter_ptr(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set(const int* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_int_ptr_detailed(this->c_node, const_cast<int*>(data), num_elements, offset,
-      stride, element_bytes, endianness);
-  }
-  void set(const unsigned int* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_unsigned_int_ptr_detailed(this->c_node, const_cast<unsigned int*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(signed int, signed_int);
+  catalyst_conduit_c_setter_ptr(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set(const long* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_long_ptr_detailed(this->c_node, const_cast<long*>(data), num_elements, offset,
-      stride, element_bytes, endianness);
-  }
-  void set(const unsigned long* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_unsigned_long_ptr_detailed(this->c_node, const_cast<unsigned long*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(signed long, signed_long);
+  catalyst_conduit_c_setter_ptr(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set(const float* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_float_ptr_detailed(this->c_node, const_cast<float*>(data), num_elements,
-      offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set(const double* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_double_ptr_detailed(this->c_node, const_cast<double*>(data), num_elements,
-      offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_setter_ptr(double, double);
 #endif
+
+#undef catalyst_conduit_c_setter_ptr
+
   void set_path_node(const std::string& path, const Node& data)
   {
     conduit_node_set_path_node(this->c_node, path.c_str(), data.c_node);
@@ -564,62 +487,38 @@ public:
 
 #undef catalyst_conduit_path_setter
 
-  void set_path(const std::string& path, const char data)
-  {
-    conduit_node_set_path_char(this->c_node, path.c_str(), data);
+#define catalyst_conduit_c_path_setter(cname, joined)                                              \
+  void set_path(const std::string& path, cname data)                                               \
+  {                                                                                                \
+    conduit_node_set_path_##joined(this->c_node, path.c_str(), data);                              \
   }
+
+  catalyst_conduit_c_path_setter(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set_path(const std::string& path, const signed char data)
-  {
-    conduit_node_set_path_signed_char(this->c_node, path.c_str(), data);
-  }
-  void set_path(const std::string& path, const unsigned char data)
-  {
-    conduit_node_set_path_unsigned_char(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(signed char, signed_char);
+  catalyst_conduit_c_path_setter(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_path(const std::string& path, const short data)
-  {
-    conduit_node_set_path_short(this->c_node, path.c_str(), data);
-  }
-  void set_path(const std::string& path, const unsigned short data)
-  {
-    conduit_node_set_path_unsigned_short(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(signed short, signed_short);
+  catalyst_conduit_c_path_setter(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_path(const std::string& path, const int data)
-  {
-    conduit_node_set_path_int(this->c_node, path.c_str(), data);
-  }
-  void set_path(const std::string& path, const unsigned int data)
-  {
-    conduit_node_set_path_unsigned_int(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(signed int, signed_int);
+  catalyst_conduit_c_path_setter(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_path(const std::string& path, const long data)
-  {
-    conduit_node_set_path_long(this->c_node, path.c_str(), data);
-  }
-  void set_path(const std::string& path, const unsigned long data)
-  {
-    conduit_node_set_path_unsigned_long(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(signed long, signed_long);
+  catalyst_conduit_c_path_setter(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_path(const std::string& path, const float data)
-  {
-    conduit_node_set_path_float(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_path(const std::string& path, const double data)
-  {
-    conduit_node_set_path_double(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_c_path_setter(double, double);
 #endif
+
+#undef catalyst_conduit_c_path_setter
+
   void set_path_string(const std::string& path, const std::string& data)
   {
     conduit_node_set_path_char8_str(this->c_node, path.c_str(), data.c_str());
@@ -662,73 +561,38 @@ public:
 
 #undef catalyst_conduit_path_setter_vector
 
-  void set_path(const std::string& path, const std::vector<char>& data)
-  {
-    conduit_node_set_path_char_ptr(
-      this->c_node, path.c_str(), std::vector<char>(data).data(), data.size());
+#define catalyst_conduit_c_path_setter_vector(cname, joined)                                       \
+  void set_path(const std::string& path, const std::vector<cname>& data)                           \
+  {                                                                                                \
+    conduit_node_set_path_##joined##_ptr(                                                          \
+      this->c_node, path.c_str(), const_cast<cname*>(data.data()), data.size());                   \
   }
+
+  catalyst_conduit_c_path_setter_vector(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set_path(const std::string& path, const std::vector<signed char>& data)
-  {
-    conduit_node_set_path_signed_char_ptr(
-      this->c_node, path.c_str(), std::vector<signed char>(data).data(), data.size());
-  }
-  void set_path(const std::string& path, const std::vector<unsigned char>& data)
-  {
-    conduit_node_set_path_unsigned_char_ptr(
-      this->c_node, path.c_str(), std::vector<unsigned char>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(signed char, signed_char);
+  catalyst_conduit_c_path_setter_vector(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_path(const std::string& path, const std::vector<short>& data)
-  {
-    conduit_node_set_path_short_ptr(
-      this->c_node, path.c_str(), std::vector<short>(data).data(), data.size());
-  }
-  void set_path(const std::string& path, const std::vector<unsigned short>& data)
-  {
-    conduit_node_set_path_unsigned_short_ptr(
-      this->c_node, path.c_str(), std::vector<unsigned short>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(signed short, signed_short);
+  catalyst_conduit_c_path_setter_vector(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_path(const std::string& path, const std::vector<int>& data)
-  {
-    conduit_node_set_path_int_ptr(
-      this->c_node, path.c_str(), std::vector<int>(data).data(), data.size());
-  }
-  void set_path(const std::string& path, const std::vector<unsigned int>& data)
-  {
-    conduit_node_set_path_unsigned_int_ptr(
-      this->c_node, path.c_str(), std::vector<unsigned int>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(signed int, signed_int);
+  catalyst_conduit_c_path_setter_vector(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_path(const std::string& path, const std::vector<long>& data)
-  {
-    conduit_node_set_path_long_ptr(
-      this->c_node, path.c_str(), std::vector<long>(data).data(), data.size());
-  }
-  void set_path(const std::string& path, const std::vector<unsigned long>& data)
-  {
-    conduit_node_set_path_unsigned_long_ptr(
-      this->c_node, path.c_str(), std::vector<unsigned long>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(signed long, signed_long);
+  catalyst_conduit_c_path_setter_vector(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_path(const std::string& path, const std::vector<float>& data)
-  {
-    conduit_node_set_path_float_ptr(
-      this->c_node, path.c_str(), std::vector<float>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_path(const std::string& path, const std::vector<double>& data)
-  {
-    conduit_node_set_path_double_ptr(
-      this->c_node, path.c_str(), std::vector<double>(data).data(), data.size());
-  }
+  catalyst_conduit_c_path_setter_vector(double, double);
 #endif
+
+#undef catalyst_conduit_c_path_setter_vector
 
 #define catalyst_conduit_path_setter_ptr(dname)                                                    \
   void set_path_##dname##_ptr(const std::string& path, const conduit_##dname* data,                \
@@ -764,104 +628,48 @@ public:
 
 #undef catalyst_conduit_path_setter_ptr
 
+#define catalyst_conduit_c_path_setter_ptr(cname, joined)                                          \
+  void set_path(const std::string& path, const cname* data, conduit_index_t num_elements = 1,      \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(cname),                            \
+    conduit_index_t element_bytes = sizeof(cname), conduit_index_t endianness = 0)                 \
+  {                                                                                                \
+    conduit_node_set_path_##joined##_ptr_detailed(this->c_node, path.c_str(),                      \
+      const_cast<cname*>(data), num_elements, offset, stride, element_bytes, endianness);          \
+  }
+
   void set_path_char_ptr(const std::string& path, const char* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_CHAR), conduit_index_t endianness = 0)
+    conduit_index_t stride = sizeof(char), conduit_index_t element_bytes = sizeof(char),
+    conduit_index_t endianness = 0)
   {
     conduit_node_set_path_char_ptr_detailed(this->c_node, path.c_str(), const_cast<char*>(data),
       num_elements, offset, stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
-  void set_path(const std::string& path, const signed char* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_signed_char_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<signed char*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path(const std::string& path, const unsigned char* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_unsigned_char_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<unsigned char*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(signed char, signed_char);
+  catalyst_conduit_c_path_setter_ptr(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_path(const std::string& path, const short* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_short_ptr_detailed(this->c_node, path.c_str(), const_cast<short*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path(const std::string& path, const unsigned short* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_unsigned_short_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<unsigned short*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(signed short, signed_short);
+  catalyst_conduit_c_path_setter_ptr(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_path(const std::string& path, const int* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_int_ptr_detailed(this->c_node, path.c_str(), const_cast<int*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path(const std::string& path, const unsigned int* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_unsigned_int_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<unsigned int*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(signed int, signed_int);
+  catalyst_conduit_c_path_setter_ptr(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_path(const std::string& path, const long* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_long_ptr_detailed(this->c_node, path.c_str(), const_cast<long*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path(const std::string& path, const unsigned long* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_unsigned_long_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<unsigned long*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(signed long, signed_long);
+  catalyst_conduit_c_path_setter_ptr(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_path(const std::string& path, const float* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_float_ptr_detailed(this->c_node, path.c_str(), const_cast<float*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_path(const std::string& path, const double* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_double_ptr_detailed(this->c_node, path.c_str(), const_cast<double*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_setter_ptr(double, double);
 #endif
+
+#undef catalyst_conduit_c_path_setter_ptr
+
   void set_external_node(Node& data) { conduit_node_set_external_node(this->c_node, data.c_node); }
 
   void set_external(Node& data) { this->set_external_node(data); }
@@ -897,62 +705,38 @@ public:
 
 #undef catalyst_conduit_external_setter_vector
 
-  void set_external(std::vector<char>& data)
-  {
-    conduit_node_set_external_char_ptr(this->c_node, data.data(), data.size());
+#define catalyst_conduit_c_external_setter_vector(cname, joined)                                   \
+  void set_external(const std::vector<cname>& data)                                                \
+  {                                                                                                \
+    conduit_node_set_external_##joined##_ptr(                                                      \
+      this->c_node, const_cast<cname*>(data.data()), data.size());                                 \
   }
+
+  catalyst_conduit_c_external_setter_vector(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set_external(std::vector<signed char>& data)
-  {
-    conduit_node_set_external_signed_char_ptr(this->c_node, data.data(), data.size());
-  }
-  void set_external(std::vector<unsigned char>& data)
-  {
-    conduit_node_set_external_unsigned_char_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(signed char, signed_char);
+  catalyst_conduit_c_external_setter_vector(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_external(std::vector<short>& data)
-  {
-    conduit_node_set_external_short_ptr(this->c_node, data.data(), data.size());
-  }
-  void set_external(std::vector<unsigned short>& data)
-  {
-    conduit_node_set_external_unsigned_short_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(signed short, signed_short);
+  catalyst_conduit_c_external_setter_vector(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_external(std::vector<int>& data)
-  {
-    conduit_node_set_external_int_ptr(this->c_node, data.data(), data.size());
-  }
-  void set_external(std::vector<unsigned int>& data)
-  {
-    conduit_node_set_external_unsigned_int_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(signed int, signed_int);
+  catalyst_conduit_c_external_setter_vector(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_external(std::vector<long>& data)
-  {
-    conduit_node_set_external_long_ptr(this->c_node, data.data(), data.size());
-  }
-  void set_external(std::vector<unsigned long>& data)
-  {
-    conduit_node_set_external_unsigned_long_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(signed long, signed_long);
+  catalyst_conduit_c_external_setter_vector(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_external(std::vector<float>& data)
-  {
-    conduit_node_set_external_float_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_external(std::vector<double>& data)
-  {
-    conduit_node_set_external_double_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_c_external_setter_vector(double, double);
 #endif
+
+#undef catalyst_conduit_c_external_setter_vector
 
 #define catalyst_conduit_external_setter_ptr(dname)                                                \
   void set_external_##dname##_ptr(const conduit_##dname* data, conduit_index_t num_elements = 1,   \
@@ -986,100 +770,47 @@ public:
 
 #undef catalyst_conduit_external_setter_ptr
 
+#define catalyst_conduit_c_external_setter_ptr(cname, joined)                                      \
+  void set_external(cname* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,     \
+    conduit_index_t stride = sizeof(cname), conduit_index_t element_bytes = sizeof(cname),         \
+    conduit_index_t endianness = 0)                                                                \
+  {                                                                                                \
+    conduit_node_set_external_##joined##_ptr_detailed(                                             \
+      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);                \
+  }
+
   void set_external_char_ptr(char* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_CHAR), conduit_index_t endianness = 0)
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(char),
+    conduit_index_t element_bytes = sizeof(char), conduit_index_t endianness = 0)
   {
     conduit_node_set_external_char_ptr_detailed(
       this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
-  void set_external(signed char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_signed_char_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_external(unsigned char* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_unsigned_char_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(signed char, signed_char);
+  catalyst_conduit_c_external_setter_ptr(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_external(short* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_short_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_external(unsigned short* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_unsigned_short_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(signed short, signed_short);
+  catalyst_conduit_c_external_setter_ptr(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_external(int* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_int_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_external(unsigned int* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_unsigned_int_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(signed int, signed_int);
+  catalyst_conduit_c_external_setter_ptr(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_external(long* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_long_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_external(unsigned long* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_unsigned_long_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(signed long, signed_long);
+  catalyst_conduit_c_external_setter_ptr(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_external(float* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_float_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_external(double* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_double_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_external_setter_ptr(double, double);
 #endif
+
+#undef catalyst_conduit_c_external_setter_vector
+
   void set_path_external_node(const std::string& path, Node& data)
   {
     conduit_node_set_path_external_node(this->c_node, path.c_str(), data.c_node);
@@ -1122,67 +853,38 @@ public:
 
 #undef catalyst_conduit_path_external_setter_vector
 
-  void set_path_external(const std::string& path, std::vector<char>& data)
-  {
-    conduit_node_set_path_external_char_ptr(this->c_node, path.c_str(), data.data(), data.size());
+#define catalyst_conduit_c_path_external_setter_vector(cname, joined)                              \
+  void set_path_external(const std::string& path, std::vector<cname>& data)                        \
+  {                                                                                                \
+    conduit_node_set_path_external_##joined##_ptr(                                                 \
+      this->c_node, path.c_str(), data.data(), data.size());                                       \
   }
+
+  catalyst_conduit_c_path_external_setter_vector(char, char);
 #ifndef CONDUIT_USE_CHAR
-  void set_path_external(const std::string& path, std::vector<signed char>& data)
-  {
-    conduit_node_set_path_external_signed_char_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
-  void set_path_external(const std::string& path, std::vector<unsigned char>& data)
-  {
-    conduit_node_set_path_external_unsigned_char_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(signed char, signed_char);
+  catalyst_conduit_c_path_external_setter_vector(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_path_external(const std::string& path, std::vector<short>& data)
-  {
-    conduit_node_set_path_external_short_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-  void set_path_external(const std::string& path, std::vector<unsigned short>& data)
-  {
-    conduit_node_set_path_external_unsigned_short_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(signed short, signed_short);
+  catalyst_conduit_c_path_external_setter_vector(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_path_external(const std::string& path, std::vector<int>& data)
-  {
-    conduit_node_set_path_external_int_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-  void set_path_external(const std::string& path, std::vector<unsigned int>& data)
-  {
-    conduit_node_set_path_external_unsigned_int_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(signed int, signed_int);
+  catalyst_conduit_c_path_external_setter_vector(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_path_external(const std::string& path, std::vector<long>& data)
-  {
-    conduit_node_set_path_external_long_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-  void set_path_external(const std::string& path, std::vector<unsigned long>& data)
-  {
-    conduit_node_set_path_external_unsigned_long_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(signed long, signed_long);
+  catalyst_conduit_c_path_external_setter_vector(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_path_external(const std::string& path, std::vector<float>& data)
-  {
-    conduit_node_set_path_external_float_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_path_external(const std::string& path, std::vector<double>& data)
-  {
-    conduit_node_set_path_external_double_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_c_path_external_setter_vector(double, double);
 #endif
+
+#undef catalyst_conduit_c_path_external_setter_vector
 
 #define catalyst_conduit_path_external_setter_ptr(dname)                                           \
   void set_path_external_##dname##_ptr(const std::string& path, conduit_##dname* data,             \
@@ -1217,6 +919,15 @@ public:
 
 #undef catalyst_conduit_path_external_setter_ptr
 
+#define catalyst_conduit_c_path_external_setter_ptr(cname, joined)                                 \
+  void set_path_external(const std::string& path, cname* data, conduit_index_t num_elements = 1,   \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(cname),                            \
+    conduit_index_t element_bytes = sizeof(cname), conduit_index_t endianness = 0)                 \
+  {                                                                                                \
+    conduit_node_set_path_external_##joined##_ptr_detailed(                                        \
+      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);  \
+  }
+
   void set_path_external_char_ptr(const std::string& path, char* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
@@ -1226,97 +937,30 @@ public:
       this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
   }
 #ifndef CONDUIT_USE_CHAR
-  void set_path_external(const std::string& path, signed char* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_signed_char_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path_external(const std::string& path, unsigned char* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_CHAR),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_unsigned_char_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(signed char, signed_char);
+  catalyst_conduit_c_path_external_setter_ptr(unsigned char, unsigned_char);
 #endif
 #ifndef CONDUIT_USE_SHORT
-  void set_path_external(const std::string& path, short* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_SHORT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_short_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path_external(const std::string& path, unsigned short* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_SHORT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_unsigned_short_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(signed short, signed_short);
+  catalyst_conduit_c_path_external_setter_ptr(unsigned short, unsigned_short);
 #endif
 #ifndef CONDUIT_USE_INT
-  void set_path_external(const std::string& path, int* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_INT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_int_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path_external(const std::string& path, unsigned int* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_INT),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_unsigned_int_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(signed int, signed_int);
+  catalyst_conduit_c_path_external_setter_ptr(unsigned int, unsigned_int);
 #endif
 #ifndef CONDUIT_USE_LONG
-  void set_path_external(const std::string& path, long* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_LONG), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_long_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-  void set_path_external(const std::string& path, unsigned long* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_UNSIGNED_LONG),
-    conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_unsigned_long_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(signed long, signed_long);
+  catalyst_conduit_c_path_external_setter_ptr(unsigned long, unsigned_long);
 #endif
 #ifndef CONDUIT_USE_FLOAT
-  void set_path_external(const std::string& path, float* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_FLOAT),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_FLOAT), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_float_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(float, float);
 #endif
 #ifndef CONDUIT_USE_DOUBLE
-  void set_path_external(const std::string& path, double* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_DOUBLE),
-    conduit_index_t element_bytes = sizeof(CONDUIT_NATIVE_DOUBLE), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_double_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_c_path_external_setter_ptr(double, double);
 #endif
+
+#undef catalyst_conduit_c_path_external_setter_ptr
+
   /////////////////////////////////////////////////////////////////////////////
   // End generated section.
   /////////////////////////////////////////////////////////////////////////////
