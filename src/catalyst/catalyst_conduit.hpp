@@ -272,45 +272,24 @@ public:
 
   void set(const Node& data) { this->set_node(data); }
 
-  void set_int8(const conduit_int8 data) { conduit_node_set_int8(this->c_node, data); }
+#define catalyst_conduit_setter(dname)                                                             \
+  void set_##dname(conduit_##dname data) { conduit_node_set_##dname(this->c_node, data); }         \
+  void set(conduit_##dname data) { this->set_##dname(data); }
 
-  void set(const conduit_int8 data) { this->set_int8(data); }
+  catalyst_conduit_setter(int8);
+  catalyst_conduit_setter(int16);
+  catalyst_conduit_setter(int32);
+  catalyst_conduit_setter(int64);
 
-  void set_int16(const conduit_int16 data) { conduit_node_set_int16(this->c_node, data); }
+  catalyst_conduit_setter(uint8);
+  catalyst_conduit_setter(uint16);
+  catalyst_conduit_setter(uint32);
+  catalyst_conduit_setter(uint64);
 
-  void set(const conduit_int16 data) { this->set_int16(data); }
+  catalyst_conduit_setter(float32);
+  catalyst_conduit_setter(float64);
 
-  void set_int32(const conduit_int32 data) { conduit_node_set_int32(this->c_node, data); }
-
-  void set(const conduit_int32 data) { this->set_int32(data); }
-
-  void set_int64(const conduit_int64 data) { conduit_node_set_int64(this->c_node, data); }
-
-  void set(const conduit_int64 data) { this->set_int64(data); }
-
-  void set_uint8(const conduit_uint8 data) { conduit_node_set_uint8(this->c_node, data); }
-
-  void set(const conduit_uint8 data) { this->set_uint8(data); }
-
-  void set_uint16(const conduit_uint16 data) { conduit_node_set_uint16(this->c_node, data); }
-
-  void set(const conduit_uint16 data) { this->set_uint16(data); }
-
-  void set_uint32(const conduit_uint32 data) { conduit_node_set_uint32(this->c_node, data); }
-
-  void set(const conduit_uint32 data) { this->set_uint32(data); }
-
-  void set_uint64(const conduit_uint64 data) { conduit_node_set_uint64(this->c_node, data); }
-
-  void set(const conduit_uint64 data) { this->set_uint64(data); }
-
-  void set_float32(const conduit_float32 data) { conduit_node_set_float32(this->c_node, data); }
-
-  void set(const conduit_float32 data) { this->set_float32(data); }
-
-  void set_float64(const conduit_float64 data) { conduit_node_set_float64(this->c_node, data); }
-
-  void set(const conduit_float64 data) { this->set_float64(data); }
+#undef catalyst_conduit_setter
 
   void set(const char data) { conduit_node_set_char(this->c_node, data); }
 #ifndef CONDUIT_USE_CHAR
@@ -344,80 +323,28 @@ public:
 
   void set_char8_str(const char* data) { conduit_node_set_char8_str(this->c_node, data); }
 
-  void set_int8_vector(const std::vector<conduit_int8>& data)
-  {
-    conduit_node_set_int8_ptr(this->c_node, std::vector<conduit_int8>(data).data(), data.size());
-  }
+#define catalyst_conduit_setter_vector(dname)                                                      \
+  void set_##dname##_vector(const std::vector<conduit_##dname>& data)                              \
+  {                                                                                                \
+    conduit_node_set_##dname##_ptr(                                                                \
+      this->c_node, const_cast<conduit_##dname*>(data.data()), data.size());                       \
+  }                                                                                                \
+  void set(const std::vector<conduit_##dname>& data) { this->set_##dname##_vector(data); }
 
-  void set(const std::vector<conduit_int8>& data) { this->set_int8_vector(data); }
+  catalyst_conduit_setter_vector(int8);
+  catalyst_conduit_setter_vector(int16);
+  catalyst_conduit_setter_vector(int32);
+  catalyst_conduit_setter_vector(int64);
 
-  void set_int16_vector(const std::vector<conduit_int16>& data)
-  {
-    conduit_node_set_int16_ptr(this->c_node, std::vector<conduit_int16>(data).data(), data.size());
-  }
+  catalyst_conduit_setter_vector(uint8);
+  catalyst_conduit_setter_vector(uint16);
+  catalyst_conduit_setter_vector(uint32);
+  catalyst_conduit_setter_vector(uint64);
 
-  void set(const std::vector<conduit_int16>& data) { this->set_int16_vector(data); }
+  catalyst_conduit_setter_vector(float32);
+  catalyst_conduit_setter_vector(float64);
 
-  void set_int32_vector(const std::vector<conduit_int32>& data)
-  {
-    conduit_node_set_int32_ptr(this->c_node, std::vector<conduit_int32>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_int32>& data) { this->set_int32_vector(data); }
-
-  void set_int64_vector(const std::vector<conduit_int64>& data)
-  {
-    conduit_node_set_int64_ptr(this->c_node, std::vector<conduit_int64>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_int64>& data) { this->set_int64_vector(data); }
-
-  void set_uint8_vector(const std::vector<conduit_uint8>& data)
-  {
-    conduit_node_set_uint8_ptr(this->c_node, std::vector<conduit_uint8>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_uint8>& data) { this->set_uint8_vector(data); }
-
-  void set_uint16_vector(const std::vector<conduit_uint16>& data)
-  {
-    conduit_node_set_uint16_ptr(
-      this->c_node, std::vector<conduit_uint16>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_uint16>& data) { this->set_uint16_vector(data); }
-
-  void set_uint32_vector(const std::vector<conduit_uint32>& data)
-  {
-    conduit_node_set_uint32_ptr(
-      this->c_node, std::vector<conduit_uint32>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_uint32>& data) { this->set_uint32_vector(data); }
-
-  void set_uint64_vector(const std::vector<conduit_uint64>& data)
-  {
-    conduit_node_set_uint64_ptr(
-      this->c_node, std::vector<conduit_uint64>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_uint64>& data) { this->set_uint64_vector(data); }
-
-  void set_float32_vector(const std::vector<conduit_float32>& data)
-  {
-    conduit_node_set_float32_ptr(
-      this->c_node, std::vector<conduit_float32>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_float32>& data) { this->set_float32_vector(data); }
-
-  void set_float64_vector(const std::vector<conduit_float64>& data)
-  {
-    conduit_node_set_float64_ptr(
-      this->c_node, std::vector<conduit_float64>(data).data(), data.size());
-  }
-
-  void set(const std::vector<conduit_float64>& data) { this->set_float64_vector(data); }
+#undef catalyst_conduit_setter_vector
 
   void set(const std::vector<char>& data)
   {
@@ -480,155 +407,36 @@ public:
     conduit_node_set_double_ptr(this->c_node, std::vector<double>(data).data(), data.size());
   }
 #endif
-  void set_int8_ptr(const conduit_int8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_int8_ptr_detailed(this->c_node, const_cast<conduit_int8*>(data), num_elements,
-      offset, stride, element_bytes, endianness);
+
+#define catalyst_conduit_setter_ptr(dname)                                                         \
+  void set_##dname##_ptr(const conduit_##dname* data, conduit_index_t num_elements = 1,            \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_##dname),                  \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    conduit_node_set_##dname##_ptr_detailed(this->c_node, const_cast<conduit_##dname*>(data),      \
+      num_elements, offset, stride, element_bytes, endianness);                                    \
+  }                                                                                                \
+  void set(const conduit_##dname* data, conduit_index_t num_elements = 1,                          \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_##dname),                  \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    this->set_##dname##_ptr(data, num_elements, offset, stride, element_bytes, endianness);        \
   }
 
-  void set(const conduit_int8* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    this->set_int8_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_setter_ptr(int8);
+  catalyst_conduit_setter_ptr(int16);
+  catalyst_conduit_setter_ptr(int32);
+  catalyst_conduit_setter_ptr(int64);
 
-  void set_int16_ptr(const conduit_int16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_int16_ptr_detailed(this->c_node, const_cast<conduit_int16*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_setter_ptr(uint8);
+  catalyst_conduit_setter_ptr(uint16);
+  catalyst_conduit_setter_ptr(uint32);
+  catalyst_conduit_setter_ptr(uint64);
 
-  void set(const conduit_int16* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    this->set_int16_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_setter_ptr(float32);
+  catalyst_conduit_setter_ptr(float64);
 
-  void set_int32_ptr(const conduit_int32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_int32_ptr_detailed(this->c_node, const_cast<conduit_int32*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_int32* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    this->set_int32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_int64_ptr(const conduit_int64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_int64_ptr_detailed(this->c_node, const_cast<conduit_int64*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_int64* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    this->set_int64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_uint8_ptr(const conduit_uint8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_uint8_ptr_detailed(this->c_node, const_cast<conduit_uint8*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_uint8* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    this->set_uint8_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_uint16_ptr(const conduit_uint16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_uint16_ptr_detailed(this->c_node, const_cast<conduit_uint16*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_uint16* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    this->set_uint16_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_uint32_ptr(const conduit_uint32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_uint32_ptr_detailed(this->c_node, const_cast<conduit_uint32*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_uint32* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    this->set_uint32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_uint64_ptr(const conduit_uint64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_uint64_ptr_detailed(this->c_node, const_cast<conduit_uint64*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_uint64* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    this->set_uint64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_float32_ptr(const conduit_float32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_float32_ptr_detailed(this->c_node, const_cast<conduit_float32*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_float32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    this->set_float32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_float64_ptr(const conduit_float64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_float64_ptr_detailed(this->c_node, const_cast<conduit_float64*>(data),
-      num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set(const conduit_float64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    this->set_float64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+#undef catalyst_conduit_setter_ptr
 
   void set_char_ptr(const char* data, conduit_index_t num_elements = 1, conduit_index_t offset = 0,
     conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
@@ -731,105 +539,30 @@ public:
 
   void set_path(const std::string& path, const Node& data) { this->set_path_node(path, data); }
 
-  void set_path_int8(const std::string& path, const conduit_int8 data)
-  {
-    conduit_node_set_path_int8(this->c_node, path.c_str(), data);
+#define catalyst_conduit_path_setter(dname)                                                        \
+  void set_path_##dname(const std::string& path, conduit_##dname data)                             \
+  {                                                                                                \
+    conduit_node_set_path_##dname(this->c_node, path.c_str(), data);                               \
+  }                                                                                                \
+  void set_path(const std::string& path, conduit_##dname data)                                     \
+  {                                                                                                \
+    this->set_path_##dname(path, data);                                                            \
   }
 
-  void set_path(const std::string& path, const conduit_int8 data)
-  {
-    this->set_path_int8(path, data);
-  }
+  catalyst_conduit_path_setter(int8);
+  catalyst_conduit_path_setter(int16);
+  catalyst_conduit_path_setter(int32);
+  catalyst_conduit_path_setter(int64);
 
-  void set_path_int16(const std::string& path, const conduit_int16 data)
-  {
-    conduit_node_set_path_int16(this->c_node, path.c_str(), data);
-  }
+  catalyst_conduit_path_setter(uint8);
+  catalyst_conduit_path_setter(uint16);
+  catalyst_conduit_path_setter(uint32);
+  catalyst_conduit_path_setter(uint64);
 
-  void set_path(const std::string& path, const conduit_int16 data)
-  {
-    this->set_path_int16(path, data);
-  }
+  catalyst_conduit_path_setter(float32);
+  catalyst_conduit_path_setter(float64);
 
-  void set_path_int32(const std::string& path, const conduit_int32 data)
-  {
-    conduit_node_set_path_int32(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_int32 data)
-  {
-    this->set_path_int32(path, data);
-  }
-
-  void set_path_int64(const std::string& path, const conduit_int64 data)
-  {
-    conduit_node_set_path_int64(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_int64 data)
-  {
-    this->set_path_int64(path, data);
-  }
-
-  void set_path_uint8(const std::string& path, const conduit_uint8 data)
-  {
-    conduit_node_set_path_uint8(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_uint8 data)
-  {
-    this->set_path_uint8(path, data);
-  }
-
-  void set_path_uint16(const std::string& path, const conduit_uint16 data)
-  {
-    conduit_node_set_path_uint16(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_uint16 data)
-  {
-    this->set_path_uint16(path, data);
-  }
-
-  void set_path_uint32(const std::string& path, const conduit_uint32 data)
-  {
-    conduit_node_set_path_uint32(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_uint32 data)
-  {
-    this->set_path_uint32(path, data);
-  }
-
-  void set_path_uint64(const std::string& path, const conduit_uint64 data)
-  {
-    conduit_node_set_path_uint64(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_uint64 data)
-  {
-    this->set_path_uint64(path, data);
-  }
-
-  void set_path_float32(const std::string& path, const conduit_float32 data)
-  {
-    conduit_node_set_path_float32(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_float32 data)
-  {
-    this->set_path_float32(path, data);
-  }
-
-  void set_path_float64(const std::string& path, const conduit_float64 data)
-  {
-    conduit_node_set_path_float64(this->c_node, path.c_str(), data);
-  }
-
-  void set_path(const std::string& path, const conduit_float64 data)
-  {
-    this->set_path_float64(path, data);
-  }
+#undef catalyst_conduit_path_setter
 
   void set_path(const std::string& path, const char data)
   {
@@ -902,115 +635,32 @@ public:
     conduit_node_set_path_char8_str(this->c_node, path.c_str(), data);
   }
 
-  void set_path_int8_vector(const std::string& path, const std::vector<conduit_int8>& data)
-  {
-    conduit_node_set_path_int8_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_int8>(data).data(), data.size());
+#define catalyst_conduit_path_setter_vector(dname)                                                 \
+  void set_path_##dname##_vector(                                                                  \
+    const std::string& path, const std::vector<conduit_##dname>& data)                             \
+  {                                                                                                \
+    conduit_node_set_path_##dname##_ptr(                                                           \
+      this->c_node, path.c_str(), const_cast<conduit_##dname*>(data.data()), data.size());         \
+  }                                                                                                \
+  void set_path(const std::string& path, const std::vector<conduit_##dname>& data)                 \
+  {                                                                                                \
+    this->set_path_##dname##_vector(path, data);                                                   \
   }
 
-  void set_path(const std::string& path, const std::vector<conduit_int8>& data)
-  {
-    this->set_path_int8_vector(path, data);
-  }
+  catalyst_conduit_path_setter_vector(int8);
+  catalyst_conduit_path_setter_vector(int16);
+  catalyst_conduit_path_setter_vector(int32);
+  catalyst_conduit_path_setter_vector(int64);
 
-  void set_path_int16_vector(const std::string& path, const std::vector<conduit_int16>& data)
-  {
-    conduit_node_set_path_int16_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_int16>(data).data(), data.size());
-  }
+  catalyst_conduit_path_setter_vector(uint8);
+  catalyst_conduit_path_setter_vector(uint16);
+  catalyst_conduit_path_setter_vector(uint32);
+  catalyst_conduit_path_setter_vector(uint64);
 
-  void set_path(const std::string& path, const std::vector<conduit_int16>& data)
-  {
-    this->set_path_int16_vector(path, data);
-  }
+  catalyst_conduit_path_setter_vector(float32);
+  catalyst_conduit_path_setter_vector(float64);
 
-  void set_path_int32_vector(const std::string& path, const std::vector<conduit_int32>& data)
-  {
-    conduit_node_set_path_int32_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_int32>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_int32>& data)
-  {
-    this->set_path_int32_vector(path, data);
-  }
-
-  void set_path_int64_vector(const std::string& path, const std::vector<conduit_int64>& data)
-  {
-    conduit_node_set_path_int64_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_int64>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_int64>& data)
-  {
-    this->set_path_int64_vector(path, data);
-  }
-
-  void set_path_uint8_vector(const std::string& path, const std::vector<conduit_uint8>& data)
-  {
-    conduit_node_set_path_uint8_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_uint8>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_uint8>& data)
-  {
-    this->set_path_uint8_vector(path, data);
-  }
-
-  void set_path_uint16_vector(const std::string& path, const std::vector<conduit_uint16>& data)
-  {
-    conduit_node_set_path_uint16_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_uint16>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_uint16>& data)
-  {
-    this->set_path_uint16_vector(path, data);
-  }
-
-  void set_path_uint32_vector(const std::string& path, const std::vector<conduit_uint32>& data)
-  {
-    conduit_node_set_path_uint32_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_uint32>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_uint32>& data)
-  {
-    this->set_path_uint32_vector(path, data);
-  }
-
-  void set_path_uint64_vector(const std::string& path, const std::vector<conduit_uint64>& data)
-  {
-    conduit_node_set_path_uint64_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_uint64>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_uint64>& data)
-  {
-    this->set_path_uint64_vector(path, data);
-  }
-
-  void set_path_float32_vector(const std::string& path, const std::vector<conduit_float32>& data)
-  {
-    conduit_node_set_path_float32_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_float32>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_float32>& data)
-  {
-    this->set_path_float32_vector(path, data);
-  }
-
-  void set_path_float64_vector(const std::string& path, const std::vector<conduit_float64>& data)
-  {
-    conduit_node_set_path_float64_ptr(
-      this->c_node, path.c_str(), std::vector<conduit_float64>(data).data(), data.size());
-  }
-
-  void set_path(const std::string& path, const std::vector<conduit_float64>& data)
-  {
-    this->set_path_float64_vector(path, data);
-  }
+#undef catalyst_conduit_path_setter_vector
 
   void set_path(const std::string& path, const std::vector<char>& data)
   {
@@ -1079,174 +729,40 @@ public:
       this->c_node, path.c_str(), std::vector<double>(data).data(), data.size());
   }
 #endif
-  void set_path_int8_ptr(const std::string& path, const conduit_int8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_int8_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_int8*>(data), num_elements, offset, stride, element_bytes, endianness);
+
+#define catalyst_conduit_path_setter_ptr(dname)                                                    \
+  void set_path_##dname##_ptr(const std::string& path, const conduit_##dname* data,                \
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,                                  \
+    conduit_index_t stride = sizeof(conduit_##dname),                                              \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    conduit_node_set_path_##dname##_ptr_detailed(this->c_node, path.c_str(),                       \
+      const_cast<conduit_##dname*>(data), num_elements, offset, stride, element_bytes,             \
+      endianness);                                                                                 \
+  }                                                                                                \
+  void set_path(const std::string& path, const conduit_##dname* data,                              \
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,                                  \
+    conduit_index_t stride = sizeof(conduit_##dname),                                              \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    this->set_path_##dname##_ptr(                                                                  \
+      path, data, num_elements, offset, stride, element_bytes, endianness);                        \
   }
 
-  void set_path(const std::string& path, const conduit_int8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    this->set_path_int8_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_setter_ptr(int8);
+  catalyst_conduit_path_setter_ptr(int16);
+  catalyst_conduit_path_setter_ptr(int32);
+  catalyst_conduit_path_setter_ptr(int64);
 
-  void set_path_int16_ptr(const std::string& path, const conduit_int16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_int16_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_int16*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_setter_ptr(uint8);
+  catalyst_conduit_path_setter_ptr(uint16);
+  catalyst_conduit_path_setter_ptr(uint32);
+  catalyst_conduit_path_setter_ptr(uint64);
 
-  void set_path(const std::string& path, const conduit_int16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    this->set_path_int16_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_setter_ptr(float32);
+  catalyst_conduit_path_setter_ptr(float64);
 
-  void set_path_int32_ptr(const std::string& path, const conduit_int32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_int32_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_int32*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_int32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    this->set_path_int32_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_int64_ptr(const std::string& path, const conduit_int64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_int64_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_int64*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_int64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    this->set_path_int64_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_uint8_ptr(const std::string& path, const conduit_uint8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_uint8_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_uint8*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_uint8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    this->set_path_uint8_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_uint16_ptr(const std::string& path, const conduit_uint16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_uint16_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_uint16*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_uint16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    this->set_path_uint16_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_uint32_ptr(const std::string& path, const conduit_uint32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_uint32_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_uint32*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_uint32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    this->set_path_uint32_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_uint64_ptr(const std::string& path, const conduit_uint64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_uint64_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_uint64*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_uint64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    this->set_path_uint64_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_float32_ptr(const std::string& path, const conduit_float32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_float32_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_float32*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_float32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    this->set_path_float32_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_float64_ptr(const std::string& path, const conduit_float64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_float64_ptr_detailed(this->c_node, path.c_str(),
-      const_cast<conduit_float64*>(data), num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path(const std::string& path, const conduit_float64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    this->set_path_float64_ptr(path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+#undef catalyst_conduit_path_setter_ptr
 
   void set_path_char_ptr(const std::string& path, const char* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
@@ -1355,75 +871,31 @@ public:
     conduit_node_set_external_char8_str(this->c_node, data);
   }
 
-  void set_external_int8_vector(std::vector<conduit_int8>& data)
-  {
-    conduit_node_set_external_int8_ptr(this->c_node, data.data(), data.size());
+#define catalyst_conduit_external_setter_vector(dname)                                             \
+  void set_external_##dname##_vector(const std::vector<conduit_##dname>& data)                     \
+  {                                                                                                \
+    conduit_node_set_external_##dname##_ptr(                                                       \
+      this->c_node, const_cast<conduit_##dname*>(data.data()), data.size());                       \
+  }                                                                                                \
+  void set_external(const std::vector<conduit_##dname>& data)                                      \
+  {                                                                                                \
+    this->set_external_##dname##_vector(data);                                                     \
   }
 
-  void set_external(std::vector<conduit_int8>& data) { this->set_external_int8_vector(data); }
+  catalyst_conduit_external_setter_vector(int8);
+  catalyst_conduit_external_setter_vector(int16);
+  catalyst_conduit_external_setter_vector(int32);
+  catalyst_conduit_external_setter_vector(int64);
 
-  void set_external_int16_vector(std::vector<conduit_int16>& data)
-  {
-    conduit_node_set_external_int16_ptr(this->c_node, data.data(), data.size());
-  }
+  catalyst_conduit_external_setter_vector(uint8);
+  catalyst_conduit_external_setter_vector(uint16);
+  catalyst_conduit_external_setter_vector(uint32);
+  catalyst_conduit_external_setter_vector(uint64);
 
-  void set_external(std::vector<conduit_int16>& data) { this->set_external_int16_vector(data); }
+  catalyst_conduit_external_setter_vector(float32);
+  catalyst_conduit_external_setter_vector(float64);
 
-  void set_external_int32_vector(std::vector<conduit_int32>& data)
-  {
-    conduit_node_set_external_int32_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_int32>& data) { this->set_external_int32_vector(data); }
-
-  void set_external_int64_vector(std::vector<conduit_int64>& data)
-  {
-    conduit_node_set_external_int64_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_int64>& data) { this->set_external_int64_vector(data); }
-
-  void set_external_uint8_vector(std::vector<conduit_uint8>& data)
-  {
-    conduit_node_set_external_uint8_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_uint8>& data) { this->set_external_uint8_vector(data); }
-
-  void set_external_uint16_vector(std::vector<conduit_uint16>& data)
-  {
-    conduit_node_set_external_uint16_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_uint16>& data) { this->set_external_uint16_vector(data); }
-
-  void set_external_uint32_vector(std::vector<conduit_uint32>& data)
-  {
-    conduit_node_set_external_uint32_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_uint32>& data) { this->set_external_uint32_vector(data); }
-
-  void set_external_uint64_vector(std::vector<conduit_uint64>& data)
-  {
-    conduit_node_set_external_uint64_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_uint64>& data) { this->set_external_uint64_vector(data); }
-
-  void set_external_float32_vector(std::vector<conduit_float32>& data)
-  {
-    conduit_node_set_external_float32_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_float32>& data) { this->set_external_float32_vector(data); }
-
-  void set_external_float64_vector(std::vector<conduit_float64>& data)
-  {
-    conduit_node_set_external_float64_ptr(this->c_node, data.data(), data.size());
-  }
-
-  void set_external(std::vector<conduit_float64>& data) { this->set_external_float64_vector(data); }
+#undef catalyst_conduit_external_setter_vector
 
   void set_external(std::vector<char>& data)
   {
@@ -1481,155 +953,38 @@ public:
     conduit_node_set_external_double_ptr(this->c_node, data.data(), data.size());
   }
 #endif
-  void set_external_int8_ptr(conduit_int8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_int8_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
+
+#define catalyst_conduit_external_setter_ptr(dname)                                                \
+  void set_external_##dname##_ptr(const conduit_##dname* data, conduit_index_t num_elements = 1,   \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_##dname),                  \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    conduit_node_set_external_##dname##_ptr_detailed(this->c_node,                                 \
+      const_cast<conduit_##dname*>(data), num_elements, offset, stride, element_bytes,             \
+      endianness);                                                                                 \
+  }                                                                                                \
+  void set_external(const conduit_##dname* data, conduit_index_t num_elements = 1,                 \
+    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_##dname),                  \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    this->set_external_##dname##_ptr(                                                              \
+      data, num_elements, offset, stride, element_bytes, endianness);                              \
   }
 
-  void set_external(conduit_int8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    this->set_external_int8_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_external_setter_ptr(int8);
+  catalyst_conduit_external_setter_ptr(int16);
+  catalyst_conduit_external_setter_ptr(int32);
+  catalyst_conduit_external_setter_ptr(int64);
 
-  void set_external_int16_ptr(conduit_int16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_int16_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_external_setter_ptr(uint8);
+  catalyst_conduit_external_setter_ptr(uint16);
+  catalyst_conduit_external_setter_ptr(uint32);
+  catalyst_conduit_external_setter_ptr(uint64);
 
-  void set_external(conduit_int16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    this->set_external_int16_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_external_setter_ptr(float32);
+  catalyst_conduit_external_setter_ptr(float64);
 
-  void set_external_int32_ptr(conduit_int32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_int32_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_int32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    this->set_external_int32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_int64_ptr(conduit_int64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_int64_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_int64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    this->set_external_int64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_uint8_ptr(conduit_uint8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_uint8_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_uint8* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    this->set_external_uint8_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_uint16_ptr(conduit_uint16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_uint16_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_uint16* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    this->set_external_uint16_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_uint32_ptr(conduit_uint32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_uint32_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_uint32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    this->set_external_uint32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_uint64_ptr(conduit_uint64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_uint64_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_uint64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    this->set_external_uint64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_float32_ptr(conduit_float32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_float32_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_float32* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    this->set_external_float32_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external_float64_ptr(conduit_float64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_external_float64_ptr_detailed(
-      this->c_node, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_external(conduit_float64* data, conduit_index_t num_elements = 1,
-    conduit_index_t offset = 0, conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    this->set_external_float64_ptr(data, num_elements, offset, stride, element_bytes, endianness);
-  }
+#undef catalyst_conduit_external_setter_ptr
 
   void set_external_char_ptr(char* data, conduit_index_t num_elements = 1,
     conduit_index_t offset = 0, conduit_index_t stride = sizeof(CONDUIT_NATIVE_CHAR),
@@ -1740,107 +1095,32 @@ public:
     conduit_node_set_path_external_char8_str(this->c_node, path.c_str(), data);
   }
 
-  void set_path_external_int8_vector(const std::string& path, std::vector<conduit_int8>& data)
-  {
-    conduit_node_set_path_external_int8_ptr(this->c_node, path.c_str(), data.data(), data.size());
+#define catalyst_conduit_path_external_setter_vector(dname)                                        \
+  void set_path_external_##dname##_vector(                                                         \
+    const std::string& path, std::vector<conduit_##dname>& data)                                   \
+  {                                                                                                \
+    conduit_node_set_path_external_##dname##_ptr(                                                  \
+      this->c_node, path.c_str(), data.data(), data.size());                                       \
+  }                                                                                                \
+  void set_path_external(const std::string& path, std::vector<conduit_##dname>& data)              \
+  {                                                                                                \
+    this->set_path_external_##dname##_vector(path, data);                                          \
   }
 
-  void set_path_external(const std::string& path, std::vector<conduit_int8>& data)
-  {
-    this->set_path_external_int8_vector(path, data);
-  }
+  catalyst_conduit_path_external_setter_vector(int8);
+  catalyst_conduit_path_external_setter_vector(int16);
+  catalyst_conduit_path_external_setter_vector(int32);
+  catalyst_conduit_path_external_setter_vector(int64);
 
-  void set_path_external_int16_vector(const std::string& path, std::vector<conduit_int16>& data)
-  {
-    conduit_node_set_path_external_int16_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
+  catalyst_conduit_path_external_setter_vector(uint8);
+  catalyst_conduit_path_external_setter_vector(uint16);
+  catalyst_conduit_path_external_setter_vector(uint32);
+  catalyst_conduit_path_external_setter_vector(uint64);
 
-  void set_path_external(const std::string& path, std::vector<conduit_int16>& data)
-  {
-    this->set_path_external_int16_vector(path, data);
-  }
+  catalyst_conduit_path_external_setter_vector(float32);
+  catalyst_conduit_path_external_setter_vector(float64);
 
-  void set_path_external_int32_vector(const std::string& path, std::vector<conduit_int32>& data)
-  {
-    conduit_node_set_path_external_int32_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_int32>& data)
-  {
-    this->set_path_external_int32_vector(path, data);
-  }
-
-  void set_path_external_int64_vector(const std::string& path, std::vector<conduit_int64>& data)
-  {
-    conduit_node_set_path_external_int64_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_int64>& data)
-  {
-    this->set_path_external_int64_vector(path, data);
-  }
-
-  void set_path_external_uint8_vector(const std::string& path, std::vector<conduit_uint8>& data)
-  {
-    conduit_node_set_path_external_uint8_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_uint8>& data)
-  {
-    this->set_path_external_uint8_vector(path, data);
-  }
-
-  void set_path_external_uint16_vector(const std::string& path, std::vector<conduit_uint16>& data)
-  {
-    conduit_node_set_path_external_uint16_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_uint16>& data)
-  {
-    this->set_path_external_uint16_vector(path, data);
-  }
-
-  void set_path_external_uint32_vector(const std::string& path, std::vector<conduit_uint32>& data)
-  {
-    conduit_node_set_path_external_uint32_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_uint32>& data)
-  {
-    this->set_path_external_uint32_vector(path, data);
-  }
-
-  void set_path_external_uint64_vector(const std::string& path, std::vector<conduit_uint64>& data)
-  {
-    conduit_node_set_path_external_uint64_ptr(this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_uint64>& data)
-  {
-    this->set_path_external_uint64_vector(path, data);
-  }
-
-  void set_path_external_float32_vector(const std::string& path, std::vector<conduit_float32>& data)
-  {
-    conduit_node_set_path_external_float32_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_float32>& data)
-  {
-    this->set_path_external_float32_vector(path, data);
-  }
-
-  void set_path_external_float64_vector(const std::string& path, std::vector<conduit_float64>& data)
-  {
-    conduit_node_set_path_external_float64_ptr(
-      this->c_node, path.c_str(), data.data(), data.size());
-  }
-
-  void set_path_external(const std::string& path, std::vector<conduit_float64>& data)
-  {
-    this->set_path_external_float64_vector(path, data);
-  }
+#undef catalyst_conduit_path_external_setter_vector
 
   void set_path_external(const std::string& path, std::vector<char>& data)
   {
@@ -1903,185 +1183,39 @@ public:
     conduit_node_set_path_external_double_ptr(this->c_node, path.c_str(), data.data(), data.size());
   }
 #endif
-  void set_path_external_int8_ptr(const std::string& path, conduit_int8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_int8_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
+
+#define catalyst_conduit_path_external_setter_ptr(dname)                                           \
+  void set_path_external_##dname##_ptr(const std::string& path, conduit_##dname* data,             \
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,                                  \
+    conduit_index_t stride = sizeof(conduit_##dname),                                              \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    conduit_node_set_path_external_##dname##_ptr_detailed(                                         \
+      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);  \
+  }                                                                                                \
+  void set_path_external(const std::string& path, conduit_##dname* data,                           \
+    conduit_index_t num_elements = 1, conduit_index_t offset = 0,                                  \
+    conduit_index_t stride = sizeof(conduit_##dname),                                              \
+    conduit_index_t element_bytes = sizeof(conduit_##dname), conduit_index_t endianness = 0)       \
+  {                                                                                                \
+    this->set_path_external_##dname##_ptr(                                                         \
+      path, data, num_elements, offset, stride, element_bytes, endianness);                        \
   }
 
-  void set_path_external(const std::string& path, conduit_int8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int8),
-    conduit_index_t element_bytes = sizeof(conduit_int8), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_int8_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_external_setter_ptr(int8);
+  catalyst_conduit_path_external_setter_ptr(int16);
+  catalyst_conduit_path_external_setter_ptr(int32);
+  catalyst_conduit_path_external_setter_ptr(int64);
 
-  void set_path_external_int16_ptr(const std::string& path, conduit_int16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_int16_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_external_setter_ptr(uint8);
+  catalyst_conduit_path_external_setter_ptr(uint16);
+  catalyst_conduit_path_external_setter_ptr(uint32);
+  catalyst_conduit_path_external_setter_ptr(uint64);
 
-  void set_path_external(const std::string& path, conduit_int16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int16),
-    conduit_index_t element_bytes = sizeof(conduit_int16), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_int16_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+  catalyst_conduit_path_external_setter_ptr(float32);
+  catalyst_conduit_path_external_setter_ptr(float64);
 
-  void set_path_external_int32_ptr(const std::string& path, conduit_int32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_int32_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_int32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int32),
-    conduit_index_t element_bytes = sizeof(conduit_int32), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_int32_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_int64_ptr(const std::string& path, conduit_int64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_int64_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_int64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_int64),
-    conduit_index_t element_bytes = sizeof(conduit_int64), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_int64_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_uint8_ptr(const std::string& path, conduit_uint8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_uint8_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_uint8* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint8),
-    conduit_index_t element_bytes = sizeof(conduit_uint8), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_uint8_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_uint16_ptr(const std::string& path, conduit_uint16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_uint16_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_uint16* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint16),
-    conduit_index_t element_bytes = sizeof(conduit_uint16), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_uint16_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_uint32_ptr(const std::string& path, conduit_uint32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_uint32_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_uint32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint32),
-    conduit_index_t element_bytes = sizeof(conduit_uint32), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_uint32_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_uint64_ptr(const std::string& path, conduit_uint64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_uint64_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_uint64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_uint64),
-    conduit_index_t element_bytes = sizeof(conduit_uint64), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_uint64_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_float32_ptr(const std::string& path, conduit_float32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_float32_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_float32* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float32),
-    conduit_index_t element_bytes = sizeof(conduit_float32), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_float32_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external_float64_ptr(const std::string& path, conduit_float64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    conduit_node_set_path_external_float64_ptr_detailed(
-      this->c_node, path.c_str(), data, num_elements, offset, stride, element_bytes, endianness);
-  }
-
-  void set_path_external(const std::string& path, conduit_float64* data,
-    conduit_index_t num_elements = 1, conduit_index_t offset = 0,
-    conduit_index_t stride = sizeof(conduit_float64),
-    conduit_index_t element_bytes = sizeof(conduit_float64), conduit_index_t endianness = 0)
-  {
-    this->set_path_external_float64_ptr(
-      path, data, num_elements, offset, stride, element_bytes, endianness);
-  }
+#undef catalyst_conduit_path_external_setter_ptr
 
   void set_path_external_char_ptr(const std::string& path, char* data,
     conduit_index_t num_elements = 1, conduit_index_t offset = 0,
