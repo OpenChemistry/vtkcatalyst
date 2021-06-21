@@ -3265,52 +3265,52 @@ private:
   template <typename T, typename Deser = T>
   T to_type() const
   {
-    const conduit_datatype* data = conduit_node_dtype(this->c_node);
+    DataType const dtype = this->dtype();
     /* ints */
-    if (conduit_datatype_is_int8(data))
+    if (dtype.is_int8())
     {
       return static_cast<T>(as_int8());
     }
-    if (conduit_datatype_is_int16(data))
+    if (dtype.is_int16())
     {
       return static_cast<T>(as_int16());
     }
-    if (conduit_datatype_is_int32(data))
+    if (dtype.is_int32())
     {
       return static_cast<T>(as_int32());
     }
-    if (conduit_datatype_is_int64(data))
+    if (dtype.is_int64())
     {
       return static_cast<T>(as_int64());
     }
     /* conduit_uints */
-    if (conduit_datatype_is_uint8(data))
+    if (dtype.is_uint8())
     {
       return static_cast<T>(as_uint8());
     }
-    if (conduit_datatype_is_uint16(data))
+    if (dtype.is_uint16())
     {
       return static_cast<T>(as_uint16());
     }
-    if (conduit_datatype_is_uint32(data))
+    if (dtype.is_uint32())
     {
       return static_cast<T>(as_uint32());
     }
-    if (conduit_datatype_is_uint64(data))
+    if (dtype.is_uint64())
     {
       return static_cast<T>(as_uint64());
     }
     /* floats */
-    if (conduit_datatype_is_float32(data))
+    if (dtype.is_float32())
     {
       return static_cast<T>(as_float32());
     }
-    if (conduit_datatype_is_float64(data))
+    if (dtype.is_float64())
     {
       return static_cast<T>(as_float64());
     }
     // string case
-    if (conduit_datatype_is_char8_str(data))
+    if (dtype.is_char8_str())
     {
       Deser res;
       std::stringstream ss(as_char8_str());
