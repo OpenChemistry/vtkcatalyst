@@ -5,6 +5,7 @@ set(headers
   catalyst_stub.h
   catalyst.hpp
   catalyst_conduit.hpp
+  catalyst_conduit_blueprint.hpp
   catalyst_conduit_error.hpp
   catalyst_dump_node.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_export.h
