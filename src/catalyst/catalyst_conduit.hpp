@@ -178,6 +178,28 @@ public:
   bool is_object() const { return conduit_datatype_is_object(this->c_dtype); }
   bool is_list() const { return conduit_datatype_is_list(this->c_dtype); }
 
+  conduit_index_t type_id() const { return conduit_datatype_id(this->c_dtype); }
+  std::string name() const
+  {
+    char* c_name = conduit_datatype_name(this->c_dtype);
+    std::string name = c_name;
+    conduit_datatype_name_destroy(c_name);
+    return name;
+  }
+
+  conduit_index_t number_of_elements() const
+  {
+    return conduit_datatype_number_of_elements(this->c_dtype);
+  }
+  conduit_index_t offset() const { return conduit_datatype_offset(this->c_dtype); }
+  conduit_index_t stride() const { return conduit_datatype_stride(this->c_dtype); }
+  conduit_index_t element_bytes() const { return conduit_datatype_element_bytes(this->c_dtype); }
+  conduit_index_t endianness() const { return conduit_datatype_endianness(this->c_dtype); }
+  conduit_index_t element_index(conduit_index_t idx) const
+  {
+    return conduit_datatype_element_index(this->c_dtype, idx);
+  }
+
   bool is_number() const { return conduit_datatype_is_number(this->c_dtype); }
   bool is_floating_point() const { return conduit_datatype_is_floating_point(this->c_dtype); }
   bool is_integer() const { return conduit_datatype_is_integer(this->c_dtype); }
