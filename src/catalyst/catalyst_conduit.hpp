@@ -123,7 +123,7 @@ public:
 
   Id id() const
   {
-    if (this->is_valid())
+    if (!this->is_valid())
     {
       return Id::unknown;
     }
