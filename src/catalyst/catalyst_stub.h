@@ -52,4 +52,9 @@ inline enum catalyst_error catalyst_stub_about(conduit_node* params)
   return catalyst_error_ok;
 }
 
+inline enum catalyst_error catalyst_stub_results(conduit_node* params)
+{
+  return catalyst_error_ok;
+}
+
 #endif

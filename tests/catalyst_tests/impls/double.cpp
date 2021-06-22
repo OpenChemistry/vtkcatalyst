@@ -65,3 +65,14 @@ enum catalyst_error catalyst_about_double(conduit_node* params)
 
   return err;
 }
+
+//-----------------------------------------------------------------------------
+enum catalyst_error catalyst_results_double(conduit_node* params)
+{
+  enum catalyst_error err = catalyst_stub_results(params);
+
+  conduit_node_set_path_char8_str(params, "catalyst/implementation", "test");
+  conduit_node_set_path_double(params, "data", data);
+
+  return err;
+}

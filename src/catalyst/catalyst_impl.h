@@ -23,6 +23,7 @@ extern "C"
     enum catalyst_error (*execute)(const conduit_node*);
     enum catalyst_error (*finalize)(const conduit_node*);
     enum catalyst_error (*about)(conduit_node*);
+    enum catalyst_error (*results)(conduit_node*);
   };
 
 #ifdef __cplusplus
