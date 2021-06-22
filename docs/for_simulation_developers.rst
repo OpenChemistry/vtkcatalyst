@@ -141,6 +141,16 @@ catalyst_about
 This function fills up the ``params`` instance with metadata about the Catalyst
 library being used.
 
+catalyst_results
+----------------
+
+.. code-block:: c
+
+  enum catalyst_error catalyst_results(conduit_node* params);
+
+This function fills up the ``params`` instance with updated parameters values
+from the Catalyst implementation side.
+
 All the above functions use a ``params`` object which is a `conduit_node`_. It is
 simply a hierarchical mechanism for describing data and/or metadata including
 simulation meshes and fields. Essentially, think of it as a map where keys are
@@ -161,16 +171,6 @@ e.g.
 
 Refer to `Conduit`_ documentation for details of the ``C`` API. [TODO: there are
 no docs for Conduit C API upstream].
-
-catalyst_results
-----------------
-
-.. code-block:: c
-
-  enum catalyst_error catalyst_results(conduit_node* params);
-
-TODO: catalyst_results documentation.
-
 
 .. _CMake: https://www.cmake.org
 
