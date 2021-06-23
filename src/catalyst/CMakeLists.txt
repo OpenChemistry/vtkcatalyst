@@ -26,6 +26,12 @@ add_library(catalyst
   catalyst_api.c
   catalyst_api_default.cpp
   ${headers})
+set_target_properties(catalyst
+  PROPERTIES
+    # This should never need to be bumped. libcatalyst is intended to be stable
+    # in its ABI, so removing APIs is not something we should be doing. This
+    # includes exposed Conduit APIs.
+    SOVERSION 3)
 target_link_libraries(catalyst
   PUBLIC
     catalyst::blueprint_headers
