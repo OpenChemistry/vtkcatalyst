@@ -26,6 +26,9 @@ add_library(catalyst
   catalyst_api.c
   catalyst_api_default.cpp
   ${headers})
+target_compile_features(catalyst
+  PRIVATE
+    c_std_99)
 set_target_properties(catalyst
   PROPERTIES
     # This should never need to be bumped. libcatalyst is intended to be stable
