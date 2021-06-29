@@ -363,7 +363,13 @@ catalyst_handle_t handle_open(const char* directory, const char* libname)
 
   snprintf(full_library_path, path_len, "%s/libcatalyst-%s.so", directory, libname);
 
-  catalyst_handle_t handle = dlopen(full_library_path, RTLD_LAZY | RTLD_LOCAL);
+#ifdef __APPLE__
+  int scope_flag = RTLD_LOCAL;
+#else
+  int scope_flag = RTLD_GLOBAL;
+#endif
+
+  catalyst_handle_t handle = dlopen(full_library_path, RTLD_LAZY | scope_flag);
   if (!handle)
   {
     printf("failed to open library: %s\n", dlerror());
