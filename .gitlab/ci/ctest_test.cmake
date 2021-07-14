@@ -20,7 +20,8 @@ endif ()
 ctest_test(APPEND
   PARALLEL_LEVEL "${nproc}"
   RETURN_VALUE test_result
-  EXCLUDE "${test_exclusions}")
+  EXCLUDE "${test_exclusions}"
+  OUTPUT_JUNIT "${CTEST_BINARY_DIRECTORY}/junit.xml")
 ctest_submit(PARTS Test)
 
 if (test_result)
