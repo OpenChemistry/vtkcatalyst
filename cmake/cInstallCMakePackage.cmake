@@ -11,7 +11,7 @@ export(
   FILE      ${_binary_package_dir}/catalyst-targets.cmake)
 
 include(CMakePackageConfigHelpers)
-write_basic_package_version_file("${_binary_package_dir}/catalyst-version.cmake"
+write_basic_package_version_file("${_binary_package_dir}/catalyst-config-version.cmake"
   VERSION       "${CATALYST_VERSION}"
   COMPATIBILITY SameMajorVersion)
 
@@ -38,7 +38,7 @@ install(
   DESTINATION "${CATALYST_INSTALL_PACKAGE_DIR}")
 
 install(
-  FILES       "${_binary_package_dir}/catalyst-version.cmake"
+  FILES       "${_binary_package_dir}/catalyst-config-version.cmake"
               "${_binary_package_dir}/catalyst-config.cmake"
               "${_binary_package_dir}/catalyst-macros.cmake"
               "${_binary_package_dir}/catalyst_impl.c.in"
