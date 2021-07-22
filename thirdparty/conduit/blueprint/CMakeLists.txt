@@ -25,6 +25,7 @@ set(blueprint_headers
 # Specify blueprint c sources
 #
 set(blueprint_c_headers
+    c/catalyst_conduit_blueprint_mangle.h
     c/conduit_blueprint.h
     c/conduit_blueprint_mcarray.h
     c/conduit_blueprint_mesh.h
