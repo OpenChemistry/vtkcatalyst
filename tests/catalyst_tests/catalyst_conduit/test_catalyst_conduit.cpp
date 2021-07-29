@@ -97,6 +97,16 @@ int test_cpp_node_wrapping_destructor()
   return ret;
 }
 
+int test_cpp_node_copy()
+{
+  int ret = EXIT_SUCCESS;
+
+  conduit_cpp::Node n;
+  conduit_cpp::Node clone = n;
+
+  return ret;
+}
+
 int main(int argc, char* argv[])
 {
   int ret = EXIT_SUCCESS;
@@ -119,6 +129,15 @@ int main(int argc, char* argv[])
   if (ret == EXIT_SUCCESS)
   {
     test_ret = test_cpp_node_wrapping_destructor();
+    if (test_ret != EXIT_SUCCESS)
+    {
+      ret = test_ret;
+    }
+  }
+
+  if (ret == EXIT_SUCCESS)
+  {
+    test_ret = test_cpp_node_copy();
     if (test_ret != EXIT_SUCCESS)
     {
       ret = test_ret;
