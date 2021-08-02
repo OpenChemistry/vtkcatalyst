@@ -265,8 +265,10 @@ public:
   }
   Node(Node&& other)
     : c_node(other.c_node)
+    , own_c_node(other.own_c_node)
   {
     other.c_node = nullptr;
+    other.own_c_node = false;
   }
   ~Node()
   {
@@ -984,7 +986,9 @@ public:
   Node& operator=(Node&& other)
   {
     this->c_node = other.c_node;
+    this->own_c_node = other.own_c_node;
     other.c_node = nullptr;
+    other.own_c_node = false;
     return *this;
   }
   //-----------------------------------------------------------------------------
