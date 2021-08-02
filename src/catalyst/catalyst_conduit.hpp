@@ -265,12 +265,14 @@ public:
   }
   Node(Node&& other)
     : c_node(other.c_node)
+    , own_c_node(other.own_c_node)
   {
     other.c_node = nullptr;
+    other.own_c_node = false;
   }
   ~Node()
   {
-    if (this->c_node)
+    if (this->c_node && this->own_c_node)
     {
       conduit_node_destroy(this->c_node);
     }
@@ -984,7 +986,9 @@ public:
   Node& operator=(Node&& other)
   {
     this->c_node = other.c_node;
+    this->own_c_node = other.own_c_node;
     other.c_node = nullptr;
+    other.own_c_node = false;
     return *this;
   }
   //-----------------------------------------------------------------------------
@@ -1566,9 +1570,11 @@ public:
 
 private:
   conduit_node* c_node;
+  bool own_c_node = true;
 
   explicit Node(conduit_node* other)
     : c_node(other)
+    , own_c_node(false)
   {
   }
 
@@ -1638,11 +1644,7 @@ inline conduit_node* c_node(const Node* n)
 
 inline Node cpp_node(conduit_node* n)
 {
-  conduit_node* n2 = conduit_node_create();
-  // Setting it as external tells the underlying conduit_node
-  // that we do not own this data. So, we won't ever free it.
-  conduit_node_set_external_node(n2, n);
-  return Node(n2);
+  return Node(n);
 }
 
 }
