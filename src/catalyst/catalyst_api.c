@@ -128,7 +128,7 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
         {
           conduit_node* path_node = conduit_node_child(search_paths, i);
           char* search_path = conduit_node_as_char8_str(path_node);
-          if (search_path)
+          if (search_path && *search_path)
           {
             handle = handle_open(search_path, impl_name);
             if (handle_is_valid(handle))
