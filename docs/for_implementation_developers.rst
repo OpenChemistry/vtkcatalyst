@@ -79,7 +79,7 @@ the ``conduit::Node`` API which is generally friendlier than the C API.
 
     ...
 
-    enum catalyst_error catalyst_about_MyImplName(conduit_node* params)
+    enum catalyst_status catalyst_about_MyImplName(conduit_node* params)
     {
       // convert to conduit::Node
       conduit::Node &cpp_params = (*conduit::cpp_node(params));

@@ -78,12 +78,12 @@ static catalyst_handle_t handle_from_env(const char* impl_name)
   return handle;
 }
 
-static enum catalyst_error catalyst_load(const conduit_node* params)
+static enum catalyst_status catalyst_load(const conduit_node* params)
 {
   // Ensure that an implementation has not already been loaded.
   if (impl)
   {
-    return catalyst_error_already_loaded;
+    return catalyst_status_error_already_loaded;
   }
 
   // C APIs all expect non-const pointers.
@@ -166,7 +166,7 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
 
     if (!handle_is_valid(handle))
     {
-      return catalyst_error_not_found;
+      return catalyst_status_error_not_found;
     }
 
     impl = (struct catalyst_impl const*)handle_load_symbol(handle, "catalyst_api_impl");
@@ -178,22 +178,22 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
 
   if (!impl)
   {
-    return catalyst_error_not_catalyst;
+    return catalyst_status_error_not_catalyst;
   }
 
   if (impl->version != 1)
   {
-    return catalyst_error_unsupported_version;
+    return catalyst_status_error_unsupported_version;
   }
 
   // Ensure that all required API functions are provided.
   if (!impl->initialize || !impl->execute || !impl->finalize || !impl->about || !impl->results)
   {
     impl = NULL;
-    return catalyst_error_incomplete;
+    return catalyst_status_error_incomplete;
   }
 
-  return catalyst_error_ok;
+  return catalyst_status_ok;
 }
 
 #define impl_check(method)                                                                         \
@@ -201,20 +201,20 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
   {                                                                                                \
     if (!impl)                                                                                     \
     {                                                                                              \
-      return catalyst_error_no_implementation;                                                     \
+      return catalyst_status_error_no_implementation;                                              \
     }                                                                                              \
     if (!impl->method)                                                                             \
     {                                                                                              \
-      return catalyst_error_no_implementation;                                                     \
+      return catalyst_status_error_no_implementation;                                              \
     }                                                                                              \
   } while (0)
 
-enum catalyst_error catalyst_initialize(const conduit_node* params)
+enum catalyst_status catalyst_initialize(const conduit_node* params)
 {
   if (!impl)
   {
-    enum catalyst_error err = catalyst_load(params);
-    if (err != catalyst_error_ok)
+    enum catalyst_status err = catalyst_load(params);
+    if (err != catalyst_status_ok)
     {
       return err;
     }
@@ -224,25 +224,25 @@ enum catalyst_error catalyst_initialize(const conduit_node* params)
   return (*impl->initialize)(params);
 }
 
-enum catalyst_error catalyst_execute(const conduit_node* params)
+enum catalyst_status catalyst_execute(const conduit_node* params)
 {
   impl_check(execute);
   return (*impl->execute)(params);
 }
 
-enum catalyst_error catalyst_finalize(const conduit_node* params)
+enum catalyst_status catalyst_finalize(const conduit_node* params)
 {
   impl_check(finalize);
   return (*impl->finalize)(params);
 }
 
-enum catalyst_error catalyst_about(conduit_node* params)
+enum catalyst_status catalyst_about(conduit_node* params)
 {
   impl_check(about);
   return (*impl->about)(params);
 }
 
-enum catalyst_error catalyst_results(conduit_node* params)
+enum catalyst_status catalyst_results(conduit_node* params)
 {
   impl_check(results);
   return (*impl->results)(params);

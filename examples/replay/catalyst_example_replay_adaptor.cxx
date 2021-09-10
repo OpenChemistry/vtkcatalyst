@@ -12,9 +12,9 @@
 // Call the stub implementation and check the node passed in.
 
 //-----------------------------------------------------------------------------
-enum catalyst_error catalyst_initialize_example_replay_adaptor(const conduit_node* params)
+enum catalyst_status catalyst_initialize_example_replay_adaptor(const conduit_node* params)
 {
-  enum catalyst_error err = catalyst_stub_initialize(params);
+  enum catalyst_status err = catalyst_stub_initialize(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "initialize")
@@ -37,9 +37,9 @@ enum catalyst_error catalyst_initialize_example_replay_adaptor(const conduit_nod
 }
 
 //-----------------------------------------------------------------------------
-enum catalyst_error catalyst_execute_example_replay_adaptor(const conduit_node* params)
+enum catalyst_status catalyst_execute_example_replay_adaptor(const conduit_node* params)
 {
-  enum catalyst_error err = catalyst_stub_execute(params);
+  enum catalyst_status err = catalyst_stub_execute(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "execute")
@@ -63,9 +63,9 @@ enum catalyst_error catalyst_execute_example_replay_adaptor(const conduit_node* 
 }
 
 //-----------------------------------------------------------------------------
-enum catalyst_error catalyst_finalize_example_replay_adaptor(const conduit_node* params)
+enum catalyst_status catalyst_finalize_example_replay_adaptor(const conduit_node* params)
 {
-  enum catalyst_error err = catalyst_stub_finalize(params);
+  enum catalyst_status err = catalyst_stub_finalize(params);
   conduit_cpp::Node n = conduit_cpp::cpp_node(const_cast<conduit_node*>(params));
 
   if (n["stage"].as_string() != "finalize")
@@ -89,7 +89,7 @@ enum catalyst_error catalyst_finalize_example_replay_adaptor(const conduit_node*
 }
 
 //-----------------------------------------------------------------------------
-enum catalyst_error catalyst_about_example_replay_adaptor(conduit_node* params)
+enum catalyst_status catalyst_about_example_replay_adaptor(conduit_node* params)
 {
   return catalyst_stub_about(params);
 }

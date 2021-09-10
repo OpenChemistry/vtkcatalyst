@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
   auto init = conduit_node_create();
   conduit_node_set_path_char8_str(init, "catalyst_load/implementation", "example_adaptor0");
   conduit_node_set_path_char8_str(init, "catalyst_load/search_paths/example", argv[1]);
-  enum catalyst_error err = catalyst_initialize(init);
+  enum catalyst_status err = catalyst_initialize(init);
   conduit_node_destroy(init);
-  if (err != catalyst_error_ok)
+  if (err != catalyst_status_ok)
   {
     return EXIT_FAILURE;
   }

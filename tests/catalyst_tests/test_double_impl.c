@@ -11,14 +11,14 @@
 int test_double_impl()
 {
   int ret = EXIT_SUCCESS;
-  enum catalyst_error err;
+  enum catalyst_status err;
 
   conduit_node* params = conduit_node_create();
   conduit_node_set_path_double(params, "data", 1.);
   conduit_node_set_path_char8_str(params, "catalyst_load/implementation", "double");
   err = catalyst_initialize(params);
   conduit_node_destroy(params);
-  if (err != catalyst_error_ok)
+  if (err != catalyst_status_ok)
   {
     ret = EXIT_FAILURE;
     return ret;
@@ -26,7 +26,7 @@ int test_double_impl()
 
   conduit_node* about = conduit_node_create();
   err = catalyst_about(about);
-  if (err != catalyst_error_ok)
+  if (err != catalyst_status_ok)
   {
     ret = EXIT_FAILURE;
   }
@@ -39,7 +39,7 @@ int test_double_impl()
   conduit_node* exec = conduit_node_create();
   conduit_node_set_path_double(exec, "data", 2.);
   err = catalyst_execute(exec);
-  if (err != catalyst_error_ok)
+  if (err != catalyst_status_ok)
   {
     ret = EXIT_FAILURE;
   }
@@ -47,7 +47,7 @@ int test_double_impl()
 
   conduit_node* final = conduit_node_create();
   err = catalyst_finalize(final);
-  if (err != catalyst_error_ok)
+  if (err != catalyst_status_ok)
   {
     ret = EXIT_FAILURE;
   }
