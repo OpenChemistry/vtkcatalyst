@@ -32,7 +32,17 @@ static void* handle_load_symbol(catalyst_handle_t handle, const char* symbol);
 static int handle_is_valid(catalyst_handle_t handle);
 
 static struct catalyst_impl const* impl = NULL;
+static int debug_flag = -1;
 extern struct catalyst_impl const default_impl;
+
+#define catalyst_debug(fmt, ...)                                                                   \
+  do                                                                                               \
+  {                                                                                                \
+    if (debug_flag)                                                                                \
+    {                                                                                              \
+      fprintf(stderr, "catalyst debug: " fmt, ##__VA_ARGS__);                                      \
+    }                                                                                              \
+  } while (0)
 
 static catalyst_handle_t handle_from_env(const char* impl_name)
 {
@@ -211,6 +221,12 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
 
 enum catalyst_error catalyst_initialize(const conduit_node* params)
 {
+  if (debug_flag < 0)
+  {
+    char* debug_env = getenv("CATALYST_DEBUG");
+    debug_flag = debug_env && *debug_env;
+  }
+
   if (!impl)
   {
     enum catalyst_error err = catalyst_load(params);
