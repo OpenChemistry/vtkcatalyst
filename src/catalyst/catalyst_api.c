@@ -52,6 +52,7 @@ static catalyst_handle_t handle_from_env(const char* impl_name)
   if (search_env)
   {
     char* paths = strdup(search_env);
+    catalyst_debug("search paths from `CATALYST_IMPLEMENTATION_PATHS`\n");
     if (paths)
     {
       char* pathsep = paths;
@@ -101,22 +102,29 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
 
   const char* prefer_env = getenv("CATALYST_IMPLEMENTATION_PREFER_ENV");
   int should_prefer_env = prefer_env && *prefer_env;
+  catalyst_debug("preferring environment variables? %s\n", should_prefer_env ? "yes" : "no");
 
   char* impl_name = NULL;
 
   if (should_prefer_env)
   {
     impl_name = getenv("CATALYST_IMPLEMENTATION_NAME");
+    catalyst_debug("implementation name from `CATALYST_IMPLEMENTATION_NAME`: %s\n",
+      impl_name ? impl_name : "(none)");
   }
 
   if (!impl_name && conduit_node_has_path(p, "catalyst_load/implementation"))
   {
     impl_name = conduit_node_fetch_path_as_char8_str(p, "catalyst_load/implementation");
+    catalyst_debug("implementation name from `catalyst_load/implementation`: %s\n",
+      impl_name ? impl_name : "(none)");
   }
 
   if (!impl_name && !should_prefer_env)
   {
     impl_name = getenv("CATALYST_IMPLEMENTATION_NAME");
+    catalyst_debug("implementation name from `CATALYST_IMPLEMENTATION_NAME`: %s\n",
+      impl_name ? impl_name : "(none)");
   }
 
   if (impl_name)
@@ -138,6 +146,8 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
         {
           conduit_node* path_node = conduit_node_child(search_paths, i);
           char* search_path = conduit_node_as_char8_str(path_node);
+          catalyst_debug("search path from `catalyst_load/search_paths`: `%s`\n",
+            search_path ? search_path : "(null)");
           if (search_path && *search_path)
           {
             handle = handle_open(search_path, impl_name);
@@ -165,6 +175,7 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
       };
       for (char** search_path = &default_paths[0]; *search_path; ++search_path)
       {
+        catalyst_debug("search path from default list: `%s`\n", *search_path);
         handle = handle_open(*search_path, impl_name);
         if (handle_is_valid(handle))
         {
@@ -180,10 +191,12 @@ static enum catalyst_error catalyst_load(const conduit_node* params)
     }
 
     impl = (struct catalyst_impl const*)handle_load_symbol(handle, "catalyst_api_impl");
+    catalyst_debug("loaded implementation: %p\n", impl);
   }
   else
   {
     impl = &default_impl;
+    catalyst_debug("no implementation named; using the `stub` implementation: %p\n", impl);
   }
 
   if (!impl)
@@ -319,6 +332,9 @@ catalyst_handle_t handle_open(const char* directory, const char* libname)
     full_library_path, path_len, "%s/catalyst-%s" CATALYST_DEBUG_SUFFIX ".dll", directory, libname);
 
   catalyst_handle_t handle = LoadLibraryExA(full_library_path, NULL, 0);
+
+  catalyst_debug(
+    "trying to load `%s`: %s\n", full_library_path, handle_is_valid(handle) ? "valid" : "invalid");
 
   free(full_library_path);
   return handle;
