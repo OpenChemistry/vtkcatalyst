@@ -20,6 +20,7 @@ int test_double_impl()
   conduit_node_destroy(params);
   if (err != catalyst_error_ok)
   {
+    fprintf(stderr, "failed to initialize: %d\n", err);
     ret = EXIT_FAILURE;
     return ret;
   }
@@ -28,10 +29,12 @@ int test_double_impl()
   err = catalyst_about(about);
   if (err != catalyst_error_ok)
   {
+    fprintf(stderr, "failed to call `about`: %d\n", err);
     ret = EXIT_FAILURE;
   }
   if (conduit_node_fetch_path_as_double(about, "data") != 1.)
   {
+    fprintf(stderr, "failed to get `data` from `about`: %d\n", err);
     ret = EXIT_FAILURE;
   }
   conduit_node_destroy(about);
@@ -41,6 +44,7 @@ int test_double_impl()
   err = catalyst_execute(exec);
   if (err != catalyst_error_ok)
   {
+    fprintf(stderr, "failed to call `execute`: %d\n", err);
     ret = EXIT_FAILURE;
   }
   conduit_node_destroy(exec);
@@ -49,10 +53,12 @@ int test_double_impl()
   err = catalyst_finalize(final);
   if (err != catalyst_error_ok)
   {
+    fprintf(stderr, "failed to call `finalize`: %d\n", err);
     ret = EXIT_FAILURE;
   }
   if (conduit_node_fetch_path_as_double(final, "data") != 2.)
   {
+    fprintf(stderr, "failed to get `data` from `finalize`: %d\n", err);
     ret = EXIT_FAILURE;
   }
   conduit_node_destroy(final);
