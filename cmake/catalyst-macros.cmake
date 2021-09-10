@@ -118,6 +118,12 @@ function (catalyst_implementation)
     PROPERTIES
       OUTPUT_NAME "catalyst-${catalyst_impl_NAME}")
 
+  if (WIN32)
+    set_target_properties("${catalyst_impl_TARGET}"
+      PROPERTIES
+        DEBUG_POSTFIX "d")
+  endif ()
+
   set(catalyst_impl_export_args)
   if (catalyst_impl_EXPORT)
     set(catalyst_impl_export_args

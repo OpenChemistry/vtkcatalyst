@@ -292,14 +292,15 @@ catalyst_handle_t handle_default()
 
 catalyst_handle_t handle_open(const char* directory, const char* libname)
 {
-  size_t path_len = strlen(directory) + strlen(libname) + 9 + 5 + 1;
+  size_t path_len = strlen(directory) + strlen(libname) + 9 + 5 + 1 + strlen(CATALYST_DEBUG_SUFFIX);
   char* full_library_path = (char*)malloc(path_len);
   if (!full_library_path)
   {
     return NULL;
   }
 
-  snprintf(full_library_path, path_len, "%s/catalyst-%s.dll", directory, libname);
+  snprintf(
+    full_library_path, path_len, "%s/catalyst-%s" CATALYST_DEBUG_SUFFIX ".dll", directory, libname);
 
   catalyst_handle_t handle = LoadLibraryExA(full_library_path, NULL, 0);
 

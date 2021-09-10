@@ -22,6 +22,12 @@ target_include_directories(catalyst_headers
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 add_library(catalyst::catalyst_headers ALIAS catalyst_headers)
 
+if (WIN32)
+  set_property(SOURCE catalyst_api.c APPEND
+    PROPERTY
+      COMPILE_DEFINITIONS "CATALYST_DEBUG_SUFFIX=\"$<$<CONFIG:Debug>:d>\"")
+endif ()
+
 add_library(catalyst
   catalyst_api.c
   catalyst_api_default.cpp
@@ -46,6 +52,12 @@ target_link_libraries(catalyst
     libyaml
     b64
     ${CMAKE_DL_LIBS})
+
+if (WIN32)
+  set_property(TARGET catalyst
+    PROPERTY
+      DEBUG_POSTFIX d)
+endif ()
 
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(catalyst
