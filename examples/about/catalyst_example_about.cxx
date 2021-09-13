@@ -34,12 +34,12 @@ int main(int argc, char* argv[])
   auto node = conduit_node_create();
   conduit_node_set_path_char8_str(node, "catalyst_load/implementation", "stub");
   conduit_node_set_path_char8_str(node, "catalyst/paraview/scripts/sample", "/tmp/sample.py");
-  if (catalyst_initialize(node) != catalyst_error_ok)
+  if (catalyst_initialize(node) != catalyst_status_ok)
   {
     conduit_node_destroy(node);
     return EXIT_FAILURE;
   }
-  if (catalyst_about(node) != catalyst_error_ok)
+  if (catalyst_about(node) != catalyst_status_ok)
   {
     conduit_node_destroy(node);
     return EXIT_FAILURE;

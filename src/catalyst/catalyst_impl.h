@@ -19,11 +19,11 @@ extern "C"
   struct catalyst_impl
   {
     int version;
-    enum catalyst_error (*initialize)(const conduit_node*);
-    enum catalyst_error (*execute)(const conduit_node*);
-    enum catalyst_error (*finalize)(const conduit_node*);
-    enum catalyst_error (*about)(conduit_node*);
-    enum catalyst_error (*results)(conduit_node*);
+    enum catalyst_status (*initialize)(const conduit_node*);
+    enum catalyst_status (*execute)(const conduit_node*);
+    enum catalyst_status (*finalize)(const conduit_node*);
+    enum catalyst_status (*about)(conduit_node*);
+    enum catalyst_status (*results)(conduit_node*);
   };
 
 #ifdef __cplusplus
