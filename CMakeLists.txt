@@ -35,7 +35,7 @@ set(CATALYST_ABI_VERSION "${CATALYST_VERSION_MAJOR}" CACHE INTERNAL "")
 c_set_if_not_set(CATALYST_CUSTOM_LIBRARY_SUFFIX "_catalyst${CATALYST_VERSION}")
 
 if(CATALYST_USE_MPI)
-  find_package(MPI COMPONENTS CXX C REQUIRED)
+  find_package(MPI COMPONENTS C REQUIRED)
 endif()
 
 # Some default settings.
