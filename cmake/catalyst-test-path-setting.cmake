@@ -14,7 +14,7 @@ execute_process(
           --build-generator
             "${CMAKE_GENERATOR}"
           --build-and-test
-            "${CMAKE_CURRENT_SOURCE_DIR}/${dir}"
+            "${src}/${dir}"
             "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}"
           --build-options
             "-DBUILD_TESTING:BOOL=ON"
