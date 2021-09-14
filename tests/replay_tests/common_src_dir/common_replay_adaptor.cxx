@@ -89,6 +89,12 @@ enum catalyst_status catalyst_finalize_replay(const conduit_node* params)
 }
 
 //-----------------------------------------------------------------------------
+enum catalyst_status catalyst_results_replay(conduit_node* params)
+{
+  return catalyst_stub_results(params);
+}
+
+//-----------------------------------------------------------------------------
 enum catalyst_status catalyst_about_replay(conduit_node* params)
 {
   return catalyst_stub_about(params);
