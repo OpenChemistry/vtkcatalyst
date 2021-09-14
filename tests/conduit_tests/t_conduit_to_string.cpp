@@ -22,21 +22,17 @@ TEST(conduit_to_string, simple_1)
   conduit_float64 c_val = 30.0;
 
   const std::string n_expected = "\n"
-                                 "{\n"
-                                 "  \"a\": 10,\n"
-                                 "  \"b\": 20,\n"
-                                 "  \"c\": 30.0\n"
-                                 "}\n";
+                                 "a: 10\n"
+                                 "b: 20\n"
+                                 "c: 30.0\n"
+                                 "\n";
 
   const std::string n2_expected = "\n"
-                                  "{\n"
-                                  "  \"g\": \n"
-                                  "  {\n"
-                                  "    \"a\": 10,\n"
-                                  "    \"b\": 20,\n"
-                                  "    \"c\": 30.0\n"
-                                  "  }\n"
-                                  "}\n";
+                                  "g: \n"
+                                  "  a: 10\n"
+                                  "  b: 20\n"
+                                  "  c: 30.0\n"
+                                  "\n";
 
   Node n;
   n["a"] = a_val;
