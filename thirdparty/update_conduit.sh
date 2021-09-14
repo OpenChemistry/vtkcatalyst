@@ -8,7 +8,7 @@ readonly name="conduit"
 readonly ownership="Conduit Upstream <kwrobot@kitware.com>"
 readonly subtree="thirdparty/$name"
 readonly repo="https://gitlab.kitware.com/third-party/conduit.git"
-readonly tag="for/catalyst-20210722-v0.5.1"
+readonly tag="for/catalyst-20210915-v0.7.2"
 readonly paths="
 .gitattributes
 COPYRIGHT
@@ -36,6 +36,7 @@ src/libs/conduit/*.hpp
 src/libs/conduit/*.h
 src/libs/conduit/*.h.in
 src/libs/conduit/fortran/*.*
+src/thirdparty_builtin/fmt-7.1.0/
 src/thirdparty_builtin/libb64-1.2.1/README
 src/thirdparty_builtin/libb64-1.2.1/LICENSE
 src/thirdparty_builtin/libb64-1.2.1/AUTHORS
@@ -54,19 +55,17 @@ extract_source () {
     mv "$extractdir/$name-reduced/src/cmake" "$extractdir/$name-reduced/cmake"
     mv "$extractdir/$name-reduced/src/libs/conduit" "$extractdir/$name-reduced/conduit"
     mv "$extractdir/$name-reduced/src/libs/blueprint" "$extractdir/$name-reduced/blueprint"
+    mv "$extractdir/$name-reduced/src/thirdparty_builtin/fmt-7.1.0" "$extractdir/$name-reduced/fmt"
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/libb64-1.2.1" "$extractdir/$name-reduced/libb64"
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/libyaml-690a781" "$extractdir/$name-reduced/libyaml"
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/rapidjson" "$extractdir/$name-reduced/rapidjson"
 
-    rmdir "$extractdir/$name-reduced/src/libs/conduit"
-    rmdir "$extractdir/$name-reduced/src/libs/blueprint"
     rmdir "$extractdir/$name-reduced/src/libs"
-    rmdir "$extractdir/$name-reduced/src/cmake"
-    rmdir "$extractdir/$name-reduced/src"
 
     mv "$extractdir/$name-reduced/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/CMakeLists.txt"
     mv "$extractdir/$name-reduced/conduit/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/conduit/CMakeLists.txt"
     mv "$extractdir/$name-reduced/blueprint/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/blueprint/CMakeLists.txt"
+    mv "$extractdir/$name-reduced/fmt/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/fmt/CMakeLists.txt"
     mv "$extractdir/$name-reduced/libyaml/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/libyaml/CMakeLists.txt"
     mv "$extractdir/$name-reduced/libb64/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/libb64/CMakeLists.txt"
     mv "$extractdir/$name-reduced/rapidjson/CMakeLists.catalyst.txt" "$extractdir/$name-reduced/rapidjson/CMakeLists.txt"
