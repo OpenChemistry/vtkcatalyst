@@ -6,8 +6,7 @@
 #include <cstring>
 #include <iostream>
 
-#include <catalyst.h>
-#include <conduit_cpp_to_c.hpp>
+#include <catalyst.hpp>
 
 int main(int argc, char* argv[])
 {
