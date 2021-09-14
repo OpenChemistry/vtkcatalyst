@@ -25,4 +25,9 @@ execute_process(
           --test-command
             "${CMAKE_CTEST_COMMAND}"
               -C $<CONFIGURATION>
-              -V)
+              -V
+  RESULT_VARIABLE status)
+
+if (NOT status EQUAL 0)
+  message(FATAL_ERROR "test or example failed!")
+endif ()
