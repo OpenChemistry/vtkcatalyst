@@ -49,8 +49,8 @@ target_link_libraries(catalyst
   PRIVATE
     conduit
     blueprint
-    libyaml
-    b64
+    conduit_libyaml
+    conduit_b64
     ${CMAKE_DL_LIBS})
 
 if (WIN32)
