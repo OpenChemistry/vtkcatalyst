@@ -12,7 +12,7 @@ set(headers
 configure_file(catalyst_version.h.in catalyst_version.h)
 
 set(private_headers
-  catalyst_dump_node.h)
+  catalyst_dump_node.hpp)
 
 #------------------------------------------------------------
 # Add an interface library just to setup include dirs.
@@ -33,7 +33,7 @@ endif ()
 add_library(catalyst
   catalyst_api.c
   catalyst_api_default.cpp
-  catalyst_stub.c
+  catalyst_stub.cpp
   ${headers}
   ${private_headers})
 target_compile_features(catalyst

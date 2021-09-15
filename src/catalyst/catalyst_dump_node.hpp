@@ -10,7 +10,7 @@
 #include "mpi.h"
 #endif
 
-#include <stdbool.h>
+#include <conduit_utils.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -86,13 +86,36 @@ char* construct_full_path(
   return full_path;
 }
 
+bool ensure_directory(const char* out_dir)
+{
+  int rank = 0;
+  int num_ranks = 1;
+#ifdef CATALYST_USE_MPI
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+#endif
+  int directory_exists = 0;
+  if (rank == 0)
+  {
+    directory_exists =
+      (conduit::utils::is_directory(out_dir) || conduit::utils::create_directory(out_dir)) ? 1 : 0;
+  }
+#ifdef CATALYST_USE_MPI
+  if (num_ranks > 1)
+  {
+    MPI_Bcast(&directory_exists, 1, MPI_INT, 0, MPI_COMM_WORLD);
+  }
+#endif
+  return (directory_exists == 1);
+}
+
 // Check if a data dump directory has been set. If it has,
 // write out the params argument to disk to load later.
 void dump_node(
   const conduit_node* params, const char* stage, unsigned long invocations, int use_invocations)
 {
   const char* out_dir = getenv("CATALYST_DATA_DUMP_DIRECTORY");
-  if (out_dir)
+  if (out_dir && ensure_directory(out_dir))
   {
     char* full_path = construct_full_path(out_dir, stage, invocations, use_invocations);
     conduit_node_save((conduit_node*)(params), full_path, "conduit_bin");

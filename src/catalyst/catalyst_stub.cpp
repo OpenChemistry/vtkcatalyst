@@ -4,7 +4,7 @@
  */
 
 #include "catalyst_stub.h"
-#include "catalyst_dump_node.h"
+#include "catalyst_dump_node.hpp"
 #include "catalyst_version.h"
 
 #include <stdbool.h>
