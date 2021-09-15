@@ -26,9 +26,30 @@ if (BUILD_TESTING)
   set(num_ranks_if_mpi 2)
   set(mpi_prefix_or_blank)
   if (CATALYST_USE_MPI)
+    target_link_libraries(high_num_execute_invc_driver PRIVATE MPI::MPI_C)
+    target_compile_definitions(high_num_execute_invc_driver
+      PRIVATE CATALYST_USE_MPI
+              # force `mpi.h` to not include cxx components to avoid
+              # unnecessary dependency on MPI_CPP
+              MPICH_SKIP_MPICXX
+              OMPI_SKIP_MPICXX
+              MPI_NO_CPPBIND
+              _MPICC_H)
+
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
+
+  # Set up the data dump directory for the test
+  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump")
+
+  add_test(
+    NAME high_num_execute_invc_prepare
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${data_dump_directory}")
+
+  set_tests_properties(high_num_execute_invc_prepare
+    PROPERTIES
+      FIXTURES_SETUP prepare)
 
   # Add a test for writing out the conduit nodes to disk
   add_test(
@@ -37,18 +58,11 @@ if (BUILD_TESTING)
             "$<TARGET_FILE_DIR:high_num_execute_invc_adaptor>"
   )
 
-  # Set up the data dump directory for the test
-  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
-  file(MAKE_DIRECTORY ${data_dump_directory})
-
-  set(write_out_environ_str
-     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-  )
-
   set_tests_properties(high_num_execute_invc_write_out
     PROPERTIES
-      ENVIRONMENT "${write_out_environ_str}"
-      FIXTURES_SETUP write_out)
+      ENVIRONMENT "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+      FIXTURES_SETUP write_out
+      FIXTURES_REQUIRED prepare)
 
   add_test(
     NAME high_num_execute_invc_read_in

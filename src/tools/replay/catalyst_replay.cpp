@@ -141,7 +141,9 @@ int parse_directory(const std::string& catalyst_data_dump_directory,
   WIN32_FIND_DATA ffd;
   HANDLE hFind = INVALID_HANDLE_VALUE;
 
-  hFind = FindFirstFile(catalyst_data_dump_directory.c_str(), &ffd);
+  // to browse contents of the dir, need to add "/*" to the dirname.
+  const auto contents_path = catalyst_data_dump_directory + "/*";
+  hFind = FindFirstFile(contents_path.c_str(), &ffd);
 
   if (hFind == INVALID_HANDLE_VALUE)
   {

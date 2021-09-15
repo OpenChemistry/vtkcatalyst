@@ -14,7 +14,7 @@ execute_process(
           --build-generator
             "${CMAKE_GENERATOR}"
           --build-and-test
-            "${CMAKE_CURRENT_SOURCE_DIR}/${dir}"
+            "${src}/${dir}"
             "${CMAKE_CURRENT_BINARY_DIR}/${mode}-${dir}"
           --build-options
             "-DBUILD_TESTING:BOOL=ON"
@@ -25,4 +25,9 @@ execute_process(
           --test-command
             "${CMAKE_CTEST_COMMAND}"
               -C $<CONFIGURATION>
-              -V)
+              -V
+  RESULT_VARIABLE status)
+
+if (NOT status EQUAL 0)
+  message(FATAL_ERROR "test or example failed!")
+endif ()

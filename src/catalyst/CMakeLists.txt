@@ -7,10 +7,12 @@ set(headers
   catalyst_conduit.hpp
   catalyst_conduit_blueprint.hpp
   catalyst_conduit_error.hpp
-  catalyst_dump_node.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_export.h
   ${CMAKE_CURRENT_BINARY_DIR}/catalyst_version.h)
 configure_file(catalyst_version.h.in catalyst_version.h)
+
+set(private_headers
+  catalyst_dump_node.hpp)
 
 #------------------------------------------------------------
 # Add an interface library just to setup include dirs.
@@ -31,7 +33,9 @@ endif ()
 add_library(catalyst
   catalyst_api.c
   catalyst_api_default.cpp
-  ${headers})
+  catalyst_stub.cpp
+  ${headers}
+  ${private_headers})
 target_compile_features(catalyst
   PRIVATE
     c_std_99)
@@ -69,8 +73,15 @@ endif ()
 add_library(catalyst::catalyst ALIAS catalyst)
 
 if (CATALYST_USE_MPI)
-  target_link_libraries(catalyst INTERFACE MPI::MPI_C)
-  target_compile_definitions(catalyst INTERFACE CATALYST_USE_MPI)
+  target_link_libraries(catalyst PRIVATE MPI::MPI_C)
+  target_compile_definitions(catalyst
+    PRIVATE CATALYST_USE_MPI
+            # force `mpi.h` to not include cxx components to avoid
+            # unnecessary dependency on MPI_CPP
+            MPICH_SKIP_MPICXX
+            OMPI_SKIP_MPICXX
+            MPI_NO_CPPBIND
+            _MPICC_H)
 endif ()
 
 c_install_targets(catalyst catalyst_headers)

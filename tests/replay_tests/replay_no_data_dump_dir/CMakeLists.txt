@@ -25,6 +25,15 @@ if (BUILD_TESTING)
 
   set(num_ranks_if_mpi 2)
   if (CATALYST_USE_MPI)
+    target_link_libraries(no_data_dump_dir_driver PRIVATE MPI::MPI_C)
+    target_compile_definitions(no_data_dump_dir_driver
+      PRIVATE CATALYST_USE_MPI
+              # force `mpi.h` to not include cxx components to avoid
+              # unnecessary dependency on MPI_CPP
+              MPICH_SKIP_MPICXX
+              OMPI_SKIP_MPICXX
+              MPI_NO_CPPBIND
+              _MPICC_H)
     set(mpi_prefix_or_blank
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()

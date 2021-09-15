@@ -18,14 +18,33 @@ catalyst_implementation(
 include(CTest)
 if (BUILD_TESTING)
   add_executable(high_num_ranks_driver "${src_dir}/common_replay_driver.cxx")
-
   target_link_libraries(high_num_ranks_driver
     PRIVATE
-      catalyst::catalyst)
+      catalyst::catalyst
+      MPI::MPI_C)
+  target_compile_definitions(high_num_ranks_driver
+    PRIVATE CATALYST_USE_MPI
+            # force `mpi.h` to not include cxx components to avoid
+            # unnecessary dependency on MPI_CPP
+            MPICH_SKIP_MPICXX
+            OMPI_SKIP_MPICXX
+            MPI_NO_CPPBIND
+            _MPICC_H)
 
   set(num_ranks 10)
   set(mpi_prefix
       ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks})
+
+  # Set up the data dump directory for the test
+  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
+
+  add_test(
+    NAME high_num_ranks_write_prepare
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${data_dump_directory}")
+
+  set_tests_properties(high_num_ranks_write_prepare
+    PROPERTIES
+      FIXTURES_SETUP prepare)
 
   # Add a test for writing out the conduit nodes to disk
   add_test(
@@ -34,18 +53,11 @@ if (BUILD_TESTING)
             "$<TARGET_FILE_DIR:high_num_ranks_adaptor>"
   )
 
-  # Set up the data dump directory for the test
-  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
-  file(MAKE_DIRECTORY ${data_dump_directory})
-
-  set(write_out_environ_str
-     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-  )
-
   set_tests_properties(high_num_ranks_write_out
     PROPERTIES
-      ENVIRONMENT "${write_out_environ_str}"
-      FIXTURES_SETUP write_out)
+      ENVIRONMENT "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+      FIXTURES_SETUP write_out
+      FIXTURES_REQUIRED prepare)
 
   add_test(
     NAME high_num_ranks_read_in

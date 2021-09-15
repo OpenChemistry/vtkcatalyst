@@ -21,11 +21,32 @@ if (BUILD_TESTING)
 
   target_link_libraries(replay_ranks_mismatch_driver
     PRIVATE
-      catalyst::catalyst)
+      catalyst::catalyst
+      MPI::MPI_C)
+
+  target_compile_definitions(replay_ranks_mismatch_driver
+    PRIVATE CATALYST_USE_MPI
+            # force `mpi.h` to not include cxx components to avoid
+            # unnecessary dependency on MPI_CPP
+            MPICH_SKIP_MPICXX
+            OMPI_SKIP_MPICXX
+            MPI_NO_CPPBIND
+            _MPICC_H)
 
   # Make sure that we error out if the number of ranks is different
   set(num_ranks_write_out 1)
   set(num_ranks_read_in 2)
+
+  # Set up the data dump directory for the test
+  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
+
+  add_test(
+    NAME replay_ranks_mismatch_prepare
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${data_dump_directory}")
+
+  set_tests_properties(replay_ranks_mismatch_prepare
+    PROPERTIES
+      FIXTURES_SETUP prepare_fixture)
 
   # Add a test for writing out the conduit nodes to disk
   add_test(
@@ -35,18 +56,11 @@ if (BUILD_TESTING)
             "$<TARGET_FILE_DIR:replay_ranks_mismatch_adaptor>"
   )
 
-  # Set up the data dump directory for the test
-  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
-  file(MAKE_DIRECTORY ${data_dump_directory})
-
-  set(write_out_environ_str
-     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-  )
-
   set_tests_properties(replay_ranks_mismatch_write_out
     PROPERTIES
-      ENVIRONMENT "${write_out_environ_str}"
-      FIXTURES_SETUP replay_ranks_mismatch_write_out_fixture)
+      ENVIRONMENT "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+      FIXTURES_SETUP replay_ranks_mismatch_write_out_fixture
+      FIXTURES_REQUIRED prepare_fixture)
 
   add_test(
     NAME replay_ranks_mismatch_read_in

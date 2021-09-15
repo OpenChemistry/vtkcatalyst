@@ -17,6 +17,7 @@ function(_add_example2 example_or_test dir mode root)
             "-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}"
             "-DCATALYST_INSTALL_PACKAGE_DIR=${CATALYST_INSTALL_PACKAGE_DIR}"
             ${replay_argument}
+            "-Dsrc=${CMAKE_CURRENT_SOURCE_DIR}"
             "-Droot=${root}"
             "-Ddir=${dir}"
             "-Dmode=${mode}"
