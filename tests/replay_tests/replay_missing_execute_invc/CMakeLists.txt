@@ -40,25 +40,28 @@ if (BUILD_TESTING)
         ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${num_ranks_if_mpi})
   endif()
 
+  # Set up the data dump directory for the test
+  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
+
+  add_test(
+    NAME missing_execute_invc_prepare
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${data_dump_directory}")
+
+  set_tests_properties(missing_execute_invc_prepare
+    PROPERTIES
+      FIXTURES_SETUP prepare_fixture)
+
   add_test(
     NAME missing_execute_invc_write_out
     COMMAND ${mpi_prefix_or_blank} "$<TARGET_FILE:missing_execute_invc_driver>"
             "$<TARGET_FILE_DIR:missing_execute_invc_adaptor>"
   )
 
-  # Set up the data dump directory for the test
-  set(data_dump_directory "${CMAKE_CURRENT_BINARY_DIR}/data_dump/")
-  file(MAKE_DIRECTORY ${data_dump_directory})
-
-  set(write_out_environ_str
-     "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
-  )
-
   set_tests_properties(missing_execute_invc_write_out
     PROPERTIES
-      ENVIRONMENT "${write_out_environ_str}"
-      FIXTURES_SETUP missing_execute_invc_write_out_fixture)
-
+      ENVIRONMENT "CATALYST_DATA_DUMP_DIRECTORY=${data_dump_directory}"
+      FIXTURES_SETUP missing_execute_invc_write_out_fixture
+      FIXTURES_REQUIRED prepare_fixture)
 
   # Remove one invocation of execute
   if (CATALYST_USE_MPI)
