@@ -18,10 +18,18 @@ catalyst_implementation(
 include(CTest)
 if (BUILD_TESTING)
   add_executable(high_num_ranks_driver "${src_dir}/common_replay_driver.cxx")
-
   target_link_libraries(high_num_ranks_driver
     PRIVATE
-      catalyst::catalyst)
+      catalyst::catalyst
+      MPI::MPI_C)
+  target_compile_definitions(high_num_ranks_driver
+    PRIVATE CATALYST_USE_MPI
+            # force `mpi.h` to not include cxx components to avoid
+            # unnecessary dependency on MPI_CPP
+            MPICH_SKIP_MPICXX
+            OMPI_SKIP_MPICXX
+            MPI_NO_CPPBIND
+            _MPICC_H)
 
   set(num_ranks 10)
   set(mpi_prefix
