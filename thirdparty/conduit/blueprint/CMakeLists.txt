@@ -1,24 +1,27 @@
 # CMakeLists for Catalyst
 
-configure_file (conduit_blueprint_exports.h.in
-                conduit_blueprint_exports.h)
+configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/conduit_blueprint_exports.h.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h")
 
 
-# Specify core headers
 #
-set(blueprint_core_headers
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
-)
-
 # Specify all headers
 #
 set(blueprint_headers
     conduit_blueprint.hpp
     conduit_blueprint_mesh.hpp
+    conduit_blueprint_mesh_utils.hpp
     conduit_blueprint_mesh_examples.hpp
+    conduit_blueprint_mesh_examples_julia.hpp
+    conduit_blueprint_mesh_examples_venn.hpp
     conduit_blueprint_mcarray.hpp
     conduit_blueprint_mcarray_examples.hpp
+    conduit_blueprint_o2mrelation.hpp
+    conduit_blueprint_o2mrelation_utils.hpp
+    conduit_blueprint_o2mrelation_iterator.hpp
+    conduit_blueprint_o2mrelation_examples.hpp
     conduit_blueprint_zfparray.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
 )
 
 #
@@ -27,6 +30,7 @@ set(blueprint_headers
 set(blueprint_c_headers
     c/catalyst_conduit_blueprint_mangle.h
     c/conduit_blueprint.h
+    c/conduit_blueprint_c_exports.h
     c/conduit_blueprint_mcarray.h
     c/conduit_blueprint_mesh.h
     )
@@ -38,9 +42,17 @@ set(blueprint_c_headers
 set(blueprint_sources
     conduit_blueprint.cpp
     conduit_blueprint_mesh.cpp
+    conduit_blueprint_mesh_utils.cpp
+    conduit_blueprint_mesh_matset_xforms.cpp
     conduit_blueprint_mesh_examples.cpp
+    conduit_blueprint_mesh_examples_julia.cpp
+    conduit_blueprint_mesh_examples_venn.cpp
     conduit_blueprint_mcarray.cpp
     conduit_blueprint_mcarray_examples.cpp
+    conduit_blueprint_o2mrelation.cpp
+    conduit_blueprint_o2mrelation_utils.cpp
+    conduit_blueprint_o2mrelation_iterator.cpp
+    conduit_blueprint_o2mrelation_examples.cpp
     conduit_blueprint_zfparray.cpp
     )
 
@@ -61,8 +73,7 @@ target_include_directories(blueprint_headers
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CATALYST_INSTALL_INCLUDE_DIR}>)
 c_install_headers(
-  HEADERS ${blueprint_core_headers}
-          ${blueprint_c_headers})
+  HEADERS ${blueprint_c_headers})
 c_install_targets(blueprint_headers)
 
 #-------------------------------------------------------------------------
@@ -81,8 +92,8 @@ target_link_libraries(blueprint
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(blueprint
     PRIVATE
-      conduit_EXPORTS
-      conduit_blueprint_EXPORTS)
+      conduit_c_EXPORTS
+      conduit_blueprint_c_EXPORTS)
 endif ()
 add_library(catalyst::blueprint ALIAS blueprint)
 c_install_targets(blueprint)
