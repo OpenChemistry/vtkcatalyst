@@ -26,6 +26,10 @@ int main(int argc, char* argv[])
   int ret = EXIT_SUCCESS;
   enum catalyst_status err;
 
+#ifdef CATALYST_USE_MPI
+  node["mpi_comm"].set_int64(static_cast<int64_t>(MPI_Comm_c2f(MPI_COMM_WORLD)));
+#endif
+
   int a = 10;
   node["data"].set_int32(a);
   node["stage"].set_char8_str("initialize");

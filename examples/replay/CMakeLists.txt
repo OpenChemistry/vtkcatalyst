@@ -12,6 +12,18 @@ catalyst_implementation(
   NAME    example_replay_adaptor
   SOURCES catalyst_example_replay_adaptor.cxx)
 
+if (CATALYST_USE_MPI)
+  target_link_libraries(catalyst_example_replay_adaptor PRIVATE MPI::MPI_C)
+  target_compile_definitions(catalyst_example_replay_adaptor
+    PRIVATE REPLAY_ADAPTOR_USE_MPI
+            # force `mpi.h` to not include cxx components to avoid
+            # unnecessary dependency on MPI_CPP
+            MPICH_SKIP_MPICXX
+            OMPI_SKIP_MPICXX
+            MPI_NO_CPPBIND
+            _MPICC_H)
+endif()
+
 include(CTest)
 if (BUILD_TESTING)
   add_executable(replay_test replay_test.cxx)
