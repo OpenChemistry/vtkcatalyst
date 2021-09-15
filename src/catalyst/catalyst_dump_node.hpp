@@ -21,6 +21,21 @@
 #define PATH_SEP '/'
 #endif
 
+void get_mpi_info(int& rank, int& num_ranks)
+{
+  rank = 0;
+  num_ranks = 1;
+#ifdef CATALYST_USE_MPI
+  int mpi_initialized = 0;
+  MPI_Initialized(&mpi_initialized);
+  if (mpi_initialized)
+  {
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  }
+#endif
+}
+
 // Constructs the absolute path of the file to write out.
 // Similar to python's os.path.join.
 char* construct_full_path(
@@ -28,11 +43,7 @@ char* construct_full_path(
 {
   int num_ranks = 1;
   int rank = 0;
-
-#ifdef CATALYST_USE_MPI
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-#endif
+  get_mpi_info(rank, num_ranks);
 
   size_t out_dir_len = strlen(out_dir);
   if (!out_dir_len)
@@ -90,10 +101,8 @@ bool ensure_directory(const char* out_dir)
 {
   int rank = 0;
   int num_ranks = 1;
-#ifdef CATALYST_USE_MPI
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-#endif
+  get_mpi_info(rank, num_ranks);
+
   int directory_exists = 0;
   if (rank == 0)
   {
