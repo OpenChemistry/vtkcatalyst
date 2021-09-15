@@ -18,7 +18,6 @@ configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/conduit_exports.h.in"
 #
 set(conduit_headers
     conduit.hpp
-    conduit_endianness_types.h
     conduit_core.hpp
     conduit_endianness.hpp
     conduit_data_array.hpp
@@ -30,10 +29,7 @@ set(conduit_headers
     conduit_schema.hpp
     conduit_log.hpp
     conduit_utils.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_exports.h
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_config.h
     conduit_config.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_bitwidth_style_types.h
     )
 
 #
@@ -47,6 +43,12 @@ set(conduit_c_headers
     c/conduit_cpp_to_c.hpp
     c/conduit_utils.h
     c/catalyst_conduit_mangle.h
+
+    # Not in the `/c/` directory, but needed transitively.
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_bitwidth_style_types.h
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_exports.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/conduit_endianness_types.h
     )
 
 #
