@@ -24,7 +24,7 @@
 // Constructs the absolute path of the file to write out.
 // Similar to python's os.path.join.
 char* construct_full_path(
-  const char* out_dir, const char* stage, unsigned long invocations, bool use_invocations)
+  const char* out_dir, const char* stage, unsigned long invocations, int use_invocations)
 {
   int num_ranks = 1;
   int rank = 0;
@@ -91,10 +91,11 @@ char* construct_full_path(
 void dump_node(
   const conduit_node* params, const char* stage, unsigned long invocations, int use_invocations)
 {
-  if (const char* out_dir = getenv("CATALYST_DATA_DUMP_DIRECTORY"))
+  const char* out_dir = getenv("CATALYST_DATA_DUMP_DIRECTORY");
+  if (out_dir)
   {
     char* full_path = construct_full_path(out_dir, stage, invocations, use_invocations);
-    conduit_node_save(const_cast<conduit_node*>(params), full_path, "conduit_bin");
+    conduit_node_save((conduit_node*)(params), full_path, "conduit_bin");
     free(full_path);
   }
 }
