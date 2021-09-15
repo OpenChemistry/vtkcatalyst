@@ -49,8 +49,8 @@ target_link_libraries(catalyst
   PRIVATE
     conduit
     blueprint
-    libyaml
-    b64
+    conduit_libyaml
+    conduit_b64
     ${CMAKE_DL_LIBS})
 
 if (WIN32)
@@ -62,8 +62,8 @@ endif ()
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(catalyst
     PRIVATE
-      conduit_EXPORTS
-      conduit_blueprint_EXPORTS)
+      conduit_c_EXPORTS
+      conduit_blueprint_c_EXPORTS)
 endif ()
 
 add_library(catalyst::catalyst ALIAS catalyst)
