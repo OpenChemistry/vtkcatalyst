@@ -63,6 +63,9 @@ static catalyst_handle_t handle_from_env(const char* impl_name)
         if (*pathsep == PATH_SEPARATOR)
         {
           *pathsep = '\0';
+        }
+        if (!*pathsep)
+        {
           newpath = 1;
         }
 
