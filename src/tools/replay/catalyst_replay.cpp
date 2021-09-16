@@ -19,14 +19,40 @@
 
 #include <cstdlib>
 
-void replay_catalyst_initialize(const std::string& node_dir, int num_ranks, int rank)
+void replace_mpi_comm(conduit_cpp::Node& params, std::uint64_t communicator, int depth = 0)
+{
+  if (params.has_path("mpi_comm"))
+  {
+#ifdef CATALYST_USE_MPI
+    params["mpi_comm"].set(communicator);
+#else
+    // this is essential otherwise we may end up passing garbage value.
+    params.remove("mpi_comm");
+#endif
+  }
+  else if (depth == 0) // for now, we'll only go 1 deep in the tree.
+  {
+    for (conduit_index_t max = params.number_of_children(), cc = 0; cc < max; ++cc)
+    {
+      auto child = params[cc];
+      replace_mpi_comm(child, communicator, depth + 1);
+    }
+  }
+}
+
+void replay_catalyst_initialize(
+  const std::string& node_dir, int num_ranks, int rank, std::uint64_t communicator)
 {
   conduit_cpp::Node params;
   std::stringstream node_path;
   node_path << node_dir << "initialize_params.conduit_bin"
             << "." << num_ranks << "." << rank;
-
   conduit_node_load(c_node(&params), node_path.str().c_str(), "conduit_bin");
+
+  // can't think of a generic way to locate what path is used to store the
+  // MPI communicator. let's look for `mpi_comm`, and `*/mpi_comm` for now.
+  // that should cover most-cases.
+  replace_mpi_comm(params, communicator);
 
   catalyst_initialize(c_node(&params));
 }
@@ -310,6 +336,10 @@ int main(int argc, char** argv)
 #ifdef CATALYST_USE_MPI
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+
+  std::uint64_t communicator = static_cast<std::uint64_t>(MPI_Comm_c2f(MPI_COMM_WORLD));
+#else
+  const std::uint64_t communicator = 0;
 #endif
 
   if (rank == 0 && argc != 2)
@@ -343,7 +373,7 @@ int main(int argc, char** argv)
   clean_data_dump_str(catalyst_data_dump_directory);
 
   // Everything else is done, replay!
-  replay_catalyst_initialize(catalyst_data_dump_directory, num_ranks, rank);
+  replay_catalyst_initialize(catalyst_data_dump_directory, num_ranks, rank, communicator);
   replay_catalyst_execute(
     catalyst_data_dump_directory, num_ranks, rank, num_execute_invoc_per_rank);
   replay_catalyst_finalize(catalyst_data_dump_directory, num_ranks, rank);
