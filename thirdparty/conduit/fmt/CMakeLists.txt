@@ -14,8 +14,9 @@ set(fmt_headers
     conduit_fmt/ranges.h
     )
 
-add_library(conduit_fmt INTERFACE
-  ${fmt_headers})
+add_library(conduit_fmt INTERFACE)
+  # XXX(cmake-3.19)
+  #${fmt_headers})
 target_include_directories(conduit_fmt
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
