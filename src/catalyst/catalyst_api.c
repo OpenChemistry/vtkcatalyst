@@ -74,6 +74,7 @@ static catalyst_handle_t handle_from_env(const char* impl_name)
           handle = handle_open(curpath, impl_name);
           if (handle_is_valid(handle))
           {
+            curpath = NULL;
             break;
           }
         }
@@ -83,6 +84,11 @@ static catalyst_handle_t handle_from_env(const char* impl_name)
         {
           curpath = pathsep;
         }
+      }
+
+      if (!handle_is_valid(handle) && curpath)
+      {
+        handle = handle_open(curpath, impl_name);
       }
     }
 
