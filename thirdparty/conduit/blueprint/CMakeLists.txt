@@ -7,7 +7,7 @@ configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/conduit_blueprint_exports.h.in"
 #
 # Specify all headers
 #
-set(blueprint_headers
+set(blueprint_cpp_headers
     conduit_blueprint.hpp
     conduit_blueprint_mesh.hpp
     conduit_blueprint_mesh_utils.hpp
@@ -21,7 +21,6 @@ set(blueprint_headers
     conduit_blueprint_o2mrelation_iterator.hpp
     conduit_blueprint_o2mrelation_examples.hpp
     conduit_blueprint_zfparray.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
 )
 
 #
@@ -33,6 +32,7 @@ set(blueprint_c_headers
     c/conduit_blueprint_c_exports.h
     c/conduit_blueprint_mcarray.h
     c/conduit_blueprint_mesh.h
+    ${CMAKE_CURRENT_BINARY_DIR}/conduit_blueprint_exports.h
     )
 
 
