@@ -54,7 +54,7 @@ Catalyst build directory or the Catalyst install directory.
 Using `make` (or similar)
 -------------------------
 
-If now using CMake as the build system generator for your simulation code, it is
+If not using CMake as the build system generator for your simulation code, it is
 still easy to make it aware of Catalyst. You simply need to pass the include
 path i.e. the location where the Catalyst headers are available, and the
 location and library to link against.

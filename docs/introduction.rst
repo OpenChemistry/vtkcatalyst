@@ -54,7 +54,7 @@ releases, we use the names to refer to specific components:
 
 ParaView Catalyst supports several ways for simulations to describe
 computational meshes and fields. One way is to use Conduit's `Mesh Blueprint`_.
-Another way is to use `ADIS`_. Furthermore, developers can develop their own
+Another way is to use `Fides`_. Furthermore, developers can develop their own
 implementations of the Catalyst API and still use ParaView's capabilities for
 in situ data processing and visualization. ParaView provides API that
 such developers can use to initialize and invoke ParaView in situ.
@@ -66,4 +66,4 @@ that use ParaView].
 
 .. _`Mesh Blueprint`: https://llnl-conduit.readthedocs.io/en/latest/blueprint_mesh.html#mesh-blueprint
 
-.. _`ADIS`: https://gitlab.kitware.com/vtk/adis
+.. _`Fides`: https://gitlab.kitware.com/vtk/fides
