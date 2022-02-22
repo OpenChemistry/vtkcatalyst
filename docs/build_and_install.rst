@@ -81,4 +81,4 @@ Important `CMake`_ options that affect how Catalyst is built are:
 .. _`Git`: https://git-scm.com/
 .. _`CMake`: https://cmake.org
 .. _`CMake Docs`: https://cmake.org/documentation/
-.. _`Ninja`:https://ninja-build.org
+.. _`Ninja`: https://ninja-build.org

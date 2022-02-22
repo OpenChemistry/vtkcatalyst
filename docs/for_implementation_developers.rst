@@ -5,7 +5,7 @@ Developers can develop custom implementations for the Catalyst API to support
 a wide variety of use-cases. In most cases, however, if your goal is to use
 ParaView for in situ data processing, it may be easier to simply use
 **ParaView Catalyst**. It support several ways for describing computational
-meshes and field arrays including `Mesh Blueprint`_ and `ADIS`_.
+meshes and field arrays including `Mesh Blueprint`_ and `Fides`_.
 
 This section describes the workflow for those who want to implement a custom
 implementation for the Catalyst API.
@@ -52,14 +52,16 @@ Implementing Catalyst API
 =========================
 
 Providing an implementation for the Catalyst API implies providing code for the
-five ``catalyst_`` functions that are part of the Catalyst API,
-``catalyst_initialize_MyImplName``, ``catalyst_finalize_MyImplName``,
-``catalyst_execute_MyImplName``, ``catalyst_about_MyImplName`` and
-``catalyst_results_MyImplName``.
+five ``catalyst_`` functions that are part of the Catalyst API:
+* ``catalyst_initialize_MyImplName``,
+* ``catalyst_finalize_MyImplName``,
+* ``catalyst_execute_MyImplName``,
+* ``catalyst_about_MyImplName``,
+* ``catalyst_results_MyImplName``
 
 To do that, simply include ``catalyst.h`` and ``catalyst_impl_MyImplName.h``
 headers in your implementation file and add definitions for these functions.
-Definitions for all the four functions must be provided. You can choose to
+Definitions for all the five functions must be provided. You can choose to
 invoke the default stub implementation for any of the functions by including
 the ``catalyst_stub.h`` header and then calling ``catalyst_stub_initialize``,
 ``catalyst_stub_finalize``, ``catalyst_stub_execute``, ``catalyst_stub_about`` or
@@ -104,4 +106,4 @@ library is found and loaded by ``catalyst_initialize``.
 
 .. _`Mesh Blueprint`: https://llnl-conduit.readthedocs.io/en/latest/blueprint_mesh.html#mesh-blueprint
 
-.. _`ADIS`: https://gitlab.kitware.com/vtk/adis
+.. _`Fides`: https://gitlab.kitware.com/vtk/fides
