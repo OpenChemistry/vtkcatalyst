@@ -27,13 +27,13 @@ and the link against the ``catalyst::catalyst`` target. This is done as follows:
 
     # Find the Catalyst install.
     #
-    # VERSION is optional but recommended since it lets you choose
+    # The version is optional but recommended since it lets you choose
     # the compatibility version. The only supported value currently is 2.0
     #
     # REQUIRED ensures that CMake raises errors if Catalyst is not found
     # properly.
 
-    find_package(catalyst VERSION 2.0 REQUIRED)
+    find_package(catalyst 2.0 REQUIRED)
 
 
     # Your simulation will have an executable (or a library) that
