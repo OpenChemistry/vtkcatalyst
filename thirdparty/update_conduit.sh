@@ -8,7 +8,7 @@ readonly name="conduit"
 readonly ownership="Conduit Upstream <kwrobot@kitware.com>"
 readonly subtree="thirdparty/$name"
 readonly repo="https://gitlab.kitware.com/third-party/conduit.git"
-readonly tag="for/catalyst-20220214-v0.7.2"
+readonly tag="for/catalyst-20220606-v0.8.3"
 readonly paths="
 .gitattributes
 COPYRIGHT
@@ -55,6 +55,8 @@ extract_source () {
     mv "$extractdir/$name-reduced/src/cmake" "$extractdir/$name-reduced/cmake"
     mv "$extractdir/$name-reduced/src/libs/conduit" "$extractdir/$name-reduced/conduit"
     mv "$extractdir/$name-reduced/src/libs/blueprint" "$extractdir/$name-reduced/blueprint"
+    rm -v "$extractdir/$name-reduced/blueprint/"*_examples*
+    rm -v "$extractdir/$name-reduced/blueprint/c/"*_examples*
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/fmt-7.1.0" "$extractdir/$name-reduced/fmt"
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/libb64-1.2.1" "$extractdir/$name-reduced/libb64"
     mv "$extractdir/$name-reduced/src/thirdparty_builtin/libyaml-690a781" "$extractdir/$name-reduced/libyaml"
