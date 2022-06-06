@@ -58,6 +58,7 @@ set(conduit_sources
     conduit_core.cpp
     conduit_error.cpp
     conduit_endianness.cpp
+    conduit_data_accessor.cpp
     conduit_data_type.cpp
     conduit_data_array.cpp
     conduit_generator.cpp

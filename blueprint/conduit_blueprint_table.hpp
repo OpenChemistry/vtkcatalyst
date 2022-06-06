@@ -4,24 +4,21 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit_blueprint_mpi_mesh_examples.hpp
+/// file: conduit_blueprint_table.hpp
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_BLUEPRINT_MPI_MESH_EXAMPLES_HPP
-#define CONDUIT_BLUEPRINT_MPI_MESH_EXAMPLES_HPP
+#ifndef CONDUIT_BLUEPRINT_TABLE_HPP
+#define CONDUIT_BLUEPRINT_TABLE_HPP
 
 //-----------------------------------------------------------------------------
 // conduit lib includes
 //-----------------------------------------------------------------------------
 #include "conduit.hpp"
-#include "conduit_blueprint.hpp"
 #include "conduit_blueprint_exports.h"
 
-#include <mpi.h>
-
 //-----------------------------------------------------------------------------
-// -- begin conduit::--
+// -- begin conduit --
 //-----------------------------------------------------------------------------
 namespace conduit
 {
@@ -33,63 +30,35 @@ namespace blueprint
 {
 
 //-----------------------------------------------------------------------------
-// -- begin conduit::blueprint::mpi --
+// -- begin conduit::blueprint::table --
 //-----------------------------------------------------------------------------
-namespace mpi
+
+namespace table 
 {
 
 //-----------------------------------------------------------------------------
-// -- begin conduit::blueprint::mpi::mesh --
-//-----------------------------------------------------------------------------
-namespace mesh
-{
+bool CONDUIT_BLUEPRINT_API verify(const conduit::Node &n,
+                                  conduit::Node &info);
 
 //-----------------------------------------------------------------------------
-/// Methods that generate example meshes.
-//-----------------------------------------------------------------------------
-namespace examples
-{
-    /// Generates a uniform grid per MPI task using
-    /// blueprint::mesh::examples::braid
-    /// Adds an element-associated scalar field painted with the domain id
-    void CONDUIT_BLUEPRINT_API braid_uniform_multi_domain(conduit::Node &res,
-                                                          MPI_Comm comm);
+bool CONDUIT_BLUEPRINT_API verify(const std::string &protocol,
+                                  const conduit::Node &n,
+                                  conduit::Node &info);
 
-    /// Generates a multi-domain fibonacci estimation of a golden spiral.
-    /// Domains are assigned round-robin to MPI tasks
-    void CONDUIT_BLUEPRINT_API spiral_round_robin(conduit::index_t ndomains,
-                                                  conduit::Node &res,
-                                                  MPI_Comm comm);
+//-----------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mpi::mesh::examples --
+// -- end conduit::blueprint::mesh --
 //-----------------------------------------------------------------------------
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mpi::mesh --
-//-----------------------------------------------------------------------------
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mpi --
-//-----------------------------------------------------------------------------
-
 
 }
 //-----------------------------------------------------------------------------
 // -- end conduit::blueprint --
 //-----------------------------------------------------------------------------
 
-
 }
 //-----------------------------------------------------------------------------
-// -- end conduit --
+// -- end conduit:: --
 //-----------------------------------------------------------------------------
 
-
-
 #endif
-
-
-

@@ -4,20 +4,20 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit_blueprint.h
+/// file: conduit_blueprint_mpi_mesh.h
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_BLUEPRINT_H
-#define CONDUIT_BLUEPRINT_H
+#ifndef CONDUIT_BLUEPRINT_MPI_MESH_H
+#define CONDUIT_BLUEPRINT_MPI_MESH_H
 
 //-----------------------------------------------------------------------------
 // -- includes for the public conduit blueprint c interface -- 
 //-----------------------------------------------------------------------------
 
 #include "conduit.h"
-#include "conduit_blueprint_c_exports.h"
-#include "catalyst_conduit_blueprint_mangle.h"
+#include "conduit_blueprint_exports.h"
+#include <mpi.h>
 
 //-----------------------------------------------------------------------------
 // -- begin extern C
@@ -27,19 +27,24 @@ extern "C" {
 #endif
 
 //-----------------------------------------------------------------------------
-// -- conduit_blueprint c interface  --
+// -- conduit_blueprint_mpi_mesh c interface  --
 //-----------------------------------------------------------------------------
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_about(conduit_node *cnode);
-
+//-----------------------------------------------------------------------------
+/// Partition a mesh
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mpi_mesh_partition(const conduit_node *cmesh,
+                                                                const conduit_node *coptions,
+                                                                conduit_node *coutput,
+                                                                MPI_Comm comm);
 
 //-----------------------------------------------------------------------------
-/// Verify passed node confirms to given blueprint protocol.
-/// Messages related to the verification are be placed in the "info" node.
+/// Flatten a mesh to a table
 //-----------------------------------------------------------------------------
-CONDUIT_BLUEPRINT_C_API int conduit_blueprint_verify(const char *protocol,
-                                                   const conduit_node *cnode,
-                                                   conduit_node *cinfo);
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mpi_mesh_flatten(const conduit_node *cmesh,
+                                                              const conduit_node *coptions,
+                                                              conduit_node *coutput,
+                                                              MPI_Comm comm);
 
 #ifdef __cplusplus
 }
@@ -47,10 +52,6 @@ CONDUIT_BLUEPRINT_C_API int conduit_blueprint_verify(const char *protocol,
 //-----------------------------------------------------------------------------
 // -- end extern C
 //-----------------------------------------------------------------------------
-
-#include "conduit_blueprint_mcarray.h"
-#include "conduit_blueprint_mesh.h"
-#include "conduit_blueprint_table.h"
 
 
 //-----------------------------------------------------------------------------

@@ -18,7 +18,7 @@
 
 #include "conduit_blueprint_exports.h"
 #include "conduit_blueprint_mpi_mesh.hpp"
-#include "conduit_blueprint_mpi_mesh_examples.hpp"
+/* #include "conduit_blueprint_mpi_mesh_examples.hpp" */
 
 
 #include <mpi.h>

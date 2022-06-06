@@ -4,28 +4,21 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit.hpp
+/// file: conduit_blueprint_config.h
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_HPP
-#define CONDUIT_HPP
-
+#ifndef CONDUIT_BLUEPRINT_CONFIG_H
+#define CONDUIT_BLUEPRINT_CONFIG_H
 
 //-----------------------------------------------------------------------------
-// -- includes for the public conduit interface -- 
+//
+// #define optional blueprint features
+//
 //-----------------------------------------------------------------------------
-
-#include "conduit_core.hpp"
-#include "conduit_error.hpp"
-#include "conduit_endianness.hpp"
-#include "conduit_data_type.hpp"
-#include "conduit_data_array.hpp"
-#include "conduit_schema.hpp"
-#include "conduit_node.hpp"
-#include "conduit_generator.hpp"
-#include "conduit_utils.hpp"
-#include "conduit_data_accessor.hpp"
+#cmakedefine CONDUIT_BLUEPRINT_MPI_PARMETIS_ENABLED
 
 #endif
+
+
 

@@ -4,84 +4,67 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit_blueprint_mesh_examples_venn.hpp
+/// file: conduit_blueprint_table.h
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_BLUEPRINT_MESH_EXAMPLES_VENN_HPP
-#define CONDUIT_BLUEPRINT_MESH_EXAMPLES_VENN_HPP
+#ifndef CONDUIT_BLUEPRINT_TABLE_H
+#define CONDUIT_BLUEPRINT_TABLE_H
 
 //-----------------------------------------------------------------------------
-// conduit lib includes
-//-----------------------------------------------------------------------------
-#include "conduit.hpp"
-#include "conduit_blueprint.hpp"
-#include "conduit_blueprint_exports.h"
-
-//-----------------------------------------------------------------------------
-// -- begin conduit::--
-//-----------------------------------------------------------------------------
-namespace conduit
-{
-
-
-//-----------------------------------------------------------------------------
-// -- begin conduit::blueprint --
-//-----------------------------------------------------------------------------
-namespace blueprint
-{
-
-//-----------------------------------------------------------------------------
-// -- begin conduit::blueprint::mesh --
-//-----------------------------------------------------------------------------
-namespace mesh
-{
-
-//-----------------------------------------------------------------------------
-/// Methods that generate example meshes.
-//-----------------------------------------------------------------------------
-namespace examples
-{
-    /// Generates a rectilinear grid with fields that
-    /// are computed from 3 overlapping circles.
-    ///
-    /// matset_type options:
-    ///   full -> non sparse volume fractions and matset values
-    ///   sparse_by_material ->  sparse (material dominant) volume fractions
-    ///                          and matset values
-    ///   sparse_by_element  ->  sparse (element dominant)
-    ///                          volume fractions and matset values
-    void CONDUIT_BLUEPRINT_API venn(const std::string &matset_type,
-                                    index_t nx,
-                                    index_t ny,
-                                    float64 radius,
-                                    Node &res);
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mesh::examples --
+// -- includes for the public conduit blueprint c interface -- 
 //-----------------------------------------------------------------------------
 
+#include "conduit.h"
+#include "conduit_blueprint_c_exports.h"
+#include "catalyst_conduit_blueprint_mangle.h"
 
 //-----------------------------------------------------------------------------
-}
+// -- begin extern C
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mesh --
-//-----------------------------------------------------------------------------
-
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit::blueprint --
-//-----------------------------------------------------------------------------
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit --
-//-----------------------------------------------------------------------------
-
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+//-----------------------------------------------------------------------------
+// -- conduit_blueprint_table c interface  --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/// Verify passed node conforms to the blueprint table protocol.
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_C_API int conduit_blueprint_table_verify(
+                                                    const conduit_node *cnode,
+                                                    conduit_node *cinfo);
+
+//-----------------------------------------------------------------------------
+/// Verify passed node conforms to given blueprint table sub protocol.
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_C_API int conduit_blueprint_table_verify_sub_protocol(
+                                                    const char *protocol,
+                                                    const conduit_node *cnode,
+                                                    conduit_node *cinfo);
+
+#if 0
+//-----------------------------------------------------------------------------
+/// Interface to generate example table blueprint data.
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_API void conduit_blueprint_table_examples_basic(
+                                                    conduit_index_t nx,
+                                                    conduit_index_t ny,
+                                                    conduit_index_t nz,
+                                                    conduit_node *cres);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+//-----------------------------------------------------------------------------
+// -- end extern C
+//-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
+// -- end header guard ifdef
+//-----------------------------------------------------------------------------
+#endif

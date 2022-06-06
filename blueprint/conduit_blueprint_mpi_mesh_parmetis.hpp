@@ -4,12 +4,12 @@
 
 //-----------------------------------------------------------------------------
 ///
-/// file: conduit_blueprint_mcarray_examples.hpp
+/// file: conduit_blueprint_mpi_mesh_parmetis.hpp
 ///
 //-----------------------------------------------------------------------------
 
-#ifndef CONDUIT_BLUEPRINT_MCARRAY_EXAMPLES_HPP
-#define CONDUIT_BLUEPRINT_MCARRAY_EXAMPLES_HPP
+#ifndef CONDUIT_BLUEPRINT_MPI_MESH_PARMETIS_HPP
+#define CONDUIT_BLUEPRINT_MPI_MESH_PARMETIS_HPP
 
 //-----------------------------------------------------------------------------
 // conduit lib includes
@@ -17,9 +17,10 @@
 #include "conduit.hpp"
 #include "conduit_blueprint_exports.h"
 
+#include <mpi.h>
 
 //-----------------------------------------------------------------------------
-// -- begin conduit:: --
+// -- begin conduit --
 //-----------------------------------------------------------------------------
 namespace conduit
 {
@@ -31,51 +32,56 @@ namespace blueprint
 {
 
 //-----------------------------------------------------------------------------
-// -- begin conduit::blueprint::mcarray --
+// -- begin conduit::blueprint::mpi --
 //-----------------------------------------------------------------------------
-
-namespace mcarray
+namespace mpi
 {
 
 //-----------------------------------------------------------------------------
-/// Methods that generate example multi-component arrays.
+// -- begin conduit::blueprint::mesh --
 //-----------------------------------------------------------------------------
-namespace examples
+
+namespace mesh 
 {
-    //-------------------------------------------------------------------------
-    /// creates mcarray with num pts * 3 components. 
-    /// with the following layout options (passed via mcarray_type)
-    ///  interleaved
-    ///  separate
-    ///  contiguous
-    ///  interleaved_mixed
-    //-------------------------------------------------------------------------
-    void CONDUIT_BLUEPRINT_API xyz(const std::string &mcarray_type,
-                                   conduit::index_t npts, // total # of points
-                                   conduit::Node &res);
+
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_partition_field(conduit::Node &mesh,
+                                                    MPI_Comm comm);
+
+
+//-----------------------------------------------------------------------------
+/// The following options can be passed via the opts Node:
+//-----------------------------------------------------------------------------
+/// opts:
+///      partitions:  # of partitions to use (integer) 
+///         (default ==> # of MPI Tasks)
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_partition_field(conduit::Node &mesh,
+                                                    const conduit::Node &opts,
+                                                    MPI_Comm comm);
 
 //-----------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mesh::examples --
+// -- end conduit::blueprint::mpi::mesh --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+}
+//-----------------------------------------------------------------------------
+// -- end conduit::blueprint::mpi --
 //-----------------------------------------------------------------------------
 
 
 }
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mcarray --
+// -- end conduit::blueprint --
 //-----------------------------------------------------------------------------
-
 
 }
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint:: --
-//-----------------------------------------------------------------------------
-
-
-}
-//-----------------------------------------------------------------------------
-// -- end conduit --
+// -- end conduit:: --
 //-----------------------------------------------------------------------------
 
 
