@@ -79,6 +79,7 @@ conduit_blueprint_mcarray_to_interleaved(const conduit_node *cnode,
 }
 
 
+#if 0
 //-----------------------------------------------------------------------------
 /// Interface to generate example data
 //-----------------------------------------------------------------------------
@@ -92,6 +93,7 @@ conduit_blueprint_mcarray_examples_xyz(const char *mcarray_type,
                                       npts,
                                       res);
 }
+#endif
 
 
 

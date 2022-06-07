@@ -68,6 +68,34 @@ conduit_blueprint_mesh_generate_index(const conduit_node *cmesh,
 }
 
 //-----------------------------------------------------------------------------
+/// Partition a mesh
+//-----------------------------------------------------------------------------
+void
+conduit_blueprint_mesh_partition(const conduit_node *cmesh,
+                                 const conduit_node *coptions,
+                                 conduit_node *coutput)
+{
+    const Node &mesh = cpp_node_ref(cmesh);
+    const Node &options = cpp_node_ref(coptions);
+    Node &output  = cpp_node_ref(coutput);
+    blueprint::mesh::partition(mesh, options, output);
+}
+
+//-----------------------------------------------------------------------------
+/// Flatten a mesh to a table.
+//-----------------------------------------------------------------------------
+void
+conduit_blueprint_mesh_flatten(const conduit_node *cmesh,
+    const conduit_node *coptions, conduit_node *coutput)
+{
+    const Node &mesh = cpp_node_ref(cmesh);
+    const Node &options = cpp_node_ref(coptions);
+    Node &output  = cpp_node_ref(coutput);
+    blueprint::mesh::flatten(mesh, options, output);
+}
+
+#if 0
+//-----------------------------------------------------------------------------
 /// Interface to generate example data
 //-----------------------------------------------------------------------------
 void
@@ -126,10 +154,12 @@ conduit_blueprint_mesh_examples_spiral(conduit_index_t ndomains,
 
 void
 conduit_blueprint_mesh_examples_polytess(conduit_index_t nlevels,
+                                         conduit_index_t nz,
                                          conduit_node *cres)
 {
     Node &res = cpp_node_ref(cres);
     blueprint::mesh::examples::polytess(nlevels,
+                                        nz,
                                         res);
 }
 
@@ -145,6 +175,7 @@ conduit_blueprint_mesh_examples_misc(const char *mesh_type,
                                     nx,ny,nz,
                                     res);
 }
+#endif
 
 
 
