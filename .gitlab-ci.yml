@@ -30,25 +30,25 @@ stages:
 
 # Linux
 
-build-test:fedora33:
+build-test:fedora36:
     extends:
-        - .fedora33_basic
+        - .fedora36_basic
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
         - .run_automatically
 
-build-test:fedora33-replay:
+build-test:fedora36-replay:
     extends:
-        - .fedora33_replay
+        - .fedora36_replay
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
         - .run_automatically
 
-build-test:fedora33-mpi-replay:
+build-test:fedora36-mpi-replay:
     extends:
-        - .fedora33_mpi_replay
+        - .fedora36_mpi_replay
         - .cmake_build_linux
         - .cmake_build_artifacts
         - .linux_builder_tags
