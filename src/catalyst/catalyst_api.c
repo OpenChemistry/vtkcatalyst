@@ -374,17 +374,25 @@ char* default_search_path()
     return NULL;
   }
 
-  char* dirsep = strrchr(info.dli_fname, '/');
-  *dirsep = '\0';
-
-  size_t dirlen = strlen(info.dli_fname) + 9 + 1;
-  char* directory_name = (char*)malloc(dirlen);
-  if (!directory_name)
+  char* fname = strdup(info.dli_fname);
+  if (!fname)
   {
     return NULL;
   }
 
-  snprintf(directory_name, dirlen, "%s/catalyst", info.dli_fname);
+  char* dirsep = strrchr(fname, '/');
+  *dirsep = '\0';
+
+  size_t dirlen = strlen(fname) + 9 + 1;
+  char* directory_name = (char*)malloc(dirlen);
+  if (!directory_name)
+  {
+    free(fname);
+    return NULL;
+  }
+
+  snprintf(directory_name, dirlen, "%s/catalyst", fname);
+  free(fname);
 
   return directory_name;
 }
