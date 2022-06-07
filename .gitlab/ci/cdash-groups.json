@@ -3,17 +3,17 @@
         {
             "group": "catalyst-master",
             "site": "gitlab-ci",
-            "buildname": "[fedora33]"
+            "buildname": "[fedora36]"
         },
         {
             "group": "catalyst-master",
             "site": "gitlab-ci",
-            "buildname": "[fedora33_replay]"
+            "buildname": "[fedora36_replay]"
         },
         {
             "group": "catalyst-master",
             "site": "gitlab-ci",
-            "buildname": "[fedora33_mpi_replay]"
+            "buildname": "[fedora36_mpi_replay]"
         },
         {
             "group": "catalyst-master",

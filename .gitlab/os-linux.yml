@@ -2,8 +2,8 @@
 
 ## Base images
 
-.fedora33:
-    image: "kitware/paraview:ci-catalyst-fedora33-20210614"
+.fedora36:
+    image: "kitware/paraview:ci-catalyst-fedora36-20220607"
     variables:
         GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab-kitware-sciviz-ci
 
@@ -15,27 +15,27 @@
         # https://wiki.mpich.org/mpich/index.php/Frequently_Asked_Questions#Q:_Why_MPI_Put_raises_SIGBUS_error_inside_docker.3F
         MPIR_CVAR_NOLOCAL: 1
 
-.fedora33_basic:
+.fedora36_basic:
     extends:
-        - .fedora33
+        - .fedora36
 
     variables:
-        CMAKE_CONFIGURATION: fedora33
+        CMAKE_CONFIGURATION: fedora36
 
-.fedora33_replay:
+.fedora36_replay:
     extends:
-        - .fedora33
+        - .fedora36
 
     variables:
-        CMAKE_CONFIGURATION: fedora33_replay
+        CMAKE_CONFIGURATION: fedora36_replay
 
-.fedora33_mpi_replay:
+.fedora36_mpi_replay:
     extends:
-        - .fedora33
+        - .fedora36
         - .fedora_mpich_addon
 
     variables:
-        CMAKE_CONFIGURATION: fedora33_mpi_replay
+        CMAKE_CONFIGURATION: fedora36_mpi_replay
 
 ## Tags
 
