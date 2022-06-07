@@ -56,12 +56,14 @@ CONDUIT_BLUEPRINT_C_API int conduit_blueprint_mcarray_to_contiguous(const condui
 CONDUIT_BLUEPRINT_C_API int conduit_blueprint_mcarray_to_interleaved(const conduit_node *cnode,
                                                                    conduit_node *cdest);
 
+#if 0
 //-----------------------------------------------------------------------------
 /// Interface to generate example mesh blueprint data.
 //-----------------------------------------------------------------------------
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mcarray_examples_xyz(const char *mcarray_type,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mcarray_examples_xyz(const char *mcarray_type,
                                                                   conduit_index_t npts,
                                                                   conduit_node *cres);
+#endif
 
 #ifdef __cplusplus
 }

@@ -32,6 +32,7 @@
 #include "conduit_endianness.hpp"
 #include "conduit_data_type.hpp"
 #include "conduit_data_array.hpp"
+#include "conduit_data_accessor.hpp"
 #include "conduit_schema.hpp"
 #include "conduit_generator.hpp"
 #include "conduit_node_iterator.hpp"
@@ -225,11 +226,34 @@ public:
     void mmap(const std::string &stream_path,
               const Schema &schema);
 
+
 //-----------------------------------------------------------------------------
 ///@}
 //-----------------------------------------------------------------------------
 //
 // -- end declaration of Node basic i/o methods --
+//
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+//
+// -- begin declaration of Node allocator selection methods --
+//
+//-----------------------------------------------------------------------------
+///@name Allocator Selection
+///@{
+//-----------------------------------------------------------------------------
+/// description:
+///
+//-----------------------------------------------------------------------------
+    void    set_allocator(index_t allocator_id);
+    index_t allocator();
+    void    reset_allocator();
+//-----------------------------------------------------------------------------
+///@}
+//-----------------------------------------------------------------------------
+//
+// -- end declaration of Node allocator selection methods --
 //
 //-----------------------------------------------------------------------------
 
@@ -3194,6 +3218,9 @@ public:
     void    to_float32_array(Node &res) const;
     void    to_float64_array(Node &res) const;
 
+    /// convert to the index type
+    void    to_index_t_array(Node &res) const;
+
     /// convert to c types
     void    to_char_array(Node &res)  const;
     void    to_short_array(Node &res) const;
@@ -3327,6 +3354,34 @@ public:
                 operator long_double_array() const;
             #endif
 
+            /// native c types accessors
+            operator char_accessor() const;
+
+            /// signed integer accessors
+            operator signed_char_accessor()  const;
+            operator signed_short_accessor() const;
+            operator signed_int_accessor()   const;
+            operator signed_long_accessor()  const;
+            #ifdef CONDUIT_HAS_LONG_LONG
+                operator  signed_long_long_accessor() const;
+            #endif
+
+            /// unsigned integer accessors
+            operator unsigned_char_accessor()  const;
+            operator unsigned_short_accessor() const;
+            operator unsigned_int_accessor()   const;
+            operator unsigned_long_accessor()  const;
+            #ifdef CONDUIT_HAS_LONG_LONG
+                operator  unsigned_long_long_accessor() const;
+            #endif
+
+            /// floating point accessors
+            operator float_accessor() const;
+            operator double_accessor() const;
+            #ifdef CONDUIT_USE_LONG_DOUBLE
+                operator long_double_accessor() const;
+            #endif
+
 
         private:
             // This is private we only want conduit::Node to create a
@@ -3440,6 +3495,34 @@ public:
                 operator const long_double_array() const;
             #endif
 
+            // -- as accessor -- //
+            operator char_accessor() const;
+
+            /// signed integer arrays
+            operator signed_char_accessor()  const;
+            operator signed_short_accessor() const;
+            operator signed_int_accessor()   const;
+            operator signed_long_accessor()  const;
+            #ifdef CONDUIT_HAS_LONG_LONG
+                operator  signed_long_long_accessor() const;
+            #endif
+
+            /// unsigned integer arrays
+            operator unsigned_char_accessor()  const;
+            operator unsigned_short_accessor() const;
+            operator unsigned_int_accessor()   const;
+            operator unsigned_long_accessor()  const;
+            #ifdef CONDUIT_HAS_LONG_LONG
+                operator  unsigned_long_long_accessor() const;
+            #endif
+
+            /// floating point arrays
+            operator float_accessor() const;
+            operator double_accessor() const;
+            #ifdef CONDUIT_USE_LONG_DOUBLE
+                operator long_double_accessor() const;
+            #endif
+
 
         private:
             // This is private we only want conduit::Node to create a
@@ -3533,6 +3616,7 @@ public:
 
     std::string         to_summary_string() const;
     std::string         to_summary_string(const conduit::Node &opts) const;
+    void                to_summary_string_stream(std::ostream &os) const;
     void                to_summary_string_stream(std::ostream &os,
                                                  const conduit::Node &opts) const;
     void                to_summary_string_stream(const std::string &stream_path,
@@ -3731,14 +3815,16 @@ public:
     //  the results digest in the provided data node
     bool             diff(const Node &n,
                           Node &info,
-                          const float64 epsilon = CONDUIT_EPSILON) const;
+                          const float64 epsilon = CONDUIT_EPSILON,
+                          bool relaxint = false) const;
 
     /// diff this node to the given node for compatibility (i.e. validate it
     //  has everything that the instance node has), storing the results
     //  digest in the provided data node
     bool             diff_compatible(const Node &n,
                                      Node &info,
-                                     const float64 epsilon = CONDUIT_EPSILON) const;
+                                     const float64 epsilon = CONDUIT_EPSILON,
+                                     bool relaxint = false) const;
 
     ///
     /// info() creates a node that contains metadata about the current
@@ -3977,8 +4063,10 @@ public:
     float32_array    as_float32_array();
     float64_array    as_float64_array();
 
-    // signed integer array types via conduit::DataArray (const variants)
+    // index type array types via conduit::DataArray
+    index_t_array    as_index_t_array() const;
 
+    // signed integer array types via conduit::DataArray (const variants)
     const int8_array       as_int8_array()  const;
     const int16_array      as_int16_array() const;
     const int32_array      as_int32_array() const;
@@ -3993,6 +4081,26 @@ public:
     // floating point array value via conduit::DataArray (const variants)
     const float32_array    as_float32_array() const;
     const float64_array    as_float64_array() const;
+
+    // signed integer accessors
+    int8_accessor       as_int8_accessor()  const;
+    int16_accessor      as_int16_accessor() const;
+    int32_accessor      as_int32_accessor() const;
+    int64_accessor      as_int64_accessor() const;
+
+    // unsigned integer accessors
+    uint8_accessor      as_uint8_accessor()  const;
+    uint16_accessor     as_uint16_accessor() const;
+    uint32_accessor     as_uint32_accessor() const;
+    uint64_accessor     as_uint64_accessor() const;
+
+    // floating point accessors
+    float32_accessor    as_float32_accessor() const;
+    float64_accessor    as_float64_accessor() const;
+
+    // index type array accessors
+    index_t_accessor    as_index_t_accessor() const;
+
 
     // char8_str cases
     char            *as_char8_str();
@@ -4212,6 +4320,47 @@ public:
     const long_double_array  as_long_double_array() const;
 #endif
 
+    // accessors
+
+    // c array accessors
+    char_accessor       as_char_accessor()  const;
+    short_accessor      as_short_accessor() const;
+    int_accessor        as_int_accessor()   const;
+    long_accessor       as_long_accessor()  const;
+
+#ifdef CONDUIT_HAS_LONG_LONG
+    long_long_accessor  as_long_long_accessor() const;
+#endif
+
+    // signed integer accessors
+    signed_char_accessor       as_signed_char_accessor()  const;
+    signed_short_accessor      as_signed_short_accessor() const;
+    signed_int_accessor        as_signed_int_accessor()   const;
+    signed_long_accessor       as_signed_long_accessor()  const;
+
+#ifdef CONDUIT_HAS_LONG_LONG
+    signed_long_long_accessor  as_signed_long_long_accessor() const;
+#endif
+
+
+    // unsigned integer accessors
+    unsigned_char_accessor    as_unsigned_char_accessor()  const;
+    unsigned_short_accessor   as_unsigned_short_accessor() const;
+    unsigned_int_accessor     as_unsigned_int_accessor()   const;
+    unsigned_long_accessor    as_unsigned_long_accessor()  const;
+
+#ifdef CONDUIT_HAS_LONG_LONG
+    unsigned_long_long_accessor  as_unsigned_long_long_accessor() const;
+#endif
+
+    // floating point accessors
+    float_accessor     as_float_accessor()  const;
+    double_accessor    as_double_accessor() const;
+
+#ifdef CONDUIT_USE_LONG_DOUBLE
+    long_double_accessor  as_long_double_accessor() const;
+#endif
+
 
 //-----------------------------------------------------------------------------
 ///@}
@@ -4220,7 +4369,6 @@ public:
 // -- end declaration of Node value access methods --
 //
 //-----------------------------------------------------------------------------
-
 
 private:
 //-----------------------------------------------------------------------------
@@ -4320,7 +4468,8 @@ private:
     // work horse for complex node hierarchical setup
     static void      walk_schema(Node   *node,
                                  Schema *schema,
-                                 void   *data);
+                                 void   *data,
+                                 index_t allocator_id);
 
     static void      mirror_node(Node *node,
                                  Schema *schema,
@@ -4552,6 +4701,9 @@ private:
     // initializing nodes using memory maps, so it is still needed apart from
     // simply knowing if this pointer is valid.
     MMap     *m_mmap;
+
+    // allocator id for memory
+    index_t m_allocator_id;
 };
 //-----------------------------------------------------------------------------
 // -- end conduit::Node --

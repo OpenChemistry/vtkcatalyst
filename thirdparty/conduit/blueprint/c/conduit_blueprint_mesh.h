@@ -53,21 +53,36 @@ CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_generate_index(const conduit
                                                                  conduit_node *cindex_out);
 
 //-----------------------------------------------------------------------------
+/// Partition a mesh
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_partition(const conduit_node *cmesh,
+                                                            const conduit_node *coptions,
+                                                            conduit_node *coutput);
+
+//-----------------------------------------------------------------------------
+/// Flatten a mesh to a table
+//-----------------------------------------------------------------------------
+CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_flatten(const conduit_node *cmesh,
+                                                          const conduit_node *coptions,
+                                                          conduit_node *coutput);
+
+#if 0
+//-----------------------------------------------------------------------------
 /// Interface to generate example mesh blueprint data.
 //-----------------------------------------------------------------------------
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_basic(const char *mesh_type,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_basic(const char *mesh_type,
                                                                  conduit_index_t nx,
                                                                  conduit_index_t ny,
                                                                  conduit_index_t nz,
                                                                  conduit_node *cres);
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_braid(const char *mesh_type,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_braid(const char *mesh_type,
                                                                  conduit_index_t nx,
                                                                  conduit_index_t ny,
                                                                  conduit_index_t nz,
                                                                  conduit_node *cres);
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_julia(conduit_index_t nx,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_julia(conduit_index_t nx,
                                                                  conduit_index_t ny,
                                                                  conduit_float64 x_min,
                                                                  conduit_float64 x_max,
@@ -77,17 +92,19 @@ CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_julia(conduit_index
                                                                  conduit_float64 c_im,
                                                                  conduit_node *cres);
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_spiral(conduit_index_t ndomains,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_spiral(conduit_index_t ndomains,
                                                                   conduit_node *cres);
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_polytess(conduit_index_t nlevels,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_polytess(conduit_index_t nlevels,
+                                                                    conduit_index_t nz,
                                                                     conduit_node *cres);
 
-CONDUIT_BLUEPRINT_C_API void conduit_blueprint_mesh_examples_misc(const char *mesh_type,
+CONDUIT_BLUEPRINT_API void conduit_blueprint_mesh_examples_misc(const char *mesh_type,
                                                                  conduit_index_t nx,
                                                                  conduit_index_t ny,
                                                                  conduit_index_t nz,
                                                                  conduit_node *cres);
+#endif
 
 #ifdef __cplusplus
 }

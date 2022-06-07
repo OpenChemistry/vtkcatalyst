@@ -14,8 +14,12 @@
 #include <cmath>
 #include <deque>
 #include <string>
+#include <limits>
 #include <map>
+#include <memory>
+#include <sstream>
 #include <vector>
+#include <unordered_map>
 
 //-----------------------------------------------------------------------------
 // conduit includes
@@ -24,6 +28,9 @@
 #include "conduit_blueprint_o2mrelation.hpp"
 #include "conduit_blueprint_o2mrelation_iterator.hpp"
 #include "conduit_blueprint_mesh_utils.hpp"
+
+// access one-to-many index types
+namespace O2MIndex = conduit::blueprint::o2mrelation;
 
 //-----------------------------------------------------------------------------
 // -- begin conduit --
@@ -160,15 +167,14 @@ ShapeType::is_valid() const
 ShapeCascade::ShapeCascade(const conduit::Node &topology)
 {
     ShapeType base_type(topology);
-    dim = base_type.dim;
-
-    dim_types[base_type.dim] = base_type;
-    for(index_t di = base_type.dim - 1; di >= 0; di--)
-    {
-        dim_types[di] = ShapeType(dim_types[di + 1].embed_id);
-    }
+    init(base_type);
 }
 
+//---------------------------------------------------------------------------//
+ShapeCascade::ShapeCascade(const ShapeType &base_type)
+{
+    init(base_type);
+}
 
 //---------------------------------------------------------------------------//
 index_t
@@ -196,6 +202,18 @@ ShapeCascade::get_shape(const index_t level) const
     return dim_types[level < 0 ? dim : level];
 }
 
+//---------------------------------------------------------------------------//
+void
+ShapeCascade::init(const ShapeType &base_type)
+{
+    dim = base_type.dim;
+
+    dim_types[base_type.dim] = base_type;
+    for(index_t di = base_type.dim - 1; di >= 0; di--)
+    {
+        dim_types[di] = ShapeType(dim_types[di + 1].embed_id);
+    }
+}
 
 //---------------------------------------------------------------------------//
 TopologyMetadata::TopologyMetadata(const conduit::Node &topology, const conduit::Node &coordset) :
@@ -433,21 +451,32 @@ TopologyMetadata::TopologyMetadata(const conduit::Node &topology, const conduit:
     for(index_t di = 0; di <= topo_shape.dim; di++)
     {
         Node &dim_conn = dim_topos[di]["elements/connectivity"];
-        Node data_conn(DataType::int64(dim_buffers[di].size()),
-            &(dim_buffers[di][0]), true);
-
         dim_conn.set(DataType(int_dtype.id(), dim_buffers[di].size()));
-        data_conn.to_data_type(int_dtype.id(), dim_conn);
 
-        // Initialize element/sizes for polygonal mesh using polyhedral's
-        // subelement/sizes
+        data.reset();
+        data.set_external(DataType::int64(dim_buffers[di].size()),
+            &(dim_buffers[di][0]));
+        data.to_data_type(int_dtype.id(), dim_conn);
+
+        // Initialize element sizes for 2D polygonal mesh generating
+        // from 3D polyhedral mesh
         if(di == 2 && topo_shape.is_polyhedral())
         {
-            Node &polygonal_size = dim_topos[di]["elements/sizes"];
-            Node &polyhedral_subsize = dim_topos[3]["subelements/sizes"];
-            if (polygonal_size.dtype().is_empty())
+            Node &poly_sizes = dim_topos[di]["elements/sizes"];
+            poly_sizes.set(DataType(int_dtype.id(), dim_geid_maps[di].size()));
+
+            temp.reset();
+            data.reset();
+
+            for(const auto &poly_pair : dim_geid_maps[di])
             {
-                polygonal_size = polyhedral_subsize;
+                const std::set<index_t> &poly_verts = poly_pair.first;
+                const index_t &poly_geid = poly_pair.second;
+
+                temp.set_external(DataType(int_dtype.id(), 1),
+                    poly_sizes.element_ptr(poly_geid));
+                data.set((index_t)poly_verts.size());
+                data.to_data_type(int_dtype.id(), temp);
             }
         }
 
@@ -533,6 +562,10 @@ TopologyMetadata::get_entity_data(IndexType type, index_t entity_id, index_t ent
     const DataType conn_dtype(dim_conn.dtype().id(), 1);
     const DataType off_dtype(dim_off.dtype().id(), 1);
     const DataType data_dtype = data.dtype().is_number() ? data.dtype() : DataType::int64(1);
+
+    // FIXME(JRC): This code assumes that the per-element index data is packed
+    // in memory, which isn't guaranteed to be the case (could be stride between
+    // values, etc.).
 
     const index_t entity_gid = (type == IndexType::LOCAL) ?
         dim_le2ge_maps[entity_dim][entity_id] : entity_id;
@@ -728,12 +761,12 @@ find_widest_dtype(const Node &node, const DataType &default_dtype)
     return find_widest_dtype(node, std::vector<DataType>(1, default_dtype));
 }
 
+
 //-----------------------------------------------------------------------------
-bool
-find_reference_node(const Node &node, const std::string &ref_key, Node &ref)
+const Node *
+find_reference_node(const Node &node, const std::string &ref_key)
 {
-    bool res = false;
-    ref.reset();
+    const Node *res = nullptr;
 
     // NOTE: This segment of code is necessary to transform "topology" into
     // "topologies" while keeping all other dependency names (e.g. "coordset")
@@ -753,8 +786,7 @@ find_reference_node(const Node &node, const std::string &ref_key, Node &ref)
                 const Node &ref_parent = traverse_node->fetch(ref_section);
                 if(ref_parent.has_child(ref_value))
                 {
-                    ref.set_external(ref_parent[ref_value]);
-                    res = true;
+                    res = &ref_parent[ref_value];
                 }
                 break;
             }
@@ -764,6 +796,551 @@ find_reference_node(const Node &node, const std::string &ref_key, Node &ref)
 
     return res;
 }
+
+
+//-----------------------------------------------------------------------------
+// NOTE: 'node' can be any subtree of a Blueprint-compliant mesh
+index_t
+find_domain_id(const Node &node)
+{
+    index_t domain_id = -1;
+
+    Node info;
+    const Node *curr_node = &node;
+    while(curr_node != NULL && domain_id == -1)
+    {
+        if(blueprint::mesh::verify(*curr_node, info))
+        {
+            const std::vector<const Node *> domains = blueprint::mesh::domains(*curr_node);
+            const Node &domain = *domains.front();
+            if(domain.has_path("state/domain_id"))
+            {
+                domain_id = domain["state/domain_id"].to_index_t();
+            }
+        }
+
+        curr_node = curr_node->parent();
+    }
+
+    return domain_id;
+}
+
+//-----------------------------------------------------------------------------
+// -- begin conduit::blueprint::mesh::utils::connectivity --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+connectivity::make_element_2d(std::vector<index_t>& elem,
+                              index_t element,
+                              index_t iwidth)
+{
+    index_t ilo = element % iwidth;
+    index_t jlo = element / iwidth;
+    index_t ihi = ilo + 1;
+    index_t jhi = jlo + 1;
+
+    index_t ilo_jlo = (iwidth+1)*jlo + ilo;
+    index_t ihi_jlo = (iwidth+1)*jlo + ihi;
+    index_t ihi_jhi = (iwidth+1)*jhi + ihi;
+    index_t ilo_jhi = (iwidth+1)*jhi + ilo;
+
+    elem.push_back(ilo_jlo);
+    elem.push_back(ihi_jlo);
+    elem.push_back(ihi_jhi);
+    elem.push_back(ilo_jhi);
+}
+
+
+void
+connectivity::make_element_3d(ElemType& connect,
+                              index_t element,
+                              index_t iwidth,
+                              index_t jwidth,
+                              index_t kwidth,
+                              SubelemMap& faces)
+{
+    index_t ilo = element % iwidth;
+    index_t jlo = (element / iwidth) % jwidth;
+    index_t klo = element / (iwidth*jwidth);
+    index_t ihi = ilo + 1;
+    index_t jhi = jlo + 1;
+    index_t khi = klo + 1;
+
+    index_t jlo_offset = (iwidth+1)*jlo;
+    index_t jhi_offset = (iwidth+1)*jhi;
+    index_t klo_offset = (iwidth+1)*(jwidth+1)*klo;
+    index_t khi_offset = (iwidth+1)*(jwidth+1)*khi;
+
+
+    index_t iface_start = 0; 
+    index_t jface_start = (iwidth+1)*jwidth*kwidth;
+    index_t kface_start = jface_start + iwidth*(jwidth+1)*kwidth;
+
+    //ifaces
+    {
+        index_t j_offset = jlo_offset; 
+        index_t k_offset = (iwidth+1)*jwidth*klo;
+
+        index_t lo_face = iface_start + ilo + j_offset + k_offset;
+        index_t hi_face = iface_start + ihi + j_offset + k_offset;
+
+
+        //ilo face
+        if (faces.find(lo_face) == faces.end())
+        {
+            auto& ilo_face = faces[lo_face];
+            ilo_face.push_back(ilo + jlo_offset + klo_offset);
+            ilo_face.push_back(ilo + jhi_offset + klo_offset);
+            ilo_face.push_back(ilo + jhi_offset + khi_offset);
+            ilo_face.push_back(ilo + jlo_offset + khi_offset);
+        }
+        //ihi face
+        if (faces.find(hi_face) == faces.end())
+        {
+            auto& ihi_face = faces[hi_face];
+            ihi_face.push_back(ihi + jlo_offset + klo_offset);
+            ihi_face.push_back(ihi + jhi_offset + klo_offset);
+            ihi_face.push_back(ihi + jhi_offset + khi_offset);
+            ihi_face.push_back(ihi + jlo_offset + khi_offset);
+        }
+        connect.push_back(lo_face);
+        connect.push_back(hi_face);
+    }
+    //jfaces
+    {
+        index_t i_offset = ilo;  
+        index_t jlo_face_offset = iwidth*jlo; 
+        index_t jhi_face_offset = iwidth*jhi; 
+        index_t k_offset = iwidth*(jwidth+1)*klo;
+
+        index_t lo_face = jface_start + i_offset + jlo_face_offset + k_offset;
+        index_t hi_face = jface_start + i_offset + jhi_face_offset + k_offset;
+
+        //jlo face
+        if (faces.find(lo_face) == faces.end())
+        {
+            auto& jlo_face = faces[lo_face];
+            jlo_face.push_back(ilo + jlo_offset + klo_offset);
+            jlo_face.push_back(ihi + jlo_offset + klo_offset);
+            jlo_face.push_back(ihi + jlo_offset + khi_offset);
+            jlo_face.push_back(ilo + jlo_offset + khi_offset);
+        }
+        //jhi face
+        if (faces.find(hi_face) == faces.end())
+        {
+            auto& jhi_face = faces[hi_face];
+            jhi_face.push_back(ilo + jhi_offset + klo_offset);
+            jhi_face.push_back(ihi + jhi_offset + klo_offset);
+            jhi_face.push_back(ihi + jhi_offset + khi_offset);
+            jhi_face.push_back(ilo + jhi_offset + khi_offset);
+        }
+        connect.push_back(lo_face);
+        connect.push_back(hi_face);
+    }
+    //kfaces
+    {
+        index_t i_offset = ilo;  
+        index_t j_offset = iwidth*jlo; 
+        index_t klo_face_offset = iwidth*jwidth*klo;
+        index_t khi_face_offset = iwidth*jwidth*khi;
+
+        index_t lo_face = kface_start + i_offset + j_offset + klo_face_offset;
+        index_t hi_face = kface_start + i_offset + j_offset + khi_face_offset;
+
+        //klo face
+        if (faces.find(lo_face) == faces.end())
+        {
+            auto& klo_face = faces[lo_face];
+            klo_face.push_back(ilo + jlo_offset + klo_offset);
+            klo_face.push_back(ihi + jlo_offset + klo_offset);
+            klo_face.push_back(ihi + jhi_offset + klo_offset);
+            klo_face.push_back(ilo + jhi_offset + klo_offset);
+        }
+        //khi face
+        if (faces.find(hi_face) == faces.end())
+        {
+            auto& khi_face = faces[hi_face];
+            khi_face.push_back(ilo + jlo_offset + khi_offset);
+            khi_face.push_back(ihi + jlo_offset + khi_offset);
+            khi_face.push_back(ihi + jhi_offset + khi_offset);
+            khi_face.push_back(ilo + jhi_offset + khi_offset);
+        }
+        connect.push_back(/*kface_start +*/lo_face);
+        connect.push_back(/*kface_start +*/hi_face);
+    }
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+void
+connectivity::create_elements_2d(const Node& ref_win,
+                                 index_t i_lo,
+                                 index_t j_lo,
+                                 index_t iwidth,
+                                 std::map<index_t, std::vector<index_t> >& elems)
+{
+    index_t origin_iref = ref_win["origin/i"].to_index_t();
+    index_t origin_jref = ref_win["origin/j"].to_index_t();
+
+    index_t ref_size_i = ref_win["dims/i"].to_index_t();
+    index_t ref_size_j = ref_win["dims/j"].to_index_t();
+
+    if (ref_size_i == 1)
+    {
+        index_t jstart = origin_jref - j_lo;
+        index_t jend = origin_jref - j_lo + ref_size_j - 1;
+        if (origin_iref == i_lo)
+        {
+            for (index_t jidx = jstart; jidx < jend; ++jidx)
+            {
+                index_t offset = jidx * iwidth;
+                auto& elem_conn = elems[offset];
+                if (elem_conn.empty())
+                {
+                    connectivity::make_element_2d(elem_conn,
+                                                  offset,
+                                                  iwidth);
+                }
+            }
+        }
+        else
+        {
+            for (index_t jidx = jstart; jidx < jend; ++jidx)
+            {
+                index_t offset = jidx * iwidth + (origin_iref - i_lo - 1);
+                auto& elem_conn = elems[offset];
+                if (elem_conn.empty())
+                {
+                    connectivity::make_element_2d(elem_conn,
+                                                  offset,
+                                                  iwidth);
+                }
+            }
+        }
+    }
+    else if (ref_size_j == 1)
+    {
+        index_t istart = origin_iref - i_lo;
+        index_t iend = origin_iref - i_lo + ref_size_i - 1;
+        if (origin_jref == j_lo)
+        {
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                auto& elem_conn = elems[iidx];
+                if (elem_conn.empty())
+                {
+                    connectivity::make_element_2d(elem_conn,
+                                                  iidx,
+                                                  iwidth);
+                }
+            }
+        }
+        else
+        {
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                index_t offset = iidx + ((origin_jref - j_lo - 1) * iwidth);
+                auto& elem_conn = elems[offset];
+                if (elem_conn.empty())
+                {
+                    connectivity::make_element_2d(elem_conn,
+                                                  offset,
+                                                  iwidth);
+                }
+            }
+        }
+    }
+
+    index_t istart = origin_iref - i_lo;
+    index_t jstart = origin_jref - j_lo;
+    index_t iend = istart + ref_size_i - 1;
+    index_t jend = jstart + ref_size_j - 1;
+
+    if (ref_size_i == 1)
+    {
+        if (origin_iref != i_lo)
+        {
+            --istart;
+        }
+        iend = istart + 1;
+    }
+    if (ref_size_j == 1)
+    {
+        if (origin_jref != j_lo)
+        {
+            --jstart;
+        }
+        jend = jstart + 1;
+    }
+
+    for (index_t jidx = jstart; jidx < jend; ++jidx)
+    {
+        index_t joffset = jidx * iwidth;
+        for (index_t iidx = istart; iidx < iend; ++iidx)
+        {
+            index_t offset = joffset + iidx;
+            auto& elem_conn = elems[offset];
+            if (elem_conn.empty())
+            {
+                 connectivity::make_element_2d(elem_conn,
+                                               offset,
+                                               iwidth);
+            }
+        }
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void
+connectivity::create_elements_3d(const Node& ref_win,
+                                       index_t i_lo,
+                                       index_t j_lo,
+                                       index_t k_lo,
+                                       index_t iwidth,
+                                       index_t jwidth,
+                                       index_t kwidth,
+                                       std::map<index_t, ElemType>& elems,
+                                       SubelemMap& faces)
+{
+    index_t origin_iref = ref_win["origin/i"].to_index_t();
+    index_t origin_jref = ref_win["origin/j"].to_index_t();
+    index_t origin_kref = ref_win["origin/k"].to_index_t();
+
+    index_t ref_size_i = ref_win["dims/i"].to_index_t();
+    index_t ref_size_j = ref_win["dims/j"].to_index_t();
+    index_t ref_size_k = ref_win["dims/k"].to_index_t();
+
+    index_t istart = origin_iref - i_lo;
+    index_t jstart = origin_jref - j_lo;
+    index_t kstart = origin_kref - k_lo;
+    index_t iend = istart + ref_size_i - 1;
+    index_t jend = jstart + ref_size_j - 1;
+    index_t kend = kstart + ref_size_k - 1;
+
+    if (ref_size_i == 1)
+    {
+        iend = istart + 1;
+    }
+    if (ref_size_j == 1)
+    {
+        jend = jstart + 1;
+    }
+    if (ref_size_k == 1)
+    {
+        kend = kstart + 1;
+    }
+
+    for (index_t kidx = kstart; kidx < kend; ++kidx)
+    {
+        index_t koffset = kidx * iwidth * jwidth;
+        for (index_t jidx = jstart; jidx < jend; ++jidx)
+        {
+            index_t joffset = jidx * iwidth; 
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                index_t offset = koffset + joffset + iidx;
+                auto& elem_conn = elems[offset];
+                if (elem_conn.empty())
+                {
+                     connectivity::make_element_3d(elem_conn,
+                                                   offset,
+                                                   iwidth,
+                                                   jwidth,
+                                                   kwidth,
+                                                   faces);
+                }
+            }
+        }
+    }
+}
+
+void
+connectivity::connect_elements_3d(const Node& ref_win,
+                                        index_t i_lo,
+                                        index_t j_lo,
+                                        index_t k_lo,
+                                        index_t iwidth,
+                                        index_t jwidth,
+                                        index_t& new_vertex,
+                                        std::map<index_t, ElemType>& elems)
+{
+    index_t origin_iref = ref_win["origin/i"].to_index_t();
+    index_t origin_jref = ref_win["origin/j"].to_index_t();
+    index_t origin_kref = ref_win["origin/k"].to_index_t();
+
+    index_t ref_size_i = ref_win["dims/i"].to_index_t();
+    index_t ref_size_j = ref_win["dims/j"].to_index_t();
+    index_t ref_size_k = ref_win["dims/k"].to_index_t();
+
+    index_t kstart = origin_kref - k_lo;
+    index_t kend = origin_kref - k_lo + ref_size_k - 1;
+    if (kstart == kend) kend = kstart + 1;
+    index_t jstart = origin_jref - j_lo;
+    index_t jend = origin_jref - j_lo + ref_size_j - 1;
+    if (jstart == jend) jend = jstart + 1;
+    index_t istart = origin_iref - i_lo;
+    index_t iend = origin_iref - i_lo + ref_size_i - 1;
+    if (istart == iend) iend = istart + 1;
+
+    for (index_t kidx = kstart; kidx < kend; ++kidx)
+    {
+        for (index_t jidx = jstart; jidx < jend; ++jidx)
+        {
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                index_t offset = kidx*iwidth*jwidth + jidx*iwidth + iidx;
+                auto& elem_conn = elems[offset];
+                elem_conn.push_back(new_vertex);
+                ++new_vertex;
+            }
+        }
+    }
+}
+
+void
+connectivity::connect_elements_2d(const Node& ref_win,
+                                  index_t i_lo,
+                                  index_t j_lo,
+                                  index_t iwidth,
+                                  index_t ratio,
+                                  index_t& new_vertex,
+                                  std::map<index_t, std::vector<index_t> >& elems)
+{
+    index_t origin_iref = ref_win["origin/i"].to_index_t();
+    index_t origin_jref = ref_win["origin/j"].to_index_t();
+
+    index_t ref_size_i = ref_win["dims/i"].to_index_t();
+    index_t ref_size_j = ref_win["dims/j"].to_index_t();
+
+    if (ref_size_i == 1)
+    {
+        index_t jstart = origin_jref - j_lo;
+        index_t jend = origin_jref - j_lo + ref_size_j - 1;
+        if (origin_iref == i_lo)
+        {
+            for (index_t jidx = jstart; jidx < jend; ++jidx)
+            {
+                index_t offset = jidx * (iwidth);
+                auto& elem_conn = elems[offset];
+                if (ratio > 1)
+                {
+                    for (index_t nr = ratio-1; nr > 0; --nr)
+                    {
+                        elem_conn.push_back(new_vertex+nr-1);
+                    }
+                    new_vertex += ratio - 1;
+                }
+            }
+        }
+        else
+        {
+            for (index_t jidx = jstart; jidx < jend; ++jidx)
+            {
+                index_t offset = jidx * iwidth + (origin_iref - i_lo - 1);
+                auto& elem_conn = elems[offset];
+                if (ratio > 1)
+                {
+                    size_t new_size = elem_conn.size() + ratio - 1;
+                    elem_conn.resize(new_size);
+                    index_t corner = 1;
+                    if (elem_conn[1] - elem_conn[0] != 1)
+                    {
+                        index_t ioff = offset % iwidth;
+                        index_t joff = offset / iwidth;
+                        index_t target = (iwidth+1)*joff + ioff + 1;
+                        for (index_t nr = 1; nr < 1+ratio; ++nr)
+                        {
+                            if (elem_conn[nr] == target)
+                            {
+                                corner = nr;
+                                break;
+                            }
+                        }
+                    }
+                    for (index_t nr = new_size-1; nr > corner+ratio-1; --nr)
+                    {
+                        elem_conn[nr] = elem_conn[nr-ratio+1];
+                    }
+                    for (index_t nr = corner+1; nr < corner+ratio; ++nr)
+                    {
+                        elem_conn[nr] = new_vertex;
+                        ++new_vertex;
+                    }
+                }
+            }
+        }
+    }
+    else if (ref_size_j == 1)
+    {
+        index_t istart = origin_iref - i_lo;
+        index_t iend = origin_iref - i_lo + ref_size_i - 1;
+        if (origin_jref == j_lo)
+        {
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                auto& elem_conn = elems[iidx];
+                if (ratio > 1)
+                {
+                    size_t new_size = elem_conn.size() + ratio - 1;
+                    elem_conn.resize(new_size);
+                    for (index_t nr = new_size-1; nr > 1; --nr)
+                    {
+                        elem_conn[nr] = elem_conn[nr-ratio+1];
+                    }
+                    for (index_t nr = 1; nr < ratio; ++nr)
+                    {
+                        elem_conn[nr] = (new_vertex+nr-1);
+                    }
+                    new_vertex += ratio - 1;
+                }
+            }
+        }
+        else
+        {
+            for (index_t iidx = istart; iidx < iend; ++iidx)
+            {
+                index_t offset = iidx + ((origin_jref - j_lo - 1) * iwidth);
+                auto& elem_conn = elems[offset];
+                if (ratio > 1)
+                {
+                    size_t old_size = elem_conn.size();
+                    size_t new_size = old_size + ratio - 1;
+                    elem_conn.resize(new_size);
+                    index_t corner = 2;
+                    if (old_size != 4)
+                    {
+                        index_t ioff = offset % iwidth;
+                        index_t joff = offset / iwidth;
+                        index_t target = (iwidth+1)*(joff+1) + ioff + 1;
+                        for (index_t nr = 3; nr < 3+ratio; ++nr)
+                        {
+                            if (elem_conn[nr] == target) {
+                                corner = nr;
+                                break;
+                            }
+                        }
+                    }
+                    for (index_t nr = new_size-1; nr > corner+ratio-1; --nr)
+                    {
+                        elem_conn[nr] = elem_conn[nr-ratio+1];
+                    }
+                    for (index_t nr = corner+ratio-1; nr > corner; --nr) {
+                        elem_conn[nr] = new_vertex;
+                        ++new_vertex;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+// -- end conduit::blueprint::mesh::utils::connectivity --
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // -- begin conduit::blueprint::mesh::utils::coordset --
@@ -911,8 +1488,209 @@ coordset::coordsys(const Node &n)
     return get_coordset_info(n).first;
 }
 
+
 //-----------------------------------------------------------------------------
-// -- end conduit::blueprint::mesh::utils::coorset --
+std::vector<float64>
+coordset::_explicit::coords(const Node &n, const index_t i)
+{
+    std::vector<float64> cvals;
+
+    Node temp;
+    for(const std::string &axis : coordset::axes(n))
+    {
+        const Node &axis_node = n["values"][axis];
+        temp.set_external(DataType(axis_node.dtype().id(), 1),
+            (void*)axis_node.element_ptr(i));
+        cvals.push_back(temp.to_float64());
+    }
+
+    return std::vector<float64>(std::move(cvals));
+}
+
+//-----------------------------------------------------------------------------
+void
+coordset::logical_dims(const conduit::Node &n, index_t *d, index_t maxdims)
+{
+    for(index_t i = 0; i < maxdims; i++)
+    {
+        d[i] = 1;
+    }
+
+    auto info = get_coordset_info(n);
+    const std::string cset_type = n["type"].as_string();
+    const std::vector<std::string> &cset_axes = info.second;
+    if(cset_type == "uniform" || cset_type == "rectilinear")
+    {
+        const index_t dim = ((index_t)cset_axes.size() > maxdims) ? maxdims
+            : (index_t)cset_axes.size();
+        for(index_t i = 0; i < dim; i++)
+        {
+            if(cset_type == "uniform")
+            {
+                d[i] = n["dims"][LOGICAL_AXES[i]].to_index_t();
+            }
+            else // if(cset_type == "rectilinear")
+            {
+                d[i] = n["values"][cset_axes[i]].dtype().number_of_elements();
+            }
+        }
+    }
+    else // if(cset_type == "explicit")
+    {
+        d[0] = n["values"][cset_axes[0]].dtype().number_of_elements();
+    }
+}
+
+//-----------------------------------------------------------------------------
+template<typename data_array>
+static void
+typed_minmax(const data_array &da, float64 &out_min, float64 &out_max)
+{
+    // Figure out what primitive type we are dealing with
+    using T = decltype(std::declval<data_array>().min());
+    const index_t nelem = da.number_of_elements();
+    T min = std::numeric_limits<T>::max();
+    T max = std::numeric_limits<T>::lowest();
+    for(index_t i = 0; i < nelem; i++)
+    {
+        min = std::min(min, da[i]);
+        max = std::max(max, da[i]);
+    }
+    out_min = (float64)min;
+    out_max = (float64)max;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<float64>
+coordset::extents(const Node &n)
+{
+    std::vector<float64> cset_extents;
+    const std::string csys_type = n["type"].as_string();
+    const std::vector<std::string> csys_axes = coordset::axes(n);
+    const index_t naxes = (index_t)csys_axes.size();
+    cset_extents.reserve(naxes*2);
+    for(index_t i = 0; i < naxes; i++)
+    {
+        float64 min, max;
+        if(csys_type == "uniform")
+        {
+            index_t origin = 0;
+            float64 spacing = 1.0;
+            index_t dim = n["dims"][LOGICAL_AXES[i]].to_index_t();
+            if(n.has_child("origin")
+                && n["origin"].has_child(csys_axes[i]))
+            {
+                origin = n["origin"][csys_axes[i]].to_index_t();
+            }
+            if(n.has_child("spacing")
+                && n["spacing"].has_child("d"+csys_axes[i]))
+            {
+                spacing = n["spacing"]["d" + csys_axes[i]].to_float64();
+            }
+            min = (float64)origin;
+            max = (float64)origin + (spacing * ((float64)dim - 1.));
+            if(spacing < 0.)
+            {
+                std::swap(min, max);
+            }
+        }
+        else // csys_type == "rectilinear" || csys_type == "explicit"
+        {
+            const auto &axis = n["values"][csys_axes[i]];
+            const auto id = axis.dtype().id();
+            switch(id)
+            {
+            case conduit::DataType::INT8_ID:
+                typed_minmax(axis.as_int8_array(), min, max);
+                break;
+            case conduit::DataType::INT16_ID:
+                typed_minmax(axis.as_int16_array(), min, max);
+                break;
+            case conduit::DataType::INT32_ID:
+                typed_minmax(axis.as_int32_array(), min, max);
+                break;
+            case conduit::DataType::INT64_ID:
+                typed_minmax(axis.as_int64_array(), min, max);
+                break;
+            case conduit::DataType::UINT8_ID:
+                typed_minmax(axis.as_uint8_array(), min, max);
+                break;
+            case conduit::DataType::UINT16_ID:
+                typed_minmax(axis.as_uint16_array(), min, max);
+                break;
+            case conduit::DataType::UINT32_ID:
+                typed_minmax(axis.as_uint32_array(), min, max);
+                break;
+            case conduit::DataType::UINT64_ID:
+                typed_minmax(axis.as_uint64_array(), min, max);
+                break;
+            case conduit::DataType::FLOAT32_ID:
+                typed_minmax(axis.as_float32_array(), min, max);
+                break;
+            case conduit::DataType::FLOAT64_ID:
+                typed_minmax(axis.as_float64_array(), min, max);
+                break;
+            }
+        }
+        cset_extents.push_back(min);
+        cset_extents.push_back(max);
+    }
+    return cset_extents;
+}
+
+//-----------------------------------------------------------------------------
+// -- begin conduit::blueprint::mesh::utils::coordset::uniform --
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+std::vector<double>
+coordset::uniform::spacing(const Node &n)
+{
+    auto info = get_coordset_info(n);
+    const auto &cset_axes = info.second;
+    std::vector<double> retval(cset_axes.size(), 1);
+    if(n.has_child("spacing"))
+    {
+        const Node &n_spacing = n["spacing"];
+        for(index_t i = 0; i < (index_t)cset_axes.size(); i++)
+        {
+            const std::string child_name = "d"+cset_axes[i];
+            if(n_spacing.has_child(child_name))
+            {
+                retval[i] = n_spacing[child_name].to_double();
+            }
+        }
+    }
+    return retval;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<index_t>
+coordset::uniform::origin(const Node &n)
+{
+    auto info = get_coordset_info(n);
+    const auto &cset_axes = info.second;
+    std::vector<index_t> retval(cset_axes.size(), 0);
+    if(n.has_child("origin"))
+    {
+        const Node &n_spacing = n["origin"];
+        for(index_t i = 0; i < (index_t)cset_axes.size(); i++)
+        {
+            const std::string child_name = cset_axes[i];
+            if(n_spacing.has_child(child_name))
+            {
+                retval[i] = n_spacing[child_name].to_index_t();
+            }
+        }
+    }
+    return retval;
+}
+
+//-----------------------------------------------------------------------------
+// -- end conduit::blueprint::mesh::utils::coordset::uniform --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// -- end conduit::blueprint::mesh::utils::coordset --
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -928,9 +1706,8 @@ topology::dims(const Node &n)
     const std::string type = n["type"].as_string();
     if(type != "unstructured")
     {
-        Node coordset;
-        find_reference_node(n, "coordset", coordset);
-        topology_dims = coordset::dims(coordset);
+        const Node *coordset = find_reference_node(n, "coordset");
+        topology_dims = coordset::dims(*coordset);
     }
     else // if(type == "unstructured")
     {
@@ -943,23 +1720,22 @@ topology::dims(const Node &n)
 
 
 //-----------------------------------------------------------------------------
-index_t
-topology::length(const Node &n)
+void
+topology::logical_dims(const Node &n, index_t *d, index_t maxdims)
 {
-    index_t topology_length = 1;
+    for(index_t i = 0; i < maxdims; i++)
+        d[i] = 1;
 
     const std::string type = n["type"].as_string();
     if(type == "uniform" || type == "rectilinear")
     {
-        Node coordset;
-        find_reference_node(n, "coordset", coordset);
-
-        const std::vector<std::string> csys_axes = coordset::axes(coordset);
+        const Node *coordset = find_reference_node(n, "coordset");
+        const std::vector<std::string> csys_axes = coordset::axes(*coordset);
         for(index_t i = 0; i < (index_t)csys_axes.size(); i++)
         {
-            topology_length *= ((type == "uniform") ?
-                coordset["dims"][LOGICAL_AXES[i]].to_index_t() :
-                coordset["values"][csys_axes[i]].dtype().number_of_elements()) - 1;
+            d[i] = ((type == "uniform") ?
+                coordset->fetch_existing("dims")[LOGICAL_AXES[i]].to_index_t() :
+                coordset->fetch_existing("values")[csys_axes[i]].dtype().number_of_elements()) - 1;
         }
     }
     else if(type == "structured")
@@ -968,7 +1744,19 @@ topology::length(const Node &n)
 
         for(index_t i = 0; i < (index_t)dims.number_of_children(); i++)
         {
-            topology_length *= dims[LOGICAL_AXES[i]].to_index_t();
+            d[i] = dims[LOGICAL_AXES[i]].to_index_t();
+        }
+    }
+    else if(type == "points")
+    {
+        const Node *coordset = find_reference_node(n, "coordset");
+        if(coordset)
+        {
+            coordset::logical_dims(*coordset, d, maxdims);
+        }
+        else
+        {
+            CONDUIT_ERROR("Unable to find reference node 'coordset'.");
         }
     }
     else // if(type == "unstructured")
@@ -977,12 +1765,65 @@ topology::length(const Node &n)
         // is discarded after this calculation is complete.
         Node topo_offsets;
         topology::unstructured::generate_offsets(n, topo_offsets);
-        topology_length = topo_offsets.dtype().number_of_elements();
+        d[0] = topo_offsets.dtype().number_of_elements();
     }
-
-    return topology_length;
 }
 
+//-----------------------------------------------------------------------------
+index_t
+topology::length(const Node &n)
+{
+    index_t d[3]={1,1,1};
+    logical_dims(n, d, 3);
+    return d[0] * d[1] * d[2];
+}
+
+//-----------------------------------------------------------------------------
+void
+topology::reindex_coords(const Node& topo,
+                         const Node& new_coordset,
+                         const Node& old_gvids,
+                         const Node& new_gvids,
+                         Node& out_topo)
+{
+    if (&out_topo != &topo)
+    {
+        out_topo.reset();
+        out_topo.set(topo);
+    }
+
+    // Build a mapping of global vids -> new coordset indices
+    // TODO: if we assume clustering of gvids, maybe a vector would be faster?
+    std::unordered_map<index_t, index_t> remap_vids;
+
+    index_t_accessor new_gvid_vals = new_gvids["values"].as_index_t_accessor();
+    for (index_t idx = 0; idx < new_gvid_vals.number_of_elements(); idx++)
+    {
+        remap_vids[new_gvid_vals[idx]] = idx;
+    }
+
+    std::string node_path = "elements/connectivity";
+    if (out_topo["elements/shape"].as_string() == "polyhedral")
+    {
+        node_path = "subelements/connectivity";
+    }
+
+    index_t_accessor old_vids = out_topo[node_path].as_index_t_accessor();
+    index_t_accessor old_to_gvids = old_gvids["values"].as_index_t_accessor();
+    std::vector<index_t> new_vids(old_vids.number_of_elements());
+    for (index_t idx = 0; idx < new_vids.size(); idx++)
+    {
+        index_t old_vid = old_vids[idx];
+        index_t gvid = old_to_gvids[old_vid];
+        new_vids[idx] = remap_vids[gvid];
+    }
+
+    // Set the new vertex connectivity
+    out_topo[node_path].set(new_vids);
+
+    // Set the new associated coordset name
+    out_topo["coordset"] = new_coordset.name();
+}
 
 //-----------------------------------------------------------------------------
 void
@@ -990,6 +1831,10 @@ topology::unstructured::generate_offsets(Node &n,
                                          Node &dest)
 {
     dest.reset();
+
+    // FIXME(JRC): There are weird cases wherein a polyhedral topology can have only
+    // the 'elements/offsets' defined and not 'subelements/offsets', which isn't currently
+    // properly handled by this function.
 
     if(n["elements"].has_child("offsets") && !n["elements/offsets"].dtype().is_empty())
     {
@@ -1018,7 +1863,10 @@ topology::unstructured::generate_offsets(const Node &n,
 {
     const ShapeType topo_shape(n);
     const DataType int_dtype = find_widest_dtype(n, DEFAULT_INT_DTYPES);
-    const Node &topo_conn = n["elements/connectivity"];
+    std::string key("elements/connectivity"), stream_key("elements/stream");
+    if(!n.has_path(key))
+        key = stream_key;
+    const Node &topo_conn = n[key];
 
     const DataType topo_dtype(topo_conn.dtype().id(), 1, 0, 0,
         topo_conn.dtype().element_bytes(), topo_conn.dtype().endianness());
@@ -1030,10 +1878,98 @@ topology::unstructured::generate_offsets(const Node &n,
             dest.set_external(n["elements/offsets"]);
         }
     }
-    else if(!topo_shape.is_poly())
+    else if(n.has_path(stream_key))
     {
         dest.reset();
+        // Mixed element types
+        std::map<int,int> stream_id_npts;
+        const conduit::Node &n_element_types = n["elements/element_types"];
+        for(index_t i = 0; i < n_element_types.number_of_children(); i++)
+        {
+            const Node &n_et = n_element_types[i];
+            auto stream_id = n_et["stream_id"].to_int();
+            std::string shape(n_et["shape"].as_string());
+            for(size_t j = 0; j < TOPO_SHAPES.size(); j++)
+            {
+                if(shape == TOPO_SHAPES[j])
+                {
+                    stream_id_npts[stream_id] = TOPO_SHAPE_EMBED_COUNTS[j];
+                    break;
+                }
+            }
+        }
 
+        const Node &n_stream_ids = n["elements/element_index/stream_ids"];
+        std::vector<index_t> offsets;
+        if(n.has_path("elements/element_index/element_counts"))
+        {
+            const Node &n_element_counts = n["elements/element_index/element_counts"];
+
+            index_t offset = 0, elemid = 0;
+            for(index_t j = 0; j < n_stream_ids.dtype().number_of_elements(); j++)
+            {
+                // Get the j'th elements from n_stream_ids, n_element_counts
+                const Node n_elem_ct_j(int_dtype,
+                            const_cast<void*>(n_element_counts.element_ptr(j)), true);
+                const Node n_stream_ids_j(int_dtype,
+                            const_cast<void*>(n_stream_ids.element_ptr(j)), true);
+                auto ec = static_cast<index_t>(n_elem_ct_j.to_int64());
+                auto sid = static_cast<index_t>(n_stream_ids_j.to_int64());
+                auto npts = stream_id_npts[sid];
+                for(index_t i = 0; i < ec; i++)
+                {
+                    offsets.push_back(offset);
+                    offset += npts;
+                    elemid++;
+                }
+            }
+        }
+        else if(n.has_path("elements/element_index/offsets"))
+        {
+            const Node &n_stream = n["elements/stream"];
+            const Node &n_element_offsets = n["elements/element_index/offsets"];
+            index_t offset = 0, elemid = 0;
+            for(index_t j = 0; j < n_stream_ids.dtype().number_of_elements(); j++)
+            {
+                // Get the j'th elements from n_stream_ids, n_element_offsets
+                const Node n_stream_ids_j(int_dtype,
+                            const_cast<void*>(n_stream_ids.element_ptr(j)), true);
+                const Node n_element_offsets_j(int_dtype,
+                            const_cast<void*>(n_element_offsets.element_ptr(j)), true);
+                offset = n_element_offsets.to_index_t();
+                index_t next_offset = offset;
+                if(j == n_stream_ids.dtype().number_of_elements() - 1)
+                {
+                    next_offset = n_stream.dtype().number_of_elements();
+                }
+                else
+                {
+                    const Node n_element_offsets_j1(int_dtype,
+                                const_cast<void*>(n_element_offsets.element_ptr(j)), true);
+                    next_offset = n_element_offsets_j1.to_index_t();
+                }
+                const auto sid = static_cast<index_t>(n_stream_ids_j.to_int64());
+                const auto npts = stream_id_npts[sid];
+                while(offset < next_offset) {
+                    offsets.push_back(offset);
+                    offset += npts;
+                    elemid++;
+                }
+            }
+        }
+        else
+        {
+            CONDUIT_ERROR("Stream based mixed topology has no element_counts or offsets.")
+        }
+
+        Node off_node;
+        off_node.set_external(offsets);
+        off_node.to_data_type(int_dtype.id(), dest);
+    }
+    else if(!topo_shape.is_poly())
+    {
+        dest.reset();       
+        // Single element type
         const index_t num_topo_shapes =
             topo_conn.dtype().number_of_elements() / topo_shape.indices;
 
@@ -1110,8 +2046,138 @@ topology::unstructured::generate_offsets(const Node &n,
     }
 }
 
+
+//-----------------------------------------------------------------------------
+std::vector<index_t>
+topology::unstructured::points(const Node &n,
+                               const index_t ei)
+{
+    // NOTE(JRC): This is a workaround to ensure offsets are generated up-front
+    // if they don't exist and aren't regenerated for each subcall that needs them.
+    Node ntemp;
+    ntemp.set_external(n);
+    generate_offsets(ntemp, ntemp["elements/offsets"]);
+
+    Node temp;
+    const ShapeType topo_shape(ntemp);
+
+    std::set<index_t> pidxs;
+    if(!topo_shape.is_poly())
+    {
+        const Node &poffs_node = ntemp["elements/offsets"];
+        temp.set_external(DataType(poffs_node.dtype().id(), 1),
+            (void*)poffs_node.element_ptr(ei));
+        const index_t eoff = temp.to_index_t();
+
+        const Node &pidxs_node = ntemp["elements/connectivity"];
+        for(index_t pi = 0; pi < topo_shape.indices; pi++)
+        {
+            temp.set_external(DataType(pidxs_node.dtype().id(), 1),
+                (void*)pidxs_node.element_ptr(eoff + pi));
+            pidxs.insert(temp.to_index_t());
+        }
+    }
+    else // if(topo_shape.is_poly())
+    {
+        Node enode;
+        std::set<index_t> eidxs;
+        if(topo_shape.is_polygonal())
+        {
+            enode.set_external(ntemp["elements"]);
+
+            eidxs.insert(ei);
+        }
+        else // if(topo_shape.is_polyhedral())
+        {
+            enode.set_external(ntemp["subelements"]);
+
+            const Node &eidxs_node = ntemp["elements/connectivity"];
+            o2mrelation::O2MIterator eiter(ntemp["elements"]);
+            eiter.to(ei, O2MIndex::ONE);
+            eiter.to_front(O2MIndex::MANY);
+            while(eiter.has_next(O2MIndex::MANY))
+            {
+                eiter.next(O2MIndex::MANY);
+                const index_t ii = eiter.index(O2MIndex::DATA);
+                temp.set_external(DataType(eidxs_node.dtype().id(), 1),
+                    (void*)eidxs_node.element_ptr(ii));
+                eidxs.insert(temp.to_index_t());
+            }
+        }
+
+        for(const index_t eidx : eidxs)
+        {
+            const Node &pidxs_node = enode["connectivity"];
+            o2mrelation::O2MIterator piter(enode);
+            piter.to(eidx, O2MIndex::ONE);
+            piter.to_front(O2MIndex::MANY);
+            while(piter.has_next(O2MIndex::MANY))
+            {
+                piter.next(O2MIndex::MANY);
+                const index_t pi = piter.index(O2MIndex::DATA);
+                temp.set_external(DataType(pidxs_node.dtype().id(), 1),
+                    (void*)pidxs_node.element_ptr(pi));
+                pidxs.insert(temp.to_index_t());
+            }
+        }
+    }
+
+    return std::vector<index_t>(pidxs.begin(), pidxs.end());
+}
+
 //-----------------------------------------------------------------------------
 // -- end conduit::blueprint::mesh::utils::topology --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// -- begin conduit::blueprint::mesh::utils::adjset --
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+adjset::canonicalize(Node &adjset)
+{
+    const index_t domain_id = find_domain_id(adjset);
+
+    const std::vector<std::string> &adjset_group_names = adjset["groups"].child_names();
+    for(const std::string &old_group_name : adjset_group_names)
+    {
+        const Node &group_node = adjset["groups"][old_group_name];
+        const Node &neighbors_node = group_node["neighbors"];
+
+        std::string new_group_name;
+        {
+            std::ostringstream oss;
+            oss << "group";
+
+            Node temp;
+            DataType temp_dtype(neighbors_node.dtype().id(), 1);
+
+            // NOTE(JRC): Need to use a vector instead of direct 'Node::to_index_t'
+            // because the local node ID isn't included in the neighbor list and
+            // 'DataArray' uses a static array size.
+            std::vector<index_t> group_neighbors(1, domain_id);
+            for(index_t ni = 0; ni < neighbors_node.dtype().number_of_elements(); ni++)
+            {
+                temp.set_external(temp_dtype, (void*)neighbors_node.element_ptr(ni));
+                group_neighbors.push_back(temp.to_index_t());
+            }
+            std::sort(group_neighbors.begin(), group_neighbors.end());
+
+            for(const index_t &neighbor_id : group_neighbors)
+            {
+                oss << "_" << neighbor_id;
+            }
+
+            new_group_name = oss.str();
+        }
+
+        adjset["groups"].rename_child(old_group_name, new_group_name);
+    }
+}
+
+//-----------------------------------------------------------------------------
+// -- end conduit::blueprint::mesh::utils::adjset --
 //-----------------------------------------------------------------------------
 
 }
