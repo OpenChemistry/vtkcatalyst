@@ -37,11 +37,69 @@
     variables:
         CMAKE_CONFIGURATION: fedora36_mpi_replay
 
+.fedora36_memcheck:
+    extends: .fedora36
+
+    variables:
+        CMAKE_BUILD_TYPE: RelWithDebInfo
+
+.fedora_asan_addon:
+    variables:
+        CTEST_MEMORYCHECK_TYPE: AddressSanitizer
+        # Disable LeakSanitizer for now. It's catching all kinds of errors that
+        # need investigated or suppressed.
+        CTEST_MEMORYCHECK_SANITIZER_OPTIONS: detect_leaks=0
+
+.fedora_ubsan_addon:
+    variables:
+        CTEST_MEMORYCHECK_TYPE: UndefinedBehaviorSanitizer
+
+.fedora36_asan:
+    extends:
+        - .fedora36_memcheck
+        - .fedora_asan_addon
+
+    variables:
+        CMAKE_CONFIGURATION: fedora36_asan
+
+.fedora36_ubsan:
+    extends:
+        - .fedora36_memcheck
+        - .fedora_ubsan_addon
+
+    variables:
+        CMAKE_CONFIGURATION: fedora36_ubsan
+
+.fedora36_asan_mpi_replay:
+    extends:
+        - .fedora36_memcheck
+        - .fedora_asan_addon
+        - .fedora_mpich_addon
+
+    variables:
+        CMAKE_CONFIGURATION: fedora36_asan_mpi_replay
+
+.fedora36_mpi_replay_ubsan:
+    extends:
+        - .fedora36_memcheck
+        - .fedora_ubsan_addon
+        - .fedora_mpich_addon
+
+    variables:
+        CMAKE_CONFIGURATION: fedora36_mpi_replay_ubsan
+
 ## Tags
 
 .linux_builder_tags:
     tags:
         - build
+        - paraview
+        - docker
+        - linux
+
+.linux_sanitizer_tags:
+    tags:
+        - privileged
         - paraview
         - docker
         - linux
@@ -66,6 +124,18 @@
         - "$LAUNCHER ctest -VV -S .gitlab/ci/ctest_configure.cmake"
         - "$LAUNCHER ctest -VV -S .gitlab/ci/ctest_build.cmake"
         - "$LAUNCHER ctest --output-on-failure -V -S .gitlab/ci/ctest_test.cmake"
+
+    interruptible: true
+    timeout: 5 minutes
+
+.cmake_memcheck_linux:
+    stage: build-test
+
+    script:
+        - *before_script_linux
+        - "$LAUNCHER ctest -VV -S .gitlab/ci/ctest_configure.cmake"
+        - "$LAUNCHER ctest -VV -S .gitlab/ci/ctest_build.cmake"
+        - "$LAUNCHER ctest --output-on-failure -V -S .gitlab/ci/ctest_memcheck.cmake"
 
     interruptible: true
     timeout: 5 minutes

@@ -15,3 +15,9 @@ endfunction ()
 
 configuration_flag(CATALYST_USE_MPI "mpi")
 configuration_flag(CATALYST_BUILD_REPLAY "replay")
+
+if ("$ENV{CMAKE_CONFIGURATION}" MATCHES "_asan")
+  set(CATALYST_SANITIZER "address" CACHE STRING "")
+elseif ("$ENV{CMAKE_CONFIGURATION}" MATCHES "_ubsan")
+  set(CATALYST_SANITIZER "undefined" CACHE STRING "")
+endif ()
