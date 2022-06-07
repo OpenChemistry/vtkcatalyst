@@ -8,12 +8,32 @@
         {
             "group": "catalyst-master",
             "site": "gitlab-ci",
+            "buildname": "[fedora36_asan]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora36_asan_mpi_replay]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
             "buildname": "[fedora36_replay]"
         },
         {
             "group": "catalyst-master",
             "site": "gitlab-ci",
             "buildname": "[fedora36_mpi_replay]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora36_mpi_replay_ubsan]"
+        },
+        {
+            "group": "catalyst-master",
+            "site": "gitlab-ci",
+            "buildname": "[fedora36_ubsan]"
         },
         {
             "group": "catalyst-master",
