@@ -2,17 +2,17 @@
 
 set -e
 
-readonly version="3.21.0"
+readonly version="3.23.1"
 
 case "$( uname -s )" in
     Linux)
         shatool="sha256sum"
-        sha256sum="d54ef6909f519740bc85cec07ff54574cd1e061f9f17357d9ace69f61c6291ce"
+        sha256sum="f3c654b2e226b9d43369e0bd8487c51618d4dbe5a1af929dd32af7e6ca432d60"
         platform="linux-x86_64"
         ;;
     Darwin)
         shatool="shasum -a 256"
-        sha256sum="c1c6f19dfc9c658a48b5aed22806595b2337bb3aedb71ab826552f74f568719f"
+        sha256sum="f794ed92ccb4e9b6619a77328f313497d7decf8fb7e047ba35a348b838e0e1e2"
         platform="macos-universal"
         ;;
     *)
