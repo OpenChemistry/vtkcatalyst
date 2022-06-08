@@ -1,3 +1,4 @@
+add_subdirectory(abi_tests)
 add_subdirectory(catalyst_tests)
 
 find_package(GTest)
