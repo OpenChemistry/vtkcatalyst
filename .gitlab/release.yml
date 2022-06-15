@@ -20,3 +20,13 @@
         - build
     script:
         - .gitlab/ci/upload-files.sh
+
+.release_job:
+    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    stage: release
+    tags:
+        - linux
+        - docker
+        - build
+    script:
+        - .gitlab/ci/make-release.sh

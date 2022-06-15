@@ -12,6 +12,7 @@ include:
 stages:
     - build-test
     - upload
+    - release
 
 ################################################################################
 # Job declarations
@@ -60,6 +61,16 @@ upload:source:
         - build-test:source
     variables:
         UPLOAD_FILES: catalyst-*
+
+release:source:
+    extends:
+        - .release_job
+        - .release_only
+    needs:
+        - build-test:source
+        - upload:source
+    dependencies:
+        - build-test:source
 
 # Linux
 
