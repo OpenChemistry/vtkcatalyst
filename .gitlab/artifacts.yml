@@ -15,3 +15,10 @@
 
             # CDash files.
             - build/DartConfiguration.tcl
+
+.release_artifacts:
+    artifacts:
+        expire_in: 1d
+        paths:
+            - catalyst-*.zip
+            - catalyst-*.tar.*

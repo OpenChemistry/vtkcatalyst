@@ -2,6 +2,7 @@ include:
     # Metadata shared my many jobs
     - local: .gitlab/rules.yml
     - local: .gitlab/artifacts.yml
+    - local: .gitlab/release.yml
 
     # OS builds.
     - local: .gitlab/os-linux.yml
@@ -27,6 +28,15 @@ stages:
 #   - artifacts
 #   - dependency/needs jobs for required jobs
 ################################################################################
+
+# Release jobs
+
+build-test:source:
+    extends:
+        - .create_source_archives
+        - .release_artifacts
+        - .linux_builder_tags
+        - .run_automatically
 
 # Linux
 
