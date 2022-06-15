@@ -10,3 +10,13 @@
         - tag=$( git describe --match=v* --always --abbrev=12 )
         - git archive --prefix=catalyst-$tag/ --format=zip HEAD > catalyst-$tag.zip
         - git archive --prefix=catalyst-$tag/ --format=tar.gz HEAD > catalyst-$tag.tar.gz
+
+.upload_job:
+    image: curlimages/curl:latest
+    stage: upload
+    tags:
+        - linux
+        - docker
+        - build
+    script:
+        - .gitlab/ci/upload-files.sh

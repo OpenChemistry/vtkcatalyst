@@ -11,6 +11,7 @@ include:
 
 stages:
     - build-test
+    - upload
 
 ################################################################################
 # Job declarations
@@ -37,6 +38,28 @@ build-test:source:
         - .release_artifacts
         - .linux_builder_tags
         - .run_automatically
+
+upload:source:
+    extends:
+        - .upload_job
+        - .release_only
+    needs:
+        - build-test:source
+        # Ensure all builds and tests pass.
+        - build-test:fedora36
+        - build-test:fedora36-replay
+        - build-test:fedora36-asan
+        - build-test:fedora36-ubsan
+        - build-test:fedora36-asan-mpi-replay
+        - build-test:fedora36-mpi-replay-ubsan
+        - build-test:macos-arm64-replay
+        - build-test:macos-x86_64-replay
+        - build-test:windows-vs2022-mpi-replay
+        - build-test:windows-vs2022-replay
+    dependencies:
+        - build-test:source
+    variables:
+        UPLOAD_FILES: catalyst-*
 
 # Linux
 
