@@ -48,6 +48,15 @@ CMake target-properties on the library including setting its name and version
 number. This function is only available when the ``SDK`` component is explicitly
 requested in the ``find_package(catalyst .. )`` call.
 
+For more advanced usage, the following arguments are also supported:
+
+  * ``EXPORT <export>``: Add the target to the named export set.
+  * ``LIBRARY_DESTINATION <destination>``: Where to place the
+    implementation underneath the build and install trees (with reasonable
+    defaults if not provided).
+  * ``CATALYST_TARGET <target>``: The name of the target which provides the
+    Catalyst API (defaults to ``catalyst::catalyst``).
+
 Implementing Catalyst API
 =========================
 
