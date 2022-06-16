@@ -3,6 +3,13 @@
 **Catalyst** is an **API specification** developed for simulations (and other scientific data producers)
 to analyze and visualize data in situ.
 
+## ABI commitment
+
+Catalyst is committed to a stable ABI so that existing users can always use a
+newer version of the library. To this end, it is very strict about the API
+functions available through it. For example, Conduit is embedded, but only its
+C API is available (though it is rewrapped for easier use in C++).
+
 ## History
 
 Originally, Catalyst was part of [ParaView][paraview]. However, with ParaView
