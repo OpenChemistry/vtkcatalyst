@@ -1,0 +1,32 @@
+.create_source_archives:
+    image: alpine:latest
+    stage: build-test
+    tags:
+        - linux
+        - docker
+        - build
+    script:
+        - apk add git
+        - tag=$( git describe --match=v* --always --abbrev=12 )
+        - git archive --prefix=catalyst-$tag/ --format=zip HEAD > catalyst-$tag.zip
+        - git archive --prefix=catalyst-$tag/ --format=tar.gz HEAD > catalyst-$tag.tar.gz
+
+.upload_job:
+    image: curlimages/curl:latest
+    stage: upload
+    tags:
+        - linux
+        - docker
+        - build
+    script:
+        - .gitlab/ci/upload-files.sh
+
+.release_job:
+    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    stage: release
+    tags:
+        - linux
+        - docker
+        - build
+    script:
+        - .gitlab/ci/make-release.sh
