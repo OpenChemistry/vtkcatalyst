@@ -49,6 +49,7 @@ upload:source:
         # Ensure all builds and tests pass.
         - build-test:fedora36
         - build-test:fedora36-replay
+        - build-test:fedora36-mpi-replay
         - build-test:fedora36-asan
         - build-test:fedora36-ubsan
         - build-test:fedora36-asan-mpi-replay
