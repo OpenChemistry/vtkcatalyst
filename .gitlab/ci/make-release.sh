@@ -3,7 +3,7 @@
 set -e
 
 make_release () {
-    exec release-cli create --name "Release $CI_COMMIT_TAG" --tag-name "$CI_COMMIT_TAG" "$@"
+    exec release-cli create --name "Catalyst $CI_COMMIT_TAG" --tag-name "$CI_COMMIT_TAG" "$@"
 }
 
 readonly urlbase="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/catalyst/${CI_COMMIT_TAG}"
