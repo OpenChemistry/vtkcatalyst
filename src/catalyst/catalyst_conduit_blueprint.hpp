@@ -134,6 +134,21 @@ public:
   }
 };
 
+class BlueprintTable
+{
+public:
+  static int verify(const Node& node, Node& info)
+  {
+    return conduit_blueprint_table_verify(c_node(&node), c_node(&info));
+  }
+
+  static int verify_sub_protocol(const std::string& protocol, const Node& node, Node& info)
+  {
+    return conduit_blueprint_table_verify_sub_protocol(
+      protocol.c_str(), c_node(&node), c_node(&info));
+  }
+};
+
 }
 
 #endif
