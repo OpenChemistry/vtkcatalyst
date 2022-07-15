@@ -111,15 +111,6 @@ public:
   {
     return conduit_blueprint_mcarray_to_contiguous(c_node(&node), c_node(&dest));
   }
-
-  class Example
-  {
-  public:
-    static void xyz(const std::string& type, conduit_index_t npts, Node& result)
-    {
-      conduit_blueprint_mcarray_examples_xyz(type.c_str(), npts, c_node(&result));
-    }
-  };
 };
 
 class BlueprintMesh
@@ -141,46 +132,21 @@ public:
   {
     conduit_blueprint_mesh_generate_index(c_node(&mesh), path.c_str(), ndomains, c_node(&index));
   }
+};
 
-  class Example
+class BlueprintTable
+{
+public:
+  static int verify(const Node& node, Node& info)
   {
-  public:
-    static void basic(const std::string& type, conduit_index_t nx, conduit_index_t ny,
-      conduit_index_t nz, Node& result)
-    {
-      conduit_blueprint_mesh_examples_basic(type.c_str(), nx, ny, nz, c_node(&result));
-    }
+    return conduit_blueprint_table_verify(c_node(&node), c_node(&info));
+  }
 
-    static void braid(const std::string& type, conduit_index_t nx, conduit_index_t ny,
-      conduit_index_t nz, Node& result)
-    {
-      conduit_blueprint_mesh_examples_braid(type.c_str(), nx, ny, nz, c_node(&result));
-    }
-
-    static void julia(conduit_index_t nx, conduit_index_t ny, conduit_float64 x_min,
-      conduit_float64 x_max, conduit_float64 y_min, conduit_float64 y_max, conduit_float64 c_re,
-      conduit_float64 c_im, Node& result)
-    {
-      conduit_blueprint_mesh_examples_julia(
-        nx, ny, x_min, x_max, y_min, y_max, c_re, c_im, c_node(&result));
-    }
-
-    static void spiral(conduit_index_t ndomains, Node& result)
-    {
-      conduit_blueprint_mesh_examples_spiral(ndomains, c_node(&result));
-    }
-
-    static void polytess(conduit_index_t nlevels, Node& result)
-    {
-      conduit_blueprint_mesh_examples_polytess(nlevels, c_node(&result));
-    }
-
-    static void misc(const std::string& type, conduit_index_t nx, conduit_index_t ny,
-      conduit_index_t nz, Node& result)
-    {
-      conduit_blueprint_mesh_examples_misc(type.c_str(), nx, ny, nz, c_node(&result));
-    }
-  };
+  static int verify_sub_protocol(const std::string& protocol, const Node& node, Node& info)
+  {
+    return conduit_blueprint_table_verify_sub_protocol(
+      protocol.c_str(), c_node(&node), c_node(&info));
+  }
 };
 
 }
