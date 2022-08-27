@@ -424,6 +424,80 @@ conduit_node_load(conduit_node *cnode,
 }
 
 //-----------------------------------------------------------------------------
+// to_json
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_json(const conduit_node *cnode)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_json().c_str());
+}
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_json_with_options(const conduit_node *cnode,
+                                  const conduit_node *copts)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_json(cpp_node_ref(copts)).c_str());
+}
+
+//-----------------------------------------------------------------------------
+// to_yaml
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_yaml(const conduit_node *cnode)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_yaml().c_str());
+}
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_yaml_with_options(const conduit_node *cnode,
+                                  const conduit_node *copts)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_yaml(cpp_node_ref(copts)).c_str());
+}
+
+//-----------------------------------------------------------------------------
+// to_string
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_string(const conduit_node *cnode)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_string().c_str());
+}
+
+//-----------------------------------------------------------------------------
+char*
+conduit_node_to_string_with_options(const conduit_node *cnode,
+                                    const conduit_node *copts)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_string(cpp_node_ref(copts)).c_str());
+}
+
+//-----------------------------------------------------------------------------
+// to_summary_string
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+char* conduit_node_to_summary_string(const conduit_node *cnode)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_summary_string().c_str());
+}
+
+//-----------------------------------------------------------------------------
+char* conduit_node_to_summary_string_with_options(const conduit_node *cnode,
+                                                  const conduit_node *copts)
+{
+    return _conduit_strdup(cpp_node(cnode)->to_summary_string(cpp_node_ref(copts)).c_str());
+}
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // -- set variants -- 
