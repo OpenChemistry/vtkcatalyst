@@ -52,6 +52,40 @@ typedef bputils::TopologyMetadata TopologyMetadata;
 //-----------------------------------------------------------------------------
 // -- begin internal helpers --
 //-----------------------------------------------------------------------------
+// TODO(JRC): Consider moving an improved version of this type to a more accessible location.
+struct ffloat64
+{
+    conduit::float64 data;
+
+    ffloat64(conduit::float64 input = 0.0)
+    {
+        data = input;
+    }
+
+    operator conduit::float64() const
+    {
+        return this->data;
+    }
+
+    bool operator<(const ffloat64 &other) const
+    {
+        return this->data < other.data && std::abs(this->data - other.data) > CONDUIT_EPSILON;
+    }
+};
+
+// access conduit blueprint mesh utilities
+namespace bputils = conduit::blueprint::mesh::utils;
+// access one-to-many index types
+namespace O2MIndex = conduit::blueprint::o2mrelation;
+
+// typedefs for verbose but commonly used types
+typedef std::tuple<conduit::Node*, conduit::Node*, conduit::Node*> DomMapsTuple;
+typedef std::tuple<ffloat64, ffloat64, ffloat64> PointTuple;
+// typedefs to enable passing around function pointers
+typedef void (*GenDerivedFun)(const conduit::Node&, conduit::Node&, conduit::Node&, conduit::Node&);
+typedef void (*GenDecomposedFun)(const conduit::Node&, conduit::Node&, conduit::Node&, conduit::Node&, conduit::Node&);
+typedef conduit::index_t (*IdDecomposedFun)(const bputils::TopologyMetadata&, const conduit::index_t /*ei*/, const conduit::index_t /*di*/);
+typedef std::vector<conduit::index_t> (*CalcDimDecomposedFun)(const bputils::ShapeType&);
 
 //-----------------------------------------------------------------------------
 // - begin internal potpourri functions -
@@ -462,6 +496,81 @@ bool verify_reference_field(const std::string &protocol,
     log::validation(info, res);
 
     return res;
+}
+
+bool verify_shapes_node(const Node &node, const Node &shape_map, Node &info)
+{
+  const std::string protocol = "mesh::topology::unstructured";
+  bool res = true;
+  res &= verify_integer_field(protocol, node, info);
+
+  const int32_accessor shapes = node.value();
+
+  std::vector<int32> range;
+  for(auto &child : shape_map.children())
+  {
+    range.emplace_back(child.to_int32());
+  }
+
+  for(index_t i = 0; i < shapes.number_of_elements(); ++i)
+  {
+    const int32 shape = shapes[i];
+    const bool expectedShape = std::find(range.begin(), range.end(), shape) != range.end();
+    if (!expectedShape)
+    {
+      log::error(info, protocol, "shape not in shape_map");
+    }
+    res &= expectedShape;
+  }
+
+  if (res)
+  {
+    for(auto &child : shape_map.children())
+    {
+      log::info(info, protocol, "cells found for shape "
+        + child.name() + " ("
+        + std::to_string(child.to_int32())
+        + ").");
+    }
+  }
+
+  return res;
+}
+
+bool verify_mixed_elements_node(const Node& topo_elems, Node &info_elems, bool& elems_res)
+{
+  const std::string protocol = "mesh::topology::unstructured";
+  elems_res &= verify_field_exists(protocol, topo_elems, info_elems, "shape") &&
+      conduit::blueprint::mesh::topology::shape::verify(topo_elems["shape"], info_elems["shape"]);
+
+  elems_res &= verify_field_exists(protocol, topo_elems, info_elems, "shape_map") &&
+      conduit::blueprint::mesh::topology::shape_map::verify(topo_elems["shape_map"], info_elems["shape_map"]);
+
+  elems_res &= verify_field_exists(protocol, topo_elems, info_elems, "shapes") &&
+      verify_shapes_node(topo_elems["shapes"], topo_elems["shape_map"], info_elems["shapes"]);
+
+  return elems_res;
+}
+
+bool verify_mixed_node(const Node &topo, Node &info, bool& elems_res, bool& subelems_res)
+{
+    const std::string protocol = "mesh::topology::unstructured";
+    const Node& topo_elems = topo["elements"];
+    Node& info_elems = info["elements"];
+
+    elems_res &= verify_mixed_elements_node(topo_elems, info_elems, elems_res);
+    elems_res &= verify_o2mrelation_field(protocol, topo, info, "elements");
+
+    // if polyhedra in mixed definition, the polyhedra have their faces in subelements
+    if (topo.has_child("subelements"))
+    {
+        const Node& topo_subelems = topo["subelements"];
+        Node& info_subelems = info["subelements"];
+
+        subelems_res &= verify_mixed_elements_node(topo_subelems, info_subelems, subelems_res);
+        subelems_res &= verify_o2mrelation_field(protocol, topo, info, "subelements");
+    }
+    return elems_res && subelems_res;
 }
 
 //-----------------------------------------------------------------------------
@@ -1731,7 +1840,15 @@ mesh::generate_index_for_single_domain(const Node &mesh,
                 }
             }
 
-            idx_coordset["coord_system/type"] = bputils::coordset::coordsys(coordset);
+            std::string coord_sys_type = bputils::coordset::coordsys(coordset);
+            // logical is not supported in the blueprint index.
+            if(coord_sys_type == "logical")
+            {
+                coord_sys_type = "cartesian";
+            }
+            idx_coordset["coord_system/type"] = coord_sys_type;
+
+            //idx_coordset["coord_system/type"] = bputils::coordset::coordsys(coordset);
 
             std::string cs_ref_path = join_path(ref_path, "coordsets");
             cs_ref_path = join_path(cs_ref_path, coordset_name);
@@ -1785,7 +1902,7 @@ mesh::generate_index_for_single_domain(const Node &mesh,
             }
             else if(matset.has_child("materials"))
             {
-                // NOTE: I believe path is deprecated ... 
+                // NOTE: I believe path is deprecated ...
                 NodeConstIterator mats_itr = matset["materials"].children();
                 while(mats_itr.has_next())
                 {
@@ -1932,6 +2049,716 @@ mesh::generate_index_for_single_domain(const Node &mesh,
             idx_nestset["path"] = adj_ref_path;
         }
     }
+}
+
+
+
+//
+// This function is responsible for collecting the domains within the given mesh
+// with subnodes of the given maps based on the domain's path, e.g.:
+//
+// input:
+//   mesh: {"domain0": {/*1*/}, "domain1": {/*2*/}}
+//   s2dmap: {}
+//   d2smap: {}
+//
+// output:
+//   mesh: {"domain0": {/*1*/}, "domain1": {/*2*/}}
+//   s2dmap: {"domain0": {/*A*/}, "domain1": {/*B*/}}
+//   d2smap: {"domain0": {/*a*/}, "domain1": {/*b*/}}
+//   return: [<&1, &A, &a>, <&2, &B, &b>]
+//
+std::vector<DomMapsTuple>
+group_domains_and_maps(conduit::Node &mesh, conduit::Node &s2dmap, conduit::Node &d2smap)
+{
+    std::vector<DomMapsTuple> doms_and_maps;
+
+    s2dmap.reset();
+    d2smap.reset();
+
+    if(!conduit::blueprint::mesh::is_multi_domain(mesh))
+    {
+        doms_and_maps.emplace_back(&mesh, &s2dmap, &d2smap);
+    }
+    else
+    {
+        NodeIterator domains_it = mesh.children();
+        while(domains_it.has_next())
+        {
+            conduit::Node& domain = domains_it.next();
+            if(mesh.dtype().is_object())
+            {
+                doms_and_maps.emplace_back(&domain,
+                                           &s2dmap[domain.name()],
+                                           &d2smap[domain.name()]);
+            }
+            else
+            {
+                doms_and_maps.emplace_back(&domain,
+                                           &s2dmap.append(),
+                                           &d2smap.append());
+            }
+        }
+    }
+
+    return std::vector<DomMapsTuple>(std::move(doms_and_maps));
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// -- Top level generate methods that support multi domain meshes -- 
+// These were moved from conduit::blueprint::mpi, b/c the do not depend on mpi
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+generate_derived_entities(conduit::Node &mesh,
+                          const std::string &src_adjset_name,
+                          const std::string &dst_adjset_name,
+                          const std::string &dst_topo_name,
+                          conduit::Node &s2dmap,
+                          conduit::Node &d2smap,
+                          GenDerivedFun generate_derived)
+{
+    // loop over all domains and call generate_derived on each domain
+    const std::vector<DomMapsTuple> doms_and_maps = group_domains_and_maps(mesh, s2dmap, d2smap);
+    for(index_t di = 0; di < (index_t)doms_and_maps.size(); di++)
+    {
+        conduit::Node &domain = *std::get<0>(doms_and_maps[di]);
+        conduit::Node &domain_s2dmap = *std::get<1>(doms_and_maps[di]);
+        conduit::Node &domain_d2smap = *std::get<2>(doms_and_maps[di]);
+
+        const conduit::Node &src_adjset = domain["adjsets"][src_adjset_name];
+        const Node *src_topo_ptr = bputils::find_reference_node(src_adjset, "topology");
+        const Node &src_topo = *src_topo_ptr;
+
+        conduit::Node &dst_topo = domain["topologies"][dst_topo_name];
+        generate_derived(src_topo, dst_topo, domain_s2dmap, domain_d2smap);
+
+        conduit::Node &dst_adjset = domain["adjsets"][dst_adjset_name];
+        dst_adjset.reset();
+        dst_adjset["association"].set("element");
+        dst_adjset["topology"].set(dst_topo_name);
+    }
+
+    Node src_data, dst_data;
+    for(index_t di = 0; di < (index_t)doms_and_maps.size(); di++)
+    {
+        conduit::Node &domain = *std::get<0>(doms_and_maps[di]);
+        const index_t domain_id = domain["state/domain_id"].to_index_t();
+
+        const Node *src_topo_ptr = bputils::find_reference_node(domain["adjsets"][src_adjset_name], "topology");
+        const Node &src_topo = *src_topo_ptr;
+        const Node *src_cset_ptr = bputils::find_reference_node(src_topo, "coordset");
+        const Node &src_cset = *src_cset_ptr;
+
+        const Node &dst_topo = domain["topologies"][dst_topo_name];
+        const index_t dst_topo_len = bputils::topology::length(dst_topo);
+
+        const conduit::Node &src_adjset_groups = domain["adjsets"][src_adjset_name]["groups"];
+        conduit::Node &dst_adjset_groups = domain["adjsets"][dst_adjset_name]["groups"];
+
+        // Organize Adjset Points into Interfaces (Pair-Wise Groups) //
+        //
+        // for all neighbors:
+        // construct a per-neighbor list of all unique points across all groups
+        // result is a map that contains:
+        //
+        // {(neighbor domain id): <(participating points for domain interface)>}
+        std::map<index_t, std::set<index_t>> neighbor_pidxs_map;
+        for(const std::string &group_name : src_adjset_groups.child_names())
+        {
+            const conduit::Node &src_group = src_adjset_groups[group_name];
+            index_t_accessor src_neighbors = src_group["neighbors"].value();
+            index_t_accessor src_values    = src_group["values"].value();
+
+            for(index_t ni = 0; ni < src_neighbors.dtype().number_of_elements(); ni++)
+            {
+                // src_data.set_external(DataType(src_neighbors.dtype().id(), 1),
+                //     (void*)src_neighbors.element_ptr(ni));
+                // std::set<index_t> &neighbor_pidxs = neighbor_pidxs_map[src_data.to_index_t()];
+                std::set<index_t> &neighbor_pidxs = neighbor_pidxs_map[src_neighbors[ni]];
+                for(index_t pi = 0; pi < src_values.dtype().number_of_elements(); pi++)
+                {
+                    // src_data.set_external(DataType(src_values.dtype().id(), 1),
+                    //     (void*)src_values.element_ptr(pi));
+                    // neighbor_pidxs.insert(src_data.to_index_t());
+                    neighbor_pidxs.insert(src_values[pi]);
+                }
+            }
+        }
+
+        // Collect Viable Entities for All Interfaces //
+        conduit::Node &domain_d2smap = *std::get<2>(doms_and_maps[di]);
+        index_t_accessor d2s_sizes = domain_d2smap["sizes"].value();
+
+        // {(entity id in topology): <(neighbor domain ids that contain this entity)>}
+        std::map<index_t, std::set<index_t>> entity_neighbor_map;
+        for(index_t ei = 0; ei < dst_topo_len; ei++)
+        {
+            // if we are dealing with anything but points
+            // we don't want to include duplicated entities 
+            // (that means they are internal to the domain)
+            std::vector<index_t> entity_pidxs = bputils::topology::unstructured::points(dst_topo, ei);
+            if(d2s_sizes[ei] < 2 || entity_pidxs.size() == 1)
+            {
+                for(const auto &neighbor_pair : neighbor_pidxs_map)
+                {
+                    const index_t &ni = neighbor_pair.first;
+                    const std::set<index_t> &neighbor_pidxs = neighbor_pair.second;
+
+                    // check if the new element has all of its points
+                    // contained inside of the adjset
+
+                    bool entity_in_neighbor = true;
+                    for(index_t pi = 0; pi < (index_t)entity_pidxs.size() && entity_in_neighbor; pi++)
+                    {
+                        entity_in_neighbor &= neighbor_pidxs.find(entity_pidxs[pi]) != neighbor_pidxs.end();
+                    }
+
+                    // if the element is fully in the adjset, and it is not an internal element
+                    // (count of d2s > 1), include it in the map
+
+                    if(entity_in_neighbor)
+                    {
+                        entity_neighbor_map[ei].insert(ni);
+                    }
+                }
+            }
+        }
+
+        // Use Entity Interfaces to Construct Group Entity Lists //
+
+        std::map<std::set<index_t>, std::vector<std::tuple<std::set<PointTuple>, index_t>>> group_entity_map;
+        for(const auto &entity_neighbor_pair : entity_neighbor_map)
+        {
+            const index_t &ei = entity_neighbor_pair.first;
+            const std::set<index_t> &entity_neighbors = entity_neighbor_pair.second;
+            std::tuple<std::set<PointTuple>, index_t> entity;
+
+            std::vector<index_t> entity_pidxs = bputils::topology::unstructured::points(dst_topo, ei);
+            std::set<PointTuple> &entity_points = std::get<0>(entity);
+            for(const index_t &entity_pidx : entity_pidxs)
+            {
+                const std::vector<float64> point_coords = bputils::coordset::_explicit::coords(
+                    src_cset, entity_pidx);
+                entity_points.emplace(
+                    point_coords[0],
+                    (point_coords.size() > 1) ? point_coords[1] : 0.0,
+                    (point_coords.size() > 2) ? point_coords[2] : 0.0);
+            }
+
+            index_t &entity_id = std::get<1>(entity);
+            entity_id = ei;
+
+            // NOTE(JRC): Inserting with this method allows this algorithm to sort new
+            // elements as they're generated, rather than as a separate process at the
+            // end (slight optimization overall).
+            std::vector<std::tuple<std::set<PointTuple>, index_t>> &group_entities =
+                group_entity_map[entity_neighbors];
+            auto entity_itr = std::upper_bound(group_entities.begin(), group_entities.end(), entity);
+            group_entities.insert(entity_itr, entity);
+        }
+
+        for(const auto &group_pair : group_entity_map)
+        {
+            // NOTE(JRC): It's possible for the 'src_adjset_groups' node to be empty,
+            // so we only want to query child data types if we know there is at least
+            // 1 non-empty group.
+            const conduit::DataType src_neighbors_dtype = src_adjset_groups.child(0)["neighbors"].dtype();
+            const conduit::DataType src_values_dtype = src_adjset_groups.child(0)["values"].dtype();
+
+            const std::set<index_t> &group_nidxs = group_pair.first;
+            const std::vector<std::tuple<std::set<PointTuple>, index_t>> &group_entities = group_pair.second;
+            std::string group_name;
+            {
+                // NOTE(JRC): The current domain is included in the domain name so that
+                // it matches across all domains and processors (also, using std::set
+                // ensures that items are sorted and the order is the same across ranks).
+                std::set<index_t> group_all_nidxs = group_nidxs;
+                group_all_nidxs.insert(domain_id);
+
+                std::ostringstream oss;
+                oss << "group";
+                for(const index_t &group_nidx : group_all_nidxs)
+                {
+                    oss << "_" << group_nidx;
+                }
+                group_name = oss.str();
+            }
+
+            conduit::Node &dst_group = dst_adjset_groups[group_name];
+            conduit::Node &dst_neighbors = dst_group["neighbors"];
+            conduit::Node &dst_values = dst_group["values"];
+
+            dst_neighbors.set(DataType(src_neighbors_dtype.id(), group_nidxs.size()));
+            index_t ni = 0;
+            for(auto nitr = group_nidxs.begin(); nitr != group_nidxs.end(); ++nitr)
+            {
+                src_data.set_external(DataType::index_t(1),
+                    (void*)&(*nitr));
+                dst_data.set_external(DataType(src_neighbors_dtype.id(), 1),
+                    (void*)dst_neighbors.element_ptr(ni++));
+                src_data.to_data_type(dst_data.dtype().id(), dst_data);
+            }
+
+            dst_values.set(DataType(src_values_dtype.id(), group_entities.size()));
+            for(index_t ei = 0; ei < (index_t)group_entities.size(); ei++)
+            {
+                src_data.set_external(DataType::index_t(1),
+                    (void*)&std::get<1>(group_entities[ei]));
+                dst_data.set_external(DataType(src_values_dtype.id(), 1),
+                    (void*)dst_values.element_ptr(ei));
+                src_data.to_data_type(dst_data.dtype().id(), dst_data);
+            }
+        }
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+std::vector<index_t>
+calculate_decomposed_dims(const conduit::Node &mesh, const std::string &adjset_name, CalcDimDecomposedFun calc_dims)
+{
+    // NOTE(JRC): This strategy works even if some ranks have empty meshes because
+    // the empty ranks won't use the resulting 'dims' array to compute indices and
+    // thus it doesn't matter if the variable has the technically incorrect value.
+    const std::vector<const Node *> domains = ::conduit::blueprint::mesh::domains(mesh);
+    if(domains.empty())
+    {
+        return std::vector<index_t>();
+    }
+    else // if(!domains.empty())
+    {
+        const Node &domain = *domains.front();
+
+        const Node &adjset = domain["adjsets"][adjset_name];
+        const Node *topo_ptr = bputils::find_reference_node(adjset, "topology");
+        const Node &topo = *topo_ptr;
+
+        const bputils::ShapeType shape(topo);
+        return calc_dims(shape);
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void
+generate_decomposed_entities(conduit::Node &mesh,
+                             const std::string &src_adjset_name,
+                             const std::string &dst_adjset_name,
+                             const std::string &dst_topo_name,
+                             const std::string &dst_cset_name,
+                             conduit::Node &s2dmap,
+                             conduit::Node &d2smap,
+                             GenDecomposedFun generate_decomposed,
+                             IdDecomposedFun  identify_decomposed,
+                             const std::vector<index_t> &decomposed_centroid_dims)
+{
+    const std::vector<DomMapsTuple> doms_and_maps = group_domains_and_maps(mesh, s2dmap, d2smap);
+    for(index_t di = 0; di < (index_t)doms_and_maps.size(); di++)
+    {
+        Node &domain = *std::get<0>(doms_and_maps[di]);
+        Node &domain_s2dmap = *std::get<1>(doms_and_maps[di]);
+        Node &domain_d2smap = *std::get<2>(doms_and_maps[di]);
+
+        const Node &src_adjset = domain["adjsets"][src_adjset_name];
+        const Node *src_topo_ptr = bputils::find_reference_node(src_adjset, "topology");
+        const Node &src_topo = *src_topo_ptr;
+
+        // NOTE(JRC): Diff- new code below
+        Node &dst_topo = domain["topologies"][dst_topo_name];
+        Node &dst_cset = domain["coordsets"][dst_cset_name];
+        generate_decomposed(src_topo, dst_topo, dst_cset, domain_s2dmap, domain_d2smap);
+
+        Node &dst_adjset = domain["adjsets"][dst_adjset_name];
+        dst_adjset.reset();
+        // NOTE(JRC): Diff- different association (decomposed entity -> assoc: vertex)
+        dst_adjset["association"].set("vertex");
+        dst_adjset["topology"].set(dst_topo_name);
+    }
+
+    Node src_data, dst_data;
+    src_data.reset();
+    dst_data.reset();
+    for(index_t di = 0; di < (index_t)doms_and_maps.size(); di++)
+    {
+        Node &domain = *std::get<0>(doms_and_maps[di]);
+        const index_t domain_id = domain["state/domain_id"].to_index_t();
+
+        const Node *src_topo_ptr = bputils::find_reference_node(domain["adjsets"][src_adjset_name], "topology");
+        const Node &src_topo = *src_topo_ptr;
+        const Node *src_cset_ptr = bputils::find_reference_node(src_topo, "coordset");
+        const Node &src_cset = *src_cset_ptr;
+        // NOTE(JRC): Diff- generate topology metadata for source topology to find
+        // centroids that may exist within an adjset group.
+        const bputils::TopologyMetadata src_topo_data(src_topo, src_cset);
+
+        // const Node &dst_topo = domain["topologies"][dst_topo_name];
+        const Node &dst_cset = domain["coordsets"][dst_cset_name];
+
+        const Node &src_adjset_groups = domain["adjsets"][src_adjset_name]["groups"];
+        Node &dst_adjset_groups = domain["adjsets"][dst_adjset_name]["groups"];
+
+        // Organize Adjset Points into Interfaces (Pair-Wise Groups) //
+
+        // {(neighbor domain id): <(participating points for domain interface)>}
+        std::map<index_t, std::set<index_t>> neighbor_pidxs_map;
+        for(const std::string &group_name : src_adjset_groups.child_names())
+        {
+            const Node &src_group = src_adjset_groups[group_name];
+
+            index_t_accessor src_neighbors=src_group["neighbors"].value();
+            index_t_accessor src_values=src_group["values"].value();
+
+            for(index_t ni = 0; ni < src_neighbors.dtype().number_of_elements(); ni++)
+            {
+                // src_data.set_external(DataType(src_neighbors.dtype().id(), 1),
+                //     (void*)src_neighbors.element_ptr(ni));
+                // std::set<index_t> &neighbor_pidxs = neighbor_pidxs_map[src_data.to_index_t()];
+
+                std::set<index_t> &neighbor_pidxs = neighbor_pidxs_map[src_neighbors[ni]];
+                for(index_t pi = 0; pi < src_values.dtype().number_of_elements(); pi++)
+                {
+                    // src_data.set_external(DataType(src_values.dtype().id(), 1),
+                    //     (void*)src_values.element_ptr(pi));
+                    // neighbor_pidxs.insert(src_data.to_index_t());
+                    neighbor_pidxs.insert(src_values[pi]);
+                }
+            }
+        }
+
+        // Collect Viable Entities for All Interfaces //
+
+        // {(entity centroid id): <(neighbor domain ids that contain this entity)>}
+        std::map<index_t, std::set<index_t>> entity_neighbor_map;
+        // NOTE(JRC): Diff, entirely different iteration strategy for finding entities
+        // to consider on individual adjset interfaces.
+        for(const index_t &dentry : decomposed_centroid_dims)
+        {
+            const Node &dim_topo = src_topo_data.dim_topos[dentry];
+            for(index_t ei = 0; ei < src_topo_data.get_length(dentry); ei++)
+            {
+                std::vector<index_t> entity_pidxs = bputils::topology::unstructured::points(dim_topo, ei);
+                for(const auto &neighbor_pair : neighbor_pidxs_map)
+                {
+                    const index_t &ni = neighbor_pair.first;
+                    const std::set<index_t> &neighbor_pidxs = neighbor_pair.second;
+
+                    bool entity_in_neighbor = true;
+                    for(index_t pi = 0; pi < (index_t)entity_pidxs.size() && entity_in_neighbor; pi++)
+                    {
+                        entity_in_neighbor &= neighbor_pidxs.find(entity_pidxs[pi]) != neighbor_pidxs.end();
+                    }
+
+                    if(entity_in_neighbor)
+                    {
+                        const index_t entity_cidx = identify_decomposed(src_topo_data, ei, dentry);
+                        entity_neighbor_map[entity_cidx].insert(ni);
+                    }
+                }
+            }
+        }
+
+        // Use Entity Interfaces to Construct Group Entity Lists //
+
+        std::map<std::set<index_t>, std::vector<std::tuple<std::set<PointTuple>, index_t>>> group_entity_map;
+        for(const auto &entity_neighbor_pair : entity_neighbor_map)
+        {
+            const index_t &entity_cidx = entity_neighbor_pair.first;
+            const std::set<index_t> &entity_neighbors = entity_neighbor_pair.second;
+            std::tuple<std::set<PointTuple>, index_t> entity;
+
+            std::set<PointTuple> &entity_points = std::get<0>(entity);
+            // NOTE(JRC): Diff: Substitute entity for centroid point at the end here.
+            const std::vector<float64> point_coords = bputils::coordset::_explicit::coords(
+                dst_cset, entity_cidx);
+            entity_points.emplace(
+                point_coords[0],
+                (point_coords.size() > 1) ? point_coords[1] : 0.0,
+                (point_coords.size() > 2) ? point_coords[2] : 0.0);
+
+            index_t &entity_id = std::get<1>(entity);
+            entity_id = entity_cidx;
+
+            // NOTE(JRC): Inserting with this method allows this algorithm to sort new
+            // elements as they're generated, rather than as a separate process at the
+            // end (slight optimization overall).
+            std::vector<std::tuple<std::set<PointTuple>, index_t>> &group_entities =
+                group_entity_map[entity_neighbors];
+            auto entity_itr = std::upper_bound(group_entities.begin(), group_entities.end(), entity);
+            group_entities.insert(entity_itr, entity);
+        }
+
+        for(const auto &group_pair : group_entity_map)
+        {
+            // NOTE(JRC): It's possible for the 'src_adjset_groups' node to be empty,
+            // so we only want to query child data types if we know there is at least
+            // 1 non-empty group.
+            const DataType src_neighbors_dtype = src_adjset_groups.child(0)["neighbors"].dtype();
+            const DataType src_values_dtype = src_adjset_groups.child(0)["values"].dtype();
+
+            const std::set<index_t> &group_nidxs = group_pair.first;
+            const std::vector<std::tuple<std::set<PointTuple>, index_t>> &group_entities = group_pair.second;
+            std::string group_name;
+            {
+                // NOTE(JRC): The current domain is included in the domain name so that
+                // it matches across all domains and processors (also, using std::set
+                // ensures that items are sorted and the order is the same across ranks).
+                std::set<index_t> group_all_nidxs = group_nidxs;
+                group_all_nidxs.insert(domain_id);
+
+                std::ostringstream oss;
+                oss << "group";
+                for(const index_t &group_nidx : group_all_nidxs)
+                {
+                    oss << "_" << group_nidx;
+                }
+                group_name = oss.str();
+            }
+
+            Node &dst_group = dst_adjset_groups[group_name];
+            Node &dst_neighbors = dst_group["neighbors"];
+            Node &dst_values = dst_group["values"];
+
+            dst_neighbors.set(DataType(src_neighbors_dtype.id(), group_nidxs.size()));
+            index_t ni = 0;
+            for(auto nitr = group_nidxs.begin(); nitr != group_nidxs.end(); ++nitr)
+            {
+                src_data.set_external(DataType::index_t(1),
+                    (void*)&(*nitr));
+                dst_data.set_external(DataType(src_neighbors_dtype.id(), 1),
+                    (void*)dst_neighbors.element_ptr(ni++));
+                src_data.to_data_type(dst_data.dtype().id(), dst_data);
+            }
+
+            dst_values.set(DataType(src_values_dtype.id(), group_entities.size()));
+            for(index_t ei = 0; ei < (index_t)group_entities.size(); ei++)
+            {
+                src_data.set_external(DataType::index_t(1),
+                    (void*)&std::get<1>(group_entities[ei]));
+                dst_data.set_external(DataType(src_values_dtype.id(), 1),
+                    (void*)dst_values.element_ptr(ei));
+                src_data.to_data_type(dst_data.dtype().id(), dst_data);
+            }
+        }
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void
+verify_generate_mesh(const conduit::Node &mesh,
+                     const std::string &adjset_name)
+{
+    const std::vector<const Node *> domains = blueprint::mesh::domains(mesh);
+    for(index_t di = 0; di < (index_t)domains.size(); di++)
+    {
+        const Node &domain = *domains[di];
+        Node info;
+
+        if(!domain["adjsets"].has_child(adjset_name))
+        {
+            CONDUIT_ERROR("<blueprint::mpi::mesh::generate_*> " <<
+                          "Requested source adjacency set '" << adjset_name << "' " <<
+                          "doesn't exist on domain '" << domain.name() << ".'");
+        }
+
+        if(domain["adjsets"][adjset_name]["association"].as_string() != "vertex")
+        {
+            CONDUIT_ERROR("<blueprint::mpi::mesh::generate_*> " <<
+                          "Given adjacency set has an unsupported association type 'element.'\n" <<
+                          "Supported associations:\n" <<
+                          "  'vertex'");
+        }
+
+        const Node &adjset = domain["adjsets"][adjset_name];
+        const Node *topo_ptr = bputils::find_reference_node(adjset, "topology");
+        const Node &topo = *topo_ptr;
+        if(!conduit::blueprint::mesh::topology::unstructured::verify(topo, info))
+        {
+            CONDUIT_ERROR("<blueprint::mpi::mesh::generate_*> " <<
+                          "Requested source topology '" << topo.name() << "' " <<
+                          "is of unsupported type '" << topo["type"].as_string() << ".'\n" <<
+                          "Supported types:\n" <<
+                          "  'unstructured'");
+        }
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_points(conduit::Node &mesh,
+                      const std::string &src_adjset_name,
+                      const std::string &dst_adjset_name,
+                      const std::string &dst_topo_name,
+                      conduit::Node &s2dmap,
+                      conduit::Node &d2smap)
+{
+    verify_generate_mesh(mesh, src_adjset_name);
+    generate_derived_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_points);
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_lines(conduit::Node &mesh,
+                     const std::string &src_adjset_name,
+                     const std::string &dst_adjset_name,
+                     const std::string &dst_topo_name,
+                     conduit::Node &s2dmap,
+                     conduit::Node &d2smap)
+{
+    verify_generate_mesh(mesh, src_adjset_name);
+    generate_derived_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_lines);
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_faces(conduit::Node &mesh,
+                     const std::string& src_adjset_name,
+                     const std::string& dst_adjset_name,
+                     const std::string& dst_topo_name,
+                     conduit::Node& s2dmap,
+                     conduit::Node& d2smap)
+{
+    verify_generate_mesh(mesh, src_adjset_name);
+    generate_derived_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_faces);
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_centroids(conduit::Node& mesh,
+                         const std::string& src_adjset_name,
+                         const std::string& dst_adjset_name,
+                         const std::string& dst_topo_name,
+                         const std::string& dst_cset_name,
+                         conduit::Node& s2dmap,
+                         conduit::Node& d2smap)
+{
+    const static auto identify_centroid = []
+        (const bputils::TopologyMetadata &/*topo_data*/, const index_t ei, const index_t /*di*/)
+    {
+        return ei;
+    };
+
+    const static auto calculate_centroid_dims = [] (const bputils::ShapeType &topo_shape)
+    {
+        return std::vector<index_t>(1, topo_shape.dim);
+    };
+
+    verify_generate_mesh(mesh, src_adjset_name);
+
+    const std::vector<index_t> centroid_dims = calculate_decomposed_dims(
+        mesh, src_adjset_name, calculate_centroid_dims);
+
+    generate_decomposed_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, dst_cset_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_centroids, identify_centroid, centroid_dims);
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_sides(conduit::Node& mesh,
+                     const std::string& src_adjset_name,
+                     const std::string& dst_adjset_name,
+                     const std::string& dst_topo_name,
+                     const std::string& dst_cset_name,
+                     conduit::Node& s2dmap,
+                     conduit::Node& d2smap)
+{
+    const static auto identify_side = []
+        (const bputils::TopologyMetadata &topo_data, const index_t ei, const index_t di)
+    {
+        index_t doffset = 0;
+        for(index_t dii = 0; dii < di; dii++)
+        {
+            if(dii != 1)
+            {
+                doffset += topo_data.get_length(dii);
+            }
+        }
+
+        return doffset + ei;
+    };
+
+    const static auto calculate_side_dims = [] (const bputils::ShapeType &topo_shape)
+    {
+        std::vector<index_t> side_dims;
+
+        side_dims.push_back(0);
+        if(topo_shape.dim == 3)
+        {
+            side_dims.push_back(2);
+        }
+
+        return std::vector<index_t>(std::move(side_dims));
+    };
+
+    verify_generate_mesh(mesh, src_adjset_name);
+
+    const std::vector<index_t> side_dims = calculate_decomposed_dims(
+        mesh, src_adjset_name, calculate_side_dims);
+
+    generate_decomposed_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, dst_cset_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_sides, identify_side, side_dims);
+}
+
+
+//-----------------------------------------------------------------------------
+void
+mesh::generate_corners(conduit::Node& mesh,
+                       const std::string& src_adjset_name,
+                       const std::string& dst_adjset_name,
+                       const std::string& dst_topo_name,
+                       const std::string& dst_cset_name,
+                       conduit::Node& s2dmap,
+                       conduit::Node& d2smap)
+{
+    const static auto identify_corner = []
+        (const bputils::TopologyMetadata &topo_data, const index_t ei, const index_t di)
+    {
+        index_t doffset = 0;
+        for(index_t dii = 0; dii < di; dii++)
+        {
+            doffset += topo_data.get_length(dii);
+        }
+
+        return doffset + ei;
+    };
+
+    const static auto calculate_corner_dims = [] (const bputils::ShapeType &topo_shape)
+    {
+        std::vector<index_t> corner_dims;
+
+        for(index_t di = 0; di < topo_shape.dim; di++)
+        {
+            corner_dims.push_back(di);
+        }
+
+        return std::vector<index_t>(std::move(corner_dims));
+    };
+
+    verify_generate_mesh(mesh, src_adjset_name);
+
+    const std::vector<index_t> corner_dims = calculate_decomposed_dims(
+        mesh, src_adjset_name, calculate_corner_dims);
+
+    generate_decomposed_entities(
+        mesh, src_adjset_name, dst_adjset_name, dst_topo_name, dst_cset_name, s2dmap, d2smap,
+        conduit::blueprint::mesh::topology::unstructured::generate_corners, identify_corner, corner_dims);
 }
 
 
@@ -2611,15 +3438,23 @@ mesh::topology::unstructured::verify(const Node &topo,
         bool elems_res = true;
         bool subelems_res = true;
 
-        // single shape case
+        // single shape or mixed definition case
         if(topo_elems.has_child("shape"))
         {
             elems_res &= verify_field_exists(protocol, topo_elems, info_elems, "shape") &&
                    mesh::topology::shape::verify(topo_elems["shape"], info_elems["shape"]);
             elems_res &= verify_integer_field(protocol, topo_elems, info_elems, "connectivity");
 
-            // Verify if node is polygonal or polyhedral
-            elems_res &= verify_poly_node (false, "", topo_elems, info_elems, topo, info, elems_res);
+            if (topo_elems["shape"].dtype().is_string() &&
+                topo_elems["shape"].as_string() == "mixed")
+            {
+              elems_res &= verify_mixed_node(topo, info, elems_res, subelems_res);
+            }
+            else
+            {
+              // Verify if node is polygonal or polyhedral
+              elems_res &= verify_poly_node(false, "", topo_elems, info_elems, topo, info, elems_res);
+            }
         }
         // shape stream case
         else if(topo_elems.has_child("element_types"))
@@ -3103,17 +3938,17 @@ namespace detail
         float64 x, y, z;
         vec3(float64 i, float64 j, float64 k) : x(i), y(j), z(k) {}
 
-        vec3 operator+(const vec3 &v) const 
+        vec3 operator+(const vec3 &v) const
         {
             return vec3(x + v.x, y + v.y, z + v.z);
         }
 
-        vec3 operator-(const vec3 &v) const 
+        vec3 operator-(const vec3 &v) const
         {
             return vec3(x - v.x, y - v.y, z - v.z);
         }
 
-        float64 dot(const vec3 &v) const 
+        float64 dot(const vec3 &v) const
         {
             return x * v.x + y * v.y + z * v.z;
         }
@@ -3129,8 +3964,8 @@ namespace detail
     };
 
     // given three points in 2D, calculates the area of the triangle formed by those points
-    float64 triangle_area(float64 x1, float64 y1, 
-                          float64 x2, float64 y2, 
+    float64 triangle_area(float64 x1, float64 y1,
+                          float64 x2, float64 y2,
                           float64 x3, float64 y3)
     {
         return 0.5f * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
@@ -3155,7 +3990,7 @@ namespace detail
                             const int num_orig_shapes, // number of original polygons or polyhedra
                             const T *tri_to_poly,
                             Node &volumes_info,
-                            Node &volumes_field_values) 
+                            Node &volumes_field_values)
     {
         // first we calculate the volume of each triangle
         volumes_field_values.set(conduit::DataType::float64(new_num_shapes));
@@ -3196,7 +4031,7 @@ namespace detail
                               coords_z[connec[i * 4 + 2]]);
                 vec3 d = vec3(coords_x[connec[i * 4 + 3]],
                               coords_y[connec[i * 4 + 3]],
-                              coords_z[connec[i * 4 + 3]]);                
+                              coords_z[connec[i * 4 + 3]]);
                 tri_volumes[i] = tetrahedron_volume(a,b,c,d);
             }
         }
@@ -3231,7 +4066,7 @@ namespace detail
     // T is the type of 'tri_to_poly' values
     // U is the type of connectivity values
     template<typename T, typename U>
-    // determines the type of the coordinate values and calls 
+    // determines the type of the coordinate values and calls
     // volume_dependent_helper to do the work
     void
     volume_dependent(const Node &topo_dest,
@@ -3326,14 +4161,14 @@ namespace detail
                             int dimensions,
                             U *values_array)
     {
-        // copy field values from the original field over to the 
+        // copy field values from the original field over to the
         // points that are in both the old and new topologies
         for (int i = 0; i < orig_num_points; i ++)
         {
             values_array[i] = poly_field_data[i];
         }
 
-        // this map will record for each new point (represented by 
+        // this map will record for each new point (represented by
         // an integer that indexes into the points array) the list
         // of other points that it is connected to (a set of integers)
         std::map<int, std::set<int>> info;
@@ -3344,7 +4179,7 @@ namespace detail
 
         W typesafe_orig_num_points = (W) orig_num_points;
 
-        // iterate thru the connectivity array, going in groups of 3 or 4, 
+        // iterate thru the connectivity array, going in groups of 3 or 4,
         // depending on the dimension
         for (int i = 0; i < length_of_connec; i += iter)
         {
@@ -3358,7 +4193,7 @@ namespace detail
                     // recording the points it is connected to
                     for (int k = i; k < i + iter; k ++)
                     {
-                        // make sure we do not mark down that our point is 
+                        // make sure we do not mark down that our point is
                         // connected to itself
                         if (k != j)
                         {
@@ -3393,8 +4228,8 @@ namespace detail
                     }
                 }
                 // then we divide by the number of incident points,
-                // giving us an average. We do not want to divide by 
-                // the size of the set, since there are neighbors which 
+                // giving us an average. We do not want to divide by
+                // the size of the set, since there are neighbors which
                 // may go unused, since they are not from the original
                 // coordset
                 values_array[i] = sum / num_neighbors;
@@ -3410,10 +4245,10 @@ namespace detail
     template<typename T, // T is the type of 'tri_to_poly' values
              typename U, // U is the type of the new field values (should typically be the same as V)
              typename V> // V is the type of the old field values (should typically be the same as U)
-    void 
-    map_field_to_generated_sides(Node &field_out, 
-                                 const Node &field_src, 
-                                 int new_num_shapes, 
+    void
+    map_field_to_generated_sides(Node &field_out,
+                                 const Node &field_src,
+                                 int new_num_shapes,
                                  const T *tri_to_poly,
                                  float64 *volume_ratio,
                                  bool vol_dep,
@@ -3477,7 +4312,7 @@ namespace detail
         {
             for (int i = 0; i < new_num_shapes; i ++)
             {
-                // tri_to_poly[i] is the index of the original polygon 
+                // tri_to_poly[i] is the index of the original polygon
                 // that triangle 'i' is associated with.
                 // If we use that to index into poly_field_data we
                 // get the field value of the original polygon,
@@ -3498,7 +4333,7 @@ namespace detail
 
     // T is the type of 'tri_to_poly' values
     template<typename T>
-    void 
+    void
     map_fields_to_generated_sides(const Node &topo_src,
                                   const Node &coordset_src,
                                   const Node &fields_src,
@@ -3535,7 +4370,7 @@ namespace detail
         {
             CONDUIT_ERROR(((std::string) "Bad shape in ").append(topo_dest["elements/shape"].as_string()));
         }
-        
+
         const T *tri_to_poly = d2smap["values"].value();
 
         // set up original elements id field
@@ -3551,19 +4386,19 @@ namespace detail
         original_vertices["topology"] = topo_name;
         original_vertices["association"] = "vertex";
         original_vertices["volume_dependent"] = "false";
-        int orig_num_points = coordset_src["values/x"].dtype().number_of_elements();
-        int new_num_points = coordset_dest["values/x"].dtype().number_of_elements();
+        index_t orig_num_points = coordset_src["values/x"].dtype().number_of_elements();
+        index_t new_num_points = coordset_dest["values/x"].dtype().number_of_elements();
         original_vertices["values"].set(conduit::DataType::int32(new_num_points));
         int32 *orig_vert_ids = original_vertices["values"].value();
-        for (int i = 0; i < new_num_points; i ++)
+        for (index_t i = 0; i < new_num_points; i ++)
         {
             if (i < orig_num_points)
             {
-                orig_vert_ids[i] = i;
+                orig_vert_ids[i] = static_cast<int32>(i);
             }
             else
             {
-                orig_vert_ids[i] = -1;
+                orig_vert_ids[i] = static_cast<int32>(-1);
             }
         }
 
@@ -3581,7 +4416,7 @@ namespace detail
             }
             else
             {
-                for (uint64 i = 0; i < field_names.size(); i ++)
+                for (size_t i = 0; i < field_names.size(); i ++)
                 {
                     if (field_names[i] == field_name)
                     {
@@ -3708,10 +4543,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, uint64>(field_out, 
-                                                                         field, 
-                                                                         new_num_shapes, 
-                                                                         tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, uint64>(field_out,
+                                                                         field,
+                                                                         new_num_shapes,
+                                                                         tri_to_poly,
                                                                          volume_ratio,
                                                                          vol_dep,
                                                                          vert_assoc,
@@ -3723,10 +4558,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::uint64(field_out_size));
-                        map_field_to_generated_sides<T, uint64, uint64>(field_out, 
-                                                                        field, 
-                                                                        new_num_shapes, 
-                                                                        tri_to_poly, 
+                        map_field_to_generated_sides<T, uint64, uint64>(field_out,
+                                                                        field,
+                                                                        new_num_shapes,
+                                                                        tri_to_poly,
                                                                         volume_ratio,
                                                                         vol_dep,
                                                                         vert_assoc,
@@ -3741,10 +4576,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, uint32>(field_out, 
-                                                                         field, 
-                                                                         new_num_shapes, 
-                                                                         tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, uint32>(field_out,
+                                                                         field,
+                                                                         new_num_shapes,
+                                                                         tri_to_poly,
                                                                          volume_ratio,
                                                                          vol_dep,
                                                                          vert_assoc,
@@ -3756,10 +4591,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::uint32(field_out_size));
-                        map_field_to_generated_sides<T, uint32, uint32>(field_out, 
-                                                                        field, 
-                                                                        new_num_shapes, 
-                                                                        tri_to_poly, 
+                        map_field_to_generated_sides<T, uint32, uint32>(field_out,
+                                                                        field,
+                                                                        new_num_shapes,
+                                                                        tri_to_poly,
                                                                         volume_ratio,
                                                                         vol_dep,
                                                                         vert_assoc,
@@ -3774,10 +4609,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, int64>(field_out, 
-                                                                        field, 
-                                                                        new_num_shapes, 
-                                                                        tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, int64>(field_out,
+                                                                        field,
+                                                                        new_num_shapes,
+                                                                        tri_to_poly,
                                                                         volume_ratio,
                                                                         vol_dep,
                                                                         vert_assoc,
@@ -3789,10 +4624,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::int64(field_out_size));
-                        map_field_to_generated_sides<T, int64, int64>(field_out, 
-                                                                      field, 
-                                                                      new_num_shapes, 
-                                                                      tri_to_poly, 
+                        map_field_to_generated_sides<T, int64, int64>(field_out,
+                                                                      field,
+                                                                      new_num_shapes,
+                                                                      tri_to_poly,
                                                                       volume_ratio,
                                                                       vol_dep,
                                                                       vert_assoc,
@@ -3807,10 +4642,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, int32>(field_out, 
-                                                                        field, 
-                                                                        new_num_shapes, 
-                                                                        tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, int32>(field_out,
+                                                                        field,
+                                                                        new_num_shapes,
+                                                                        tri_to_poly,
                                                                         volume_ratio,
                                                                         vol_dep,
                                                                         vert_assoc,
@@ -3822,10 +4657,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::int32(field_out_size));
-                        map_field_to_generated_sides<T, int32, int32>(field_out, 
-                                                                      field, 
-                                                                      new_num_shapes, 
-                                                                      tri_to_poly, 
+                        map_field_to_generated_sides<T, int32, int32>(field_out,
+                                                                      field,
+                                                                      new_num_shapes,
+                                                                      tri_to_poly,
                                                                       volume_ratio,
                                                                       vol_dep,
                                                                       vert_assoc,
@@ -3840,10 +4675,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, float64>(field_out, 
-                                                                          field, 
-                                                                          new_num_shapes, 
-                                                                          tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, float64>(field_out,
+                                                                          field,
+                                                                          new_num_shapes,
+                                                                          tri_to_poly,
                                                                           volume_ratio,
                                                                           vol_dep,
                                                                           vert_assoc,
@@ -3855,10 +4690,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, float64>(field_out, 
-                                                                          field, 
-                                                                          new_num_shapes, 
-                                                                          tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, float64>(field_out,
+                                                                          field,
+                                                                          new_num_shapes,
+                                                                          tri_to_poly,
                                                                           volume_ratio,
                                                                           vol_dep,
                                                                           vert_assoc,
@@ -3873,10 +4708,10 @@ namespace detail
                     if (vol_dep || vert_assoc)
                     {
                         field_out["values"].set(conduit::DataType::float64(field_out_size));
-                        map_field_to_generated_sides<T, float64, float32>(field_out, 
-                                                                          field, 
-                                                                          new_num_shapes, 
-                                                                          tri_to_poly, 
+                        map_field_to_generated_sides<T, float64, float32>(field_out,
+                                                                          field,
+                                                                          new_num_shapes,
+                                                                          tri_to_poly,
                                                                           volume_ratio,
                                                                           vol_dep,
                                                                           vert_assoc,
@@ -3888,10 +4723,10 @@ namespace detail
                     else
                     {
                         field_out["values"].set(conduit::DataType::float32(field_out_size));
-                        map_field_to_generated_sides<T, float32, float32>(field_out, 
-                                                                          field, 
-                                                                          new_num_shapes, 
-                                                                          tri_to_poly, 
+                        map_field_to_generated_sides<T, float32, float32>(field_out,
+                                                                          field,
+                                                                          new_num_shapes,
+                                                                          tri_to_poly,
                                                                           volume_ratio,
                                                                           vol_dep,
                                                                           vert_assoc,
@@ -4002,48 +4837,48 @@ mesh::topology::unstructured::generate_sides(const conduit::Node &topo_src,
     {
         detail::map_fields_to_generated_sides<uint64>(topo_src,
                                                       coordset_src,
-                                                      fields_src, 
-                                                      d2smap, 
+                                                      fields_src,
+                                                      d2smap,
                                                       topo_dest,
-                                                      coordset_dest, 
-                                                      fields_dest, 
-                                                      field_names, 
+                                                      coordset_dest,
+                                                      fields_dest,
+                                                      field_names,
                                                       field_prefix);
     }
     else if (d2smap["values"].dtype().is_uint32())
     {
         detail::map_fields_to_generated_sides<uint32>(topo_src,
                                                       coordset_src,
-                                                      fields_src, 
-                                                      d2smap, 
+                                                      fields_src,
+                                                      d2smap,
                                                       topo_dest,
-                                                      coordset_dest, 
-                                                      fields_dest, 
-                                                      field_names, 
+                                                      coordset_dest,
+                                                      fields_dest,
+                                                      field_names,
                                                       field_prefix);
     }
     else if (d2smap["values"].dtype().is_int64())
     {
         detail::map_fields_to_generated_sides<int64>(topo_src,
                                                      coordset_src,
-                                                     fields_src, 
-                                                     d2smap, 
+                                                     fields_src,
+                                                     d2smap,
                                                      topo_dest,
-                                                     coordset_dest, 
-                                                     fields_dest, 
-                                                     field_names, 
+                                                     coordset_dest,
+                                                     fields_dest,
+                                                     field_names,
                                                      field_prefix);
     }
     else if (d2smap["values"].dtype().is_int32())
     {
         detail::map_fields_to_generated_sides<int32>(topo_src,
                                                      coordset_src,
-                                                     fields_src, 
-                                                     d2smap, 
+                                                     fields_src,
+                                                     d2smap,
                                                      topo_dest,
-                                                     coordset_dest, 
-                                                     fields_dest, 
-                                                     field_names, 
+                                                     coordset_dest,
+                                                     fields_dest,
+                                                     field_names,
                                                      field_prefix);
     }
     else
@@ -4537,6 +5372,47 @@ mesh::topology::shape::verify(const Node &shape,
 }
 
 //-----------------------------------------------------------------------------
+// blueprint::mesh::topology::shape_map protocol interface
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool
+mesh::topology::shape_map::verify(const Node& shape_map,
+  Node& info)
+{
+  const std::string protocol = "mesh::topology::shape_map";
+  bool res = true;
+  info.reset();
+
+  res &= verify_object_field(protocol, shape_map, info);
+
+  for (const Node &child : shape_map.children())
+  {
+    bool isEnum = false;
+    for(const auto &enum_value : bputils::TOPO_SHAPES)
+    {
+      isEnum |= (enum_value == child.name());
+    }
+    if (isEnum)
+    {
+      log::info(info, protocol, "has valid value "+ log::quote(child.name()) +
+      "(" + std::to_string(child.as_int32()) + ")");
+    }
+    else
+    {
+      log::error(info, protocol, "has invalid value " + log::quote(child.name()) +
+        "(" + std::to_string(child.as_int32()) + ")");
+    }
+    res &= isEnum;
+  }
+
+  log::validation(info, res);
+
+  return res;
+}
+
+
+//-----------------------------------------------------------------------------
 // blueprint::mesh::matset protocol interface
 //-----------------------------------------------------------------------------
 
@@ -4551,7 +5427,7 @@ bool verify_matset_material_map(const std::string &protocol,
 
     if(res)
     {
-        // we already know we have an object, children should be 
+        // we already know we have an object, children should be
         // integer scalars
         NodeConstIterator itr = matset["material_map"].children();
         while(itr.has_next())
@@ -4654,7 +5530,7 @@ mesh::matset::verify(const Node &matset,
 
         res &= verify_matset_material_map(protocol,matset,info);
 
-        // for cases where vfs are an object, we expect the material_map child 
+        // for cases where vfs are an object, we expect the material_map child
         // names to be a subset of the volume_fractions child names
         if(matset.has_child("volume_fractions") &&
            matset["volume_fractions"].dtype().is_object())
@@ -4668,9 +5544,9 @@ mesh::matset::verify(const Node &matset,
                 {
                     std::ostringstream oss;
                     oss << "'material_map' hierarchy must be a subset of "
-                           "'volume_fractions'. " 
+                           "'volume_fractions'. "
                            " 'volume_fractions' is missing child '"
-                           << curr_name 
+                           << curr_name
                            <<"' which exists in 'material_map`" ;
                     log::error(info, protocol,oss.str());
                     res &= false;
@@ -5730,6 +6606,77 @@ mesh::index::verify(const Node &n,
 
     return res;
 }
+
+
+//-------------------------------------------------------------------------
+void
+mesh::paint_adjset(const std::string &adjset_name,
+                   const std::string &field_prefix,
+                   conduit::Node &mesh)
+{
+    // {field_prefix}_group_count -- total number of groups the vertex or element is in
+    // {field_prefix}_order_{group_name} -- the vertex or element's order in group {group_name}
+
+    // recipe adapted from Max Yang's checks in t_blueprint_mpi_mesh_parmetis
+
+    auto mesh_doms = conduit::blueprint::mesh::domains(mesh);
+
+    for(Node *dom : mesh_doms)
+    {
+        // if we don't have an adjset, skip this domain
+        if(!dom->has_path("adjsets/" + adjset_name))
+        {
+            continue;
+        }
+
+        // check adjset assoc
+        const Node &adjset = dom->fetch_existing("adjsets/" + adjset_name);
+        const std::string assoc = adjset["association"].as_string();
+
+        // get the coordset for our topo, so we can find out the
+        // number of verts
+        std::string topo_name = adjset["topology"].as_string();
+        const Node &topo = dom->fetch_existing("topologies/" + topo_name);
+        const Node &coordset = bputils::topology::coordset(topo);
+
+        index_t num_verts = mesh::coordset::length(coordset);
+        index_t num_eles  = mesh::topology::length(topo);
+        index_t num_entries = num_verts;
+
+        if(assoc == "element")
+            num_entries = num_eles;
+
+        // we want a field that counts the number of groups a vertex is in
+        Node &res_cnt_field = dom->fetch("fields/" + field_prefix + "_group_count");
+        res_cnt_field["association"] = assoc;
+        res_cnt_field["topology"] = topo_name;
+        res_cnt_field["values"].set(DataType::int64(num_entries));
+        int64_array res_cnt_vals = res_cnt_field["values"].value();
+
+        // loop over groups
+        for (const Node& group : adjset["groups"].children())
+        {
+            // we also want a field that shows the order for each group
+            // init this field
+            Node &res_order_field = dom->fetch("fields/" + field_prefix + "_order_" + group.name());
+            res_order_field["association"] = assoc;
+            res_order_field["topology"] = topo_name;
+            res_order_field["values"].set(DataType::int64(num_entries));
+            int64_array res_order_vals = res_order_field["values"].value();
+            res_order_vals.fill(-1);
+            // get entires
+            int64_accessor grp_vals = group["values"].as_int64_accessor();
+            for (index_t iv = 0; iv < grp_vals.number_of_elements(); iv++)
+            {
+                // update count
+                res_cnt_vals[grp_vals[iv]] += 1;
+                // record order
+                res_order_vals[grp_vals[iv]] = iv;
+            }
+        }
+    }
+}
+
 
 //-------------------------------------------------------------------------
 void
