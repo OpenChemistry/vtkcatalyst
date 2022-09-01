@@ -8,7 +8,7 @@ readonly name="conduit"
 readonly ownership="Conduit Upstream <kwrobot@kitware.com>"
 readonly subtree="thirdparty/$name"
 readonly repo="https://gitlab.kitware.com/third-party/conduit.git"
-readonly tag="for/catalyst-20220607-v0.8.3"
+readonly tag="for/catalyst-20220827-v0.8.4"
 readonly paths="
 .gitattributes
 COPYRIGHT
