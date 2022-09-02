@@ -104,6 +104,27 @@ void CONDUIT_BLUEPRINT_API generate_index_for_single_domain(const conduit::Node 
                                                             const std::string &ref_path,
                                                             Node &index_out);
 
+//-------------------------------------------------------------------------
+// Creates fields to help view and debug adjset relationships.
+//
+// Domains without adjset are simply skipped.
+//
+// Creates fields with the following names:
+//
+// An overall group count field:
+//
+//   {field_prefix}_group_count -- total number of groups the vertex or element is in
+//
+// And for each adjset group:
+//  Group Ordering fields:
+//   {field_prefix}_order_{group_name} -- the vertex or element's order in group {group_name}
+//
+// (note: The group order fields will only be defined on the domains involved with the group )
+//
+void CONDUIT_BLUEPRINT_API paint_adjset(const std::string &adjset_name,
+                                        const std::string &field_prefix,
+                                        conduit::Node &mesh);
+
 
 //-------------------------------------------------------------------------
 /**
@@ -162,6 +183,64 @@ void CONDUIT_BLUEPRINT_API partition_map_back(const conduit::Node& repart_mesh,
 void CONDUIT_BLUEPRINT_API flatten(const conduit::Node &mesh,
                                    const conduit::Node &options,
                                    conduit::Node &output);
+
+
+//-----------------------------------------------------------------------------
+/// blueprint mesh transform methods (these work on multi domain meshes)
+///
+/// These methods can be called on specific verified blueprint mesh.
+//-----------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_points(conduit::Node &mesh,
+                                           const std::string& src_adjset_name,
+                                           const std::string& dst_adjset_name,
+                                           const std::string& dst_topo_name,
+                                           conduit::Node& s2dmap,
+                                           conduit::Node& d2smap);
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_lines(conduit::Node &mesh,
+                                          const std::string& src_adjset_name,
+                                          const std::string& dst_adjset_name,
+                                          const std::string& dst_topo_name,
+                                          conduit::Node& s2dmap,
+                                          conduit::Node& d2smap);
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_faces(conduit::Node &mesh,
+                                          const std::string& src_adjset_name,
+                                          const std::string& dst_adjset_name,
+                                          const std::string& dst_topo_name,
+                                          conduit::Node& s2dmap,
+                                          conduit::Node& d2smap);
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_centroids(conduit::Node& mesh,
+                                              const std::string& src_adjset_name,
+                                              const std::string& dst_adjset_name,
+                                              const std::string& dst_topo_name,
+                                              const std::string& dst_cset_name,
+                                              conduit::Node& s2dmap,
+                                              conduit::Node& d2smap);
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_sides(conduit::Node& mesh,
+                                          const std::string& src_adjset_name,
+                                          const std::string& dst_adjset_name,
+                                          const std::string& dst_topo_name,
+                                          const std::string& dst_cset_name,
+                                          conduit::Node& s2dmap,
+                                          conduit::Node& d2smap);
+
+//-------------------------------------------------------------------------
+void CONDUIT_BLUEPRINT_API generate_corners(conduit::Node& mesh,
+                                            const std::string& src_adjset_name,
+                                            const std::string& dst_adjset_name,
+                                            const std::string& dst_topo_name,
+                                            const std::string& dst_cset_name,
+                                            conduit::Node& s2dmap,
+                                            conduit::Node& d2smap);
 
 //-----------------------------------------------------------------------------
 // blueprint::mesh::logical_dims protocol interface
@@ -503,6 +582,15 @@ namespace topology
         //---------------------------------------------------------------------
         bool CONDUIT_BLUEPRINT_API verify(const conduit::Node &shape,
                                           conduit::Node &info);
+    }
+    //-------------------------------------------------------------------------
+    // blueprint::mesh::topology::shape_map protocol interface
+    //-------------------------------------------------------------------------
+    namespace shape_map
+    {
+        //---------------------------------------------------------------------
+        bool CONDUIT_BLUEPRINT_API verify(const conduit::Node& shape_map,
+          conduit::Node& info);
     }
 }
 //-----------------------------------------------------------------------------

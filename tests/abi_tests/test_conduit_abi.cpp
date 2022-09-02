@@ -1143,6 +1143,126 @@ static int test_conduit_node_abi()
       "conduit_node_set_path_external_char8_str should take a char*");
   }
 
+  // conduit_node_to_json
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_json)>;
+    abi_require(&conduit_node_to_json, "conduit_node_to_json must be defined");
+    static_assert(
+      std::is_same<func_types::return_t, char*>::value, "conduit_node_to_json must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 1,
+      "conduit_node_to_json must take one argument");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_json should take a const conduit_node*");
+  }
+
+  // conduit_node_to_json_with_options
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_json_with_options)>;
+    abi_require(
+      &conduit_node_to_json_with_options, "conduit_node_to_json_with_options must be defined");
+    static_assert(std::is_same<func_types::return_t, char*>::value,
+      "conduit_node_to_json_with_options must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 2,
+      "conduit_node_to_json_with_options must take two arguments");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_json_with_options should take a const conduit_node*");
+    static_assert(
+      std::is_same<std::tuple_element<1, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_json_with_options should take a const conduit_node*");
+  }
+
+  // conduit_node_to_string
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_string)>;
+    abi_require(&conduit_node_to_string, "conduit_node_to_string must be defined");
+    static_assert(
+      std::is_same<func_types::return_t, char*>::value, "conduit_node_to_string must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 1,
+      "conduit_node_to_string must take one argument");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_string should take a const conduit_node*");
+  }
+
+  // conduit_node_to_string_with_options
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_string_with_options)>;
+    abi_require(
+      &conduit_node_to_string_with_options, "conduit_node_to_string_with_options must be defined");
+    static_assert(std::is_same<func_types::return_t, char*>::value,
+      "conduit_node_to_string_with_options must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 2,
+      "conduit_node_to_string_with_options must take two arguments");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_string_with_options should take a const conduit_node*");
+    static_assert(
+      std::is_same<std::tuple_element<1, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_string_with_options should take a const conduit_node*");
+  }
+
+  // conduit_node_to_summary_string
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_summary_string)>;
+    abi_require(&conduit_node_to_summary_string, "conduit_node_to_summary_string must be defined");
+    static_assert(std::is_same<func_types::return_t, char*>::value,
+      "conduit_node_to_summary_string must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 1,
+      "conduit_node_to_summary_string must take one argument");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_summary_string should take a const conduit_node*");
+  }
+
+  // conduit_node_to_summary_string_with_options
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_summary_string_with_options)>;
+    abi_require(&conduit_node_to_summary_string_with_options,
+      "conduit_node_to_summary_string_with_options must be defined");
+    static_assert(std::is_same<func_types::return_t, char*>::value,
+      "conduit_node_to_summary_string_with_options must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 2,
+      "conduit_node_to_summary_string_with_options must take two arguments");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_summary_string_with_options should take a const conduit_node*");
+    static_assert(
+      std::is_same<std::tuple_element<1, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_summary_string_with_options should take a const conduit_node*");
+  }
+
+  // conduit_node_to_yaml
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_yaml)>;
+    abi_require(&conduit_node_to_yaml, "conduit_node_to_yaml must be defined");
+    static_assert(
+      std::is_same<func_types::return_t, char*>::value, "conduit_node_to_yaml must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 1,
+      "conduit_node_to_yaml must take one argument");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_yaml should take a const conduit_node*");
+  }
+
+  // conduit_node_to_yaml_with_options
+  {
+    using func_types = funcinfo<decltype(conduit_node_to_yaml_with_options)>;
+    abi_require(
+      &conduit_node_to_yaml_with_options, "conduit_node_to_yaml_with_options must be defined");
+    static_assert(std::is_same<func_types::return_t, char*>::value,
+      "conduit_node_to_yaml_with_options must return char*");
+    abi_require(std::tuple_size<func_types::argument_t>::value == 2,
+      "conduit_node_to_yaml_with_options must take two arguments");
+    static_assert(
+      std::is_same<std::tuple_element<0, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_yaml_with_options should take a const conduit_node*");
+    static_assert(
+      std::is_same<std::tuple_element<1, func_types::argument_t>::type, const conduit_node*>::value,
+      "conduit_node_to_yaml_with_options should take a const conduit_node*");
+  }
+
 #define CHECK_CONDUIT_NODE_TYPE_FUNCTIONS(stem, ty)                                                \
   do                                                                                               \
   {                                                                                                \
